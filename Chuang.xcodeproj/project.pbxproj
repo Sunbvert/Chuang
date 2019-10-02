@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		A12428AE23437752001D2276 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A12428AD23437752001D2276 /* main.cpp */; };
+		A12428B923437FC6001D2276 /* libBox2D.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A12428B823437FC6001D2276 /* libBox2D.a */; };
+		A12428BB23438744001D2276 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A12428BA23438744001D2276 /* OpenGL.framework */; };
+		A12428BD23438A26001D2276 /* libglfw.3.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A12428BC23438A26001D2276 /* libglfw.3.3.dylib */; };
+		A12428BF23438A4B001D2276 /* libGLEW.2.1.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A12428BE23438A4B001D2276 /* libGLEW.2.1.0.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +29,10 @@
 /* Begin PBXFileReference section */
 		A12428AA23437752001D2276 /* Chuang */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Chuang; sourceTree = BUILT_PRODUCTS_DIR; };
 		A12428AD23437752001D2276 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		A12428B823437FC6001D2276 /* libBox2D.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBox2D.a; path = ExternalLibraries/Box2D/Lib/libBox2D.a; sourceTree = "<group>"; };
+		A12428BA23438744001D2276 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		A12428BC23438A26001D2276 /* libglfw.3.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.3.dylib; path = ../../../../../usr/local/Cellar/glfw/3.3/lib/libglfw.3.3.dylib; sourceTree = "<group>"; };
+		A12428BE23438A4B001D2276 /* libGLEW.2.1.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.2.1.0.dylib; path = ../../../../../usr/local/Cellar/glew/2.1.0/lib/libGLEW.2.1.0.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +40,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A12428BF23438A4B001D2276 /* libGLEW.2.1.0.dylib in Frameworks */,
+				A12428BD23438A26001D2276 /* libglfw.3.3.dylib in Frameworks */,
+				A12428BB23438744001D2276 /* OpenGL.framework in Frameworks */,
+				A12428B923437FC6001D2276 /* libBox2D.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -41,8 +53,9 @@
 		A12428A123437752001D2276 = {
 			isa = PBXGroup;
 			children = (
-				A12428AC23437752001D2276 /* Chuang */,
+				A12428AC23437752001D2276 /* SimulationWorld */,
 				A12428AB23437752001D2276 /* Products */,
+				A12428B723437FC6001D2276 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -54,12 +67,23 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		A12428AC23437752001D2276 /* Chuang */ = {
+		A12428AC23437752001D2276 /* SimulationWorld */ = {
 			isa = PBXGroup;
 			children = (
 				A12428AD23437752001D2276 /* main.cpp */,
 			);
-			path = Chuang;
+			path = SimulationWorld;
+			sourceTree = "<group>";
+		};
+		A12428B723437FC6001D2276 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A12428BE23438A4B001D2276 /* libGLEW.2.1.0.dylib */,
+				A12428BC23438A26001D2276 /* libglfw.3.3.dylib */,
+				A12428BA23438744001D2276 /* OpenGL.framework */,
+				A12428B823437FC6001D2276 /* libBox2D.a */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -239,6 +263,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = (
+					"${SRCROOT}/ExternalLibraries/Box2D/Include",
+					/usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/ExternalLibraries/Box2D/Lib",
+					/usr/local/Cellar/glfw/3.3/lib,
+					/usr/local/Cellar/glew/2.1.0/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -247,6 +281,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = (
+					"${SRCROOT}/ExternalLibraries/Box2D/Include",
+					/usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/ExternalLibraries/Box2D/Lib",
+					/usr/local/Cellar/glfw/3.3/lib,
+					/usr/local/Cellar/glew/2.1.0/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
