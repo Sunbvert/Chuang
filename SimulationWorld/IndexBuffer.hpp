@@ -1,0 +1,21 @@
+//
+//  IndexBuffer.hpp
+//  Chuang
+//
+//  Created by 孙川 on 2019/10/4.
+//  Copyright © 2019 孙川. All rights reserved.
+//
+
+class IndexBuffer {
+private:
+    unsigned int m_RendererID;
+    unsigned int m_Count;
+public:
+    IndexBuffer(const unsigned int* data, unsigned int count);
+    ~IndexBuffer();
+    
+    void Bind() const;
+    void Unbind() const;
+    
+    inline unsigned int GetCount() const { return m_Count; }
+};

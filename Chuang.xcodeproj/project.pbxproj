@@ -12,7 +12,12 @@
 		A12428BB23438744001D2276 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A12428BA23438744001D2276 /* OpenGL.framework */; };
 		A12428BD23438A26001D2276 /* libglfw.3.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A12428BC23438A26001D2276 /* libglfw.3.3.dylib */; };
 		A12428BF23438A4B001D2276 /* libGLEW.2.1.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A12428BE23438A4B001D2276 /* libGLEW.2.1.0.dylib */; };
+		A189B286234DCE8F0022A5DB /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A189B284234DCE8F0022A5DB /* Shader.cpp */; };
+		A189B289234DE7910022A5DB /* VertexArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A189B287234DE7910022A5DB /* VertexArray.cpp */; };
 		A1ABABD02347238400141B4F /* Basic.shader in CopyFiles */ = {isa = PBXBuildFile; fileRef = A1ABABCE23471AC000141B4F /* Basic.shader */; };
+		A1EFF1EA23476EC000869649 /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1EFF1E823476EC000869649 /* Renderer.cpp */; };
+		A1EFF1ED2347708700869649 /* VertexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1EFF1EB2347708700869649 /* VertexBuffer.cpp */; };
+		A1EFF1F02347732700869649 /* IndexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1EFF1EE2347732700869649 /* IndexBuffer.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -35,7 +40,18 @@
 		A12428BA23438744001D2276 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		A12428BC23438A26001D2276 /* libglfw.3.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.3.dylib; path = ../../../../../usr/local/Cellar/glfw/3.3/lib/libglfw.3.3.dylib; sourceTree = "<group>"; };
 		A12428BE23438A4B001D2276 /* libGLEW.2.1.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.2.1.0.dylib; path = ../../../../../usr/local/Cellar/glew/2.1.0/lib/libGLEW.2.1.0.dylib; sourceTree = "<group>"; };
+		A189B284234DCE8F0022A5DB /* Shader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Shader.cpp; sourceTree = "<group>"; };
+		A189B285234DCE8F0022A5DB /* Shader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Shader.hpp; sourceTree = "<group>"; };
+		A189B287234DE7910022A5DB /* VertexArray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VertexArray.cpp; sourceTree = "<group>"; };
+		A189B288234DE7910022A5DB /* VertexArray.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VertexArray.hpp; sourceTree = "<group>"; };
+		A189B28B234DE85A0022A5DB /* VertexBufferLayout.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VertexBufferLayout.hpp; sourceTree = "<group>"; };
 		A1ABABCE23471AC000141B4F /* Basic.shader */ = {isa = PBXFileReference; lastKnownFileType = text; path = Basic.shader; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		A1EFF1E823476EC000869649 /* Renderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cpp; sourceTree = "<group>"; };
+		A1EFF1E923476EC000869649 /* Renderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Renderer.hpp; sourceTree = "<group>"; };
+		A1EFF1EB2347708700869649 /* VertexBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VertexBuffer.cpp; sourceTree = "<group>"; };
+		A1EFF1EC2347708700869649 /* VertexBuffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VertexBuffer.hpp; sourceTree = "<group>"; };
+		A1EFF1EE2347732700869649 /* IndexBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IndexBuffer.cpp; sourceTree = "<group>"; };
+		A1EFF1EF2347732700869649 /* IndexBuffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = IndexBuffer.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +91,17 @@
 			isa = PBXGroup;
 			children = (
 				A12428AD23437752001D2276 /* main.cpp */,
+				A1EFF1E823476EC000869649 /* Renderer.cpp */,
+				A1EFF1E923476EC000869649 /* Renderer.hpp */,
+				A1EFF1EB2347708700869649 /* VertexBuffer.cpp */,
+				A1EFF1EC2347708700869649 /* VertexBuffer.hpp */,
+				A1EFF1EE2347732700869649 /* IndexBuffer.cpp */,
+				A1EFF1EF2347732700869649 /* IndexBuffer.hpp */,
+				A189B284234DCE8F0022A5DB /* Shader.cpp */,
+				A189B285234DCE8F0022A5DB /* Shader.hpp */,
+				A189B287234DE7910022A5DB /* VertexArray.cpp */,
+				A189B288234DE7910022A5DB /* VertexArray.hpp */,
+				A189B28B234DE85A0022A5DB /* VertexBufferLayout.hpp */,
 			);
 			path = SimulationWorld;
 			sourceTree = "<group>";
@@ -163,7 +190,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1EFF1EA23476EC000869649 /* Renderer.cpp in Sources */,
+				A189B289234DE7910022A5DB /* VertexArray.cpp in Sources */,
 				A12428AE23437752001D2276 /* main.cpp in Sources */,
+				A1EFF1F02347732700869649 /* IndexBuffer.cpp in Sources */,
+				A1EFF1ED2347708700869649 /* VertexBuffer.cpp in Sources */,
+				A189B286234DCE8F0022A5DB /* Shader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
