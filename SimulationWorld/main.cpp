@@ -18,8 +18,10 @@
 #include "Renderer.hpp"
 
 #include "VertexBuffer.hpp"
+#include "VertexBufferLayout.hpp"
 #include "IndexBuffer.hpp"
 #include "Shader.hpp"
+#include "Texture.hpp"
 #include "VertexArray.hpp"
 
 int main(void) {
@@ -49,7 +51,7 @@ int main(void) {
     
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK)
-        printf("Error!\n");
+        printf("Error! glew initialize failed \n");
     
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
@@ -59,10 +61,10 @@ int main(void) {
     
     
     float positions[] = {
-        -0.5f, -0.5f,
-         0.5f, -0.5f,
-         0.5f,  0.5f,
-        -0.5f,  0.5f
+        -0.5f, -0.5f, 0.0f, 0.0f,
+         0.5f, -0.5f, 1.0f, 0.0f,
+         0.5f,  0.5f, 1.0f, 1.0f,
+        -0.5f,  0.5f, 0.0f, 1.0f
     };
     
     unsigned int indices[] = {
@@ -70,14 +72,14 @@ int main(void) {
         2, 3, 0
     };
     
-    unsigned int vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
 
     VertexArray va;
-    VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+    VertexBuffer vb(positions, 4 * 4 * sizeof(float));
     
     VertexBufferLayout layout;
+    layout.Push<float>(2);
     layout.Push<float>(2);
     va.AddBuffer(vb, layout);
 
@@ -87,10 +89,16 @@ int main(void) {
     shader.Bind();
     shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
     
+    Texture texture("../Res/Texture/314.png");
+    texture.Bind();
+    shader.SetUniform1i("u_Texture", 0);
+    
     va.Unbind();
     vb.Unbind();
     ib.Unbind();
     shader.Unbind();
+    
+    Renderer renderer;
     
     //GL check error stack
     for(GLenum err; (err = glGetError()) != GL_NO_ERROR;)
@@ -109,10 +117,7 @@ int main(void) {
         shader.Bind();
         shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
         
-        va.Bind();
-        ib.Bind();
-        
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        renderer.Draw(va, ib, shader);
         
         if (r > 1.0f)
             increment = -0.05f;
