@@ -10,7 +10,6 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
-#include <Box2D/Box2D.h>
 #include <stdio.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -31,6 +30,8 @@
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+
+#include "TestClearColor.hpp"
 
 
 int main(void) {
@@ -69,109 +70,61 @@ int main(void) {
     
     std::cout << glGetString(GL_VERSION) << std::endl;
     
-    
-    float positions[] = {
-       200.0f, 200.0f, 0.0f, 0.0f,
-       600.0f, 200.0f, 1.0f, 0.0f,
-       600.0f, 400.0f, 1.0f, 1.0f,
-       200.0f, 400.0f, 0.0f, 1.0f
-    };
-    
-    unsigned int indices[] = {
-        0, 1, 2,
-        2, 3, 0
-    };
-    
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
-
-    VertexArray va;
-    VertexBuffer vb(positions, 4 * 4 * sizeof(float));
-    
-    VertexBufferLayout layout;
-    layout.Push<float>(2);
-    layout.Push<float>(2);
-    va.AddBuffer(vb, layout);
-
-    IndexBuffer ib(indices, 6);
-    
-    glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
-    //glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
-    
-    Shader shader("../Res/Shader/Basic.shader");
-    shader.Bind();
-    shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
-    
-    Texture texture("../Res/Texture/314.png");
-    texture.Bind();
-    shader.SetUniform1i("u_Texture", 0);
-    
-    va.Unbind();
-    vb.Unbind();
-    ib.Unbind();
-    shader.Unbind();
-    
-    Renderer renderer;
-    
-    //GL check error stack
-    for(GLenum err; (err = glGetError()) != GL_NO_ERROR;)
     {
-        std::cerr << "OpenGL error: " << err << std::endl;
-    }
-    
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGui_ImplOpenGL3_Init(glsl_version);
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui::StyleColorsDark();
-    
-    bool show_demo_window = true;
-    
-    glm::vec3 translation(0, 0, 0);
-    
-    float r = 0.0f;
-    float increment = 0.05f;
-    // loop until the user closes the widow
-    while( !glfwWindowShouldClose( window ) ) {
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        // Blending functions
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
         
-        // Start the Dear ImGui frame
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+        Renderer renderer;
         
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
-        glm::mat4 mvp = proj * model;
+        //GL check error stack
+        for(GLenum err; (err = glGetError()) != GL_NO_ERROR;)
+        {
+            std::cerr << "OpenGL error: " << err << std::endl;
+        }
         
-        if (show_demo_window)
-            ImGui::ShowDemoWindow(&show_demo_window);
+        // ImGui initialization
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGui_ImplOpenGL3_Init(glsl_version);
+        ImGui_ImplGlfw_InitForOpenGL(window, true);
+        ImGui::StyleColorsDark();
+        bool show_demo_window = true;
         
-        // render the OpenGL, put all the OpenGL code right here
-        shader.Bind();
-        shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
-        shader.SetUniformMat4f("u_MVP", mvp);
+        test::TestClearColor test;
         
-        renderer.Draw(va, ib, shader);
-        
-        if (r > 1.0f)
-            increment = -0.05f;
-        else if (r < 0.0f)
-            increment = 0.05f;
-        r += increment;
-        
-        
-        ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 960.0f);
-        
-        
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        
-        // swap front and back buffers
-        glfwSwapBuffers(window);
-        
-        // pool for and process events
-        glfwPollEvents();
+        while( !glfwWindowShouldClose( window ) ) {
+            renderer.Clear();
+            
+            // Start the Dear ImGui frame
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+            
+            /* begin writing code here */
+            
+            test.OnUpdate(0.0f);
+            test.OnRender();
+            test.OnImGuiRender();
+            
+            
+            
+            /* end writing code here */
+            
+            GLCheckError();
+            
+            if (show_demo_window)
+                ImGui::ShowDemoWindow(&show_demo_window);
+            
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+            
+            // swap front and back buffers
+            glfwSwapBuffers(window);
+            
+            // pool for and process events
+            glfwPollEvents();
+        }
     }
     
     // Cleanup
