@@ -17,6 +17,7 @@
 		A14F93782354A41300D5C6D0 /* Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A14F93772354A41300D5C6D0 /* Test.cpp */; };
 		A189B286234DCE8F0022A5DB /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A189B284234DCE8F0022A5DB /* Shader.cpp */; };
 		A189B289234DE7910022A5DB /* VertexArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A189B287234DE7910022A5DB /* VertexArray.cpp */; };
+		A192258D235591320017327B /* TestTexture2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A192258B235591320017327B /* TestTexture2D.cpp */; };
 		A1ABABD02347238400141B4F /* Basic.shader in CopyFiles */ = {isa = PBXBuildFile; fileRef = A1ABABCE23471AC000141B4F /* Basic.shader */; };
 		A1C6F39C2350774D00C87B58 /* stb_image.hpp in Sources */ = {isa = PBXBuildFile; fileRef = A1C6F39B2350774D00C87B58 /* stb_image.hpp */; };
 		A1C6F39E235078C100C87B58 /* stb_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1C6F39D235078C100C87B58 /* stb_image.cpp */; };
@@ -63,6 +64,8 @@
 		A189B287234DE7910022A5DB /* VertexArray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VertexArray.cpp; sourceTree = "<group>"; };
 		A189B288234DE7910022A5DB /* VertexArray.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VertexArray.hpp; sourceTree = "<group>"; };
 		A189B28B234DE85A0022A5DB /* VertexBufferLayout.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VertexBufferLayout.hpp; sourceTree = "<group>"; };
+		A192258B235591320017327B /* TestTexture2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestTexture2D.cpp; sourceTree = "<group>"; };
+		A192258C235591320017327B /* TestTexture2D.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TestTexture2D.hpp; sourceTree = "<group>"; };
 		A1ABABCE23471AC000141B4F /* Basic.shader */ = {isa = PBXFileReference; lastKnownFileType = text; path = Basic.shader; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		A1B1355C2350CD8600ECD9BF /* 314.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 314.png; sourceTree = "<group>"; };
 		A1C6F39B2350774D00C87B58 /* stb_image.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = stb_image.hpp; sourceTree = "<group>"; };
@@ -168,6 +171,8 @@
 				A14F93722354569C00D5C6D0 /* TestClearColor.hpp */,
 				A14F93742354670000D5C6D0 /* TestMvp.cpp */,
 				A14F93752354670000D5C6D0 /* TestMvp.hpp */,
+				A192258B235591320017327B /* TestTexture2D.cpp */,
+				A192258C235591320017327B /* TestTexture2D.hpp */,
 			);
 			path = test;
 			sourceTree = "<group>";
@@ -301,6 +306,7 @@
 				A1C6F3A12350794900C87B58 /* Texture.cpp in Sources */,
 				A1CA44B72353475C00E6C006 /* imgui.cpp in Sources */,
 				A1C6F39C2350774D00C87B58 /* stb_image.hpp in Sources */,
+				A192258D235591320017327B /* TestTexture2D.cpp in Sources */,
 				A1CA44B42353475C00E6C006 /* imgui_impl_opengl3.cpp in Sources */,
 				A14F93762354670000D5C6D0 /* TestMvp.cpp in Sources */,
 				A14F93782354A41300D5C6D0 /* Test.cpp in Sources */,

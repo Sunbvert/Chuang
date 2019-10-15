@@ -32,7 +32,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include "TestClearColor.hpp"
-
+#include "TestTexture2D.hpp"
 
 int main(void) {
     GLFWwindow *window;
@@ -77,12 +77,6 @@ int main(void) {
         
         Renderer renderer;
         
-        //GL check error stack
-        for(GLenum err; (err = glGetError()) != GL_NO_ERROR;)
-        {
-            std::cerr << "OpenGL error: " << err << std::endl;
-        }
-        
         // ImGui initialization
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
@@ -95,7 +89,8 @@ int main(void) {
         test::TestMenu* testMenu = new test::TestMenu(currentTest);
         currentTest = testMenu;
         
-        testMenu->RegisterTest<test::TestClearColor>("Clear Color");
+    testMenu->RegisterTest<test::TestClearColor>("Clear Color");
+    testMenu->RegisterTest<test::TestTexture2D>("2D Texture");
         
         while( !glfwWindowShouldClose( window ) ) {
             glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -125,13 +120,15 @@ int main(void) {
             
             /* end writing code here */
             
-            GLCheckError();
-            
             if (show_demo_window)
                 ImGui::ShowDemoWindow(&show_demo_window);
             
             ImGui::Render();
+            
+            // clear errors send out by imgui
+            GLCheckError();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+            GLClearError();
             
             // swap front and back buffers
             glfwSwapBuffers(window);
