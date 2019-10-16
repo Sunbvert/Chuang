@@ -33,14 +33,33 @@
 
 #include "TestClearColor.hpp"
 #include "TestTexture2D.hpp"
+#include "TestBox2D.hpp"
 
-int main(void) {
+#include "DebugDraw.hpp"
+
+void glfwErrorCallback(int error, const char *description)
+{
+    fprintf(stderr, "GLFW error occured. Code: %d. Description: %s\n", error, description);
+}
+
+static void onResizeWindow(GLFWwindow*, int width, int height)
+{
+    g_camera.width = width;
+    g_camera.height = height;
+}
+
+int main(void)
+{
+    glfwSetErrorCallback(glfwErrorCallback);
+    
+    g_camera.width = 1024;
+    g_camera.height = 640;
+    
     GLFWwindow *window;
     
     // initialize the library
-    if ( !glfwInit() ) {
+    if ( !glfwInit() )
         return -1;
-    }
     
     const char* glsl_version = "#version 150";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -49,9 +68,10 @@ int main(void) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     
     // create a windowed mode window and its OpenGL context
-    window = glfwCreateWindow(960, 540, "Simulator", NULL, NULL);
+    window = glfwCreateWindow(g_camera.width, g_camera.height, "Simulator", NULL, NULL);
     
-    if ( !window ) {
+    if ( !window )
+    {
         glfwTerminate();
         return -1;
     }
@@ -59,6 +79,8 @@ int main(void) {
     // make the window's context current
     glfwMakeContextCurrent( window );
     glfwSwapInterval(1);
+    
+    glfwSetWindowSizeCallback(window, onResizeWindow);
     
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK)
@@ -69,6 +91,9 @@ int main(void) {
     glViewport(0, 0, width, height);
     
     std::cout << glGetString(GL_VERSION) << std::endl;
+    
+    // create box2d global debug draw callback
+    g_debugDraw.Create();
     
     {
         // Blending functions
@@ -89,11 +114,19 @@ int main(void) {
         test::TestMenu* testMenu = new test::TestMenu(currentTest);
         currentTest = testMenu;
         
-    testMenu->RegisterTest<test::TestClearColor>("Clear Color");
-    testMenu->RegisterTest<test::TestTexture2D>("2D Texture");
+        testMenu->RegisterTest<test::TestClearColor>("Clear Color");
+        testMenu->RegisterTest<test::TestTexture2D>("2D Texture");
+        testMenu->RegisterTest<test::TestBox2D>("Box2D");
         
-        while( !glfwWindowShouldClose( window ) ) {
+        double time1 = glfwGetTime();
+        double time2;
+        double frameTime = 0.0;
+        double alpha = 0.9f; // alpha for frame time smooth
+        
+        while( !glfwWindowShouldClose( window ) )
+        {
             glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            // todo: clear depth buffer and enable depth test
             renderer.Clear();
             
             // Start the Dear ImGui frame
@@ -103,11 +136,13 @@ int main(void) {
             
             /* begin writing code here */
             
-            if (currentTest) {
+            if (currentTest)
+            {
                 currentTest->OnUpdate(0.0f);
                 currentTest->OnRender();
                 ImGui::Begin("Test");
-                if (currentTest != testMenu && ImGui::Button("<-")) {
+                if (currentTest != testMenu && ImGui::Button("<-"))
+                {
                     delete currentTest;
                     currentTest = testMenu;
                 }
@@ -115,10 +150,20 @@ int main(void) {
                 ImGui::End();
             }
             
-            
-            
-            
             /* end writing code here */
+            
+            // Show frame time
+            ImGui::SetNextWindowPos(ImVec2(0,0));
+            ImGui::SetNextWindowSize(ImVec2((float)1024, (float)640));
+            ImGui::Begin("Overlay", NULL, ImVec2(0,0), 0.0f, ImGuiWindowFlags_NoTitleBar|ImGuiWindowFlags_NoInputs|ImGuiWindowFlags_AlwaysAutoResize|ImGuiWindowFlags_NoScrollbar);
+            ImGui::SetCursorPos(ImVec2(5, (float)640 - 20));
+            ImGui::Text("%.1f ms", 1000.0 * frameTime);
+            ImGui::End();
+
+            // Measure speed
+            time2 = glfwGetTime();
+            frameTime = alpha * frameTime + (1.0 - alpha) * (time2 - time1);
+            time1 = time2;
             
             if (show_demo_window)
                 ImGui::ShowDemoWindow(&show_demo_window);
@@ -142,6 +187,8 @@ int main(void) {
     }
     
     // Cleanup
+    g_debugDraw.Destroy();
+    
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();

@@ -16,7 +16,7 @@ namespace test {
 
     TestTexture2D::TestTexture2D()
         : m_Translation(0, 0, 0),
-        m_Proj(glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f)),
+        m_Proj(glm::ortho(0.0f, 1024.0f, 0.0f, 640.0f, -1.0f, 1.0f)),
         m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0))) {
         
         float positions[] = {
@@ -31,6 +31,7 @@ namespace test {
             2, 3, 0
         };
         
+        // Need to reset Blend function later
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_BLEND);
             

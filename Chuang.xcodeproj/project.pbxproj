@@ -15,6 +15,8 @@
 		A14F93732354569C00D5C6D0 /* TestClearColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A14F93712354569C00D5C6D0 /* TestClearColor.cpp */; };
 		A14F93762354670000D5C6D0 /* TestMvp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A14F93742354670000D5C6D0 /* TestMvp.cpp */; };
 		A14F93782354A41300D5C6D0 /* Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A14F93772354A41300D5C6D0 /* Test.cpp */; };
+		A177D6BC2356FFB50053A0D6 /* DebugDraw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A177D6BA2356FFB50053A0D6 /* DebugDraw.cpp */; };
+		A177D6BF235710420053A0D6 /* TestBox2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A177D6BD235710420053A0D6 /* TestBox2D.cpp */; };
 		A189B286234DCE8F0022A5DB /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A189B284234DCE8F0022A5DB /* Shader.cpp */; };
 		A189B289234DE7910022A5DB /* VertexArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A189B287234DE7910022A5DB /* VertexArray.cpp */; };
 		A192258D235591320017327B /* TestTexture2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A192258B235591320017327B /* TestTexture2D.cpp */; };
@@ -59,6 +61,10 @@
 		A14F93742354670000D5C6D0 /* TestMvp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestMvp.cpp; sourceTree = "<group>"; };
 		A14F93752354670000D5C6D0 /* TestMvp.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TestMvp.hpp; sourceTree = "<group>"; };
 		A14F93772354A41300D5C6D0 /* Test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Test.cpp; sourceTree = "<group>"; };
+		A177D6BA2356FFB50053A0D6 /* DebugDraw.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DebugDraw.cpp; sourceTree = "<group>"; };
+		A177D6BB2356FFB50053A0D6 /* DebugDraw.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DebugDraw.hpp; sourceTree = "<group>"; };
+		A177D6BD235710420053A0D6 /* TestBox2D.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestBox2D.cpp; sourceTree = "<group>"; };
+		A177D6BE235710420053A0D6 /* TestBox2D.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TestBox2D.hpp; sourceTree = "<group>"; };
 		A189B284234DCE8F0022A5DB /* Shader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Shader.cpp; sourceTree = "<group>"; };
 		A189B285234DCE8F0022A5DB /* Shader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Shader.hpp; sourceTree = "<group>"; };
 		A189B287234DE7910022A5DB /* VertexArray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VertexArray.cpp; sourceTree = "<group>"; };
@@ -131,6 +137,7 @@
 		A12428AC23437752001D2276 /* SimulationWorld */ = {
 			isa = PBXGroup;
 			children = (
+				A177D6B92356FECD0053A0D6 /* world */,
 				A14F936D2354557D00D5C6D0 /* test */,
 				A1C6F3992350771100C87B58 /* vendor */,
 				A12428AD23437752001D2276 /* main.cpp */,
@@ -173,8 +180,19 @@
 				A14F93752354670000D5C6D0 /* TestMvp.hpp */,
 				A192258B235591320017327B /* TestTexture2D.cpp */,
 				A192258C235591320017327B /* TestTexture2D.hpp */,
+				A177D6BD235710420053A0D6 /* TestBox2D.cpp */,
+				A177D6BE235710420053A0D6 /* TestBox2D.hpp */,
 			);
 			path = test;
+			sourceTree = "<group>";
+		};
+		A177D6B92356FECD0053A0D6 /* world */ = {
+			isa = PBXGroup;
+			children = (
+				A177D6BA2356FFB50053A0D6 /* DebugDraw.cpp */,
+				A177D6BB2356FFB50053A0D6 /* DebugDraw.hpp */,
+			);
+			path = world;
 			sourceTree = "<group>";
 		};
 		A1ABABCC2347192300141B4F /* Res */ = {
@@ -315,9 +333,11 @@
 				A12428AE23437752001D2276 /* main.cpp in Sources */,
 				A1CA44B52353475C00E6C006 /* imgui_widgets.cpp in Sources */,
 				A1EFF1F02347732700869649 /* IndexBuffer.cpp in Sources */,
+				A177D6BF235710420053A0D6 /* TestBox2D.cpp in Sources */,
 				A1EFF1ED2347708700869649 /* VertexBuffer.cpp in Sources */,
 				A1CA44B32353475C00E6C006 /* imgui_demo.cpp in Sources */,
 				A189B286234DCE8F0022A5DB /* Shader.cpp in Sources */,
+				A177D6BC2356FFB50053A0D6 /* DebugDraw.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
