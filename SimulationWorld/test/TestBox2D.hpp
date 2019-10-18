@@ -22,15 +22,20 @@ namespace test {
         
         void OnUpdate(float deltaTime) override;
         void OnImGuiRender() override;
-        void ShiftMouseDown(const b2Vec2& p);
         void MouseDown(const b2Vec2& p);
         void MouseUp(const b2Vec2& p);
+        void ShiftMouseDown(const b2Vec2& p);
         void MouseMove(const b2Vec2& p);
     private:
         b2World* m_World;
         b2Body* CreateDynamicBody(float32 x, float32 y, float32 halfWidth, float32 halfHeight, float32 desity, float32 friction);
         b2Body* CreateStaticBody(float32 x, float32 y, float32 halfWidth, float32 halfHeight);
         b2Body* m_TestBody;
+        b2Body* m_groundBody;
+        
+        bool debugDraw = false;
+        
+        b2RevoluteJointDef CreateRevoluteJoint(b2Body* bodyA, b2Body* bodyB, b2Vec2 anchor);
         
         b2MouseJoint* m_mouseJoint;
         

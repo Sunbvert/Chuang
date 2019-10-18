@@ -39,8 +39,10 @@
 
 namespace
 {
+    test::TestBox2D* testBox2D = nullptr;
     bool rightMouseDown = false;
     b2Vec2 lastp;
+    bool box2DSelected = false;
 }
 
 void glfwErrorCallback(int error, const char *description)
@@ -56,37 +58,32 @@ static void onResizeWindow(GLFWwindow*, int width, int height)
 
 static void onMouseButton(GLFWwindow* window, int32 button, int32 action, int32 mods)
 {
-    //ImGui_ImplGlfwGL_MouseButtonCallback(window, button, action, mods);
-
     double xd, yd;
     glfwGetCursorPos(window, &xd, &yd);
     b2Vec2 ps((float32)xd, (float32)yd);
 
-//    // Use the mouse to move things around.
-//    if (button == GLFW_MOUSE_BUTTON_1)
-//    {
-//        //<##>
-//        //ps.Set(0, 0);
-//        b2Vec2 pw = g_camera.ConvertScreenToWorld(ps);
-//        if (action == GLFW_PRESS)
-//        {
-//            if (mods == GLFW_MOD_SHIFT)
-//            {
-//                test->ShiftMouseDown(pw);
-//            }
-//            else
-//            {
-//                test->MouseDown(pw);
-//            }
-//        }
-//
-//        if (action == GLFW_RELEASE)
-//        {
-//            test->MouseUp(pw);
-//        }
-//    }
-//    else
-    if (button == GLFW_MOUSE_BUTTON_2)
+    // Use the mouse to move things around.
+    if (button == GLFW_MOUSE_BUTTON_1 && box2DSelected)
+    {
+        b2Vec2 pw = g_camera.ConvertScreenToWorld(ps);
+        if (action == GLFW_PRESS)
+        {
+            if (mods == GLFW_MOD_SHIFT)
+            {
+                testBox2D->ShiftMouseDown(pw);
+            }
+            else
+            {
+                testBox2D->MouseDown(pw);
+            }
+        }
+
+        if (action == GLFW_RELEASE)
+        {
+            testBox2D->MouseUp(pw);
+        }
+    }
+    else if (button == GLFW_MOUSE_BUTTON_2)
     {
         if (action == GLFW_PRESS)
         {
@@ -106,7 +103,9 @@ static void onMouseMotion(GLFWwindow*, double xd, double yd)
     b2Vec2 ps((float)xd, (float)yd);
 
     b2Vec2 pw = g_camera.ConvertScreenToWorld(ps);
-    //test->MouseMove(pw);
+    
+    if (box2DSelected)
+        testBox2D->MouseMove(pw);
     
     if (rightMouseDown)
     {
@@ -229,6 +228,13 @@ int main(void)
             
             if (currentTest)
             {
+                if (typeid(*currentTest) == typeid(test::TestBox2D) && !box2DSelected) {
+                    testBox2D = (test::TestBox2D*)currentTest;
+                    box2DSelected = true;
+                } else if (typeid(*currentTest) != typeid(test::TestBox2D)) {
+                    box2DSelected = false;
+                }
+                
                 currentTest->OnUpdate(0.0f);
                 currentTest->OnRender();
                 ImGui::Begin("Test");

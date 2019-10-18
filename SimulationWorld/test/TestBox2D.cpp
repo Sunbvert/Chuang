@@ -14,12 +14,47 @@
 #include "DebugDraw.hpp"
 
 namespace test {
+
+    class QueryCallback : public b2QueryCallback
+    {
+    public:
+        QueryCallback(const b2Vec2& point)
+        {
+            m_point = point;
+            m_fixture = NULL;
+        }
+
+        bool ReportFixture(b2Fixture* fixture) override
+        {
+            b2Body* body = fixture->GetBody();
+            if (body->GetType() == b2_dynamicBody)
+            {
+                bool inside = fixture->TestPoint(m_point);
+                if (inside)
+                {
+                    m_fixture = fixture;
+
+                    // We are done, terminate the query.
+                    return false;
+                }
+            }
+
+            // Continue the query.
+            return true;
+        }
+
+        b2Vec2 m_point;
+        b2Fixture* m_fixture;
+    };
     
     TestBox2D::TestBox2D() : m_TestBodyPosition(0, 0), m_HeadInitialPosition(0.0f, 0.0f), m_mouseJoint(nullptr)
     {
         b2Vec2 gravity(0.0f, -10.0f);
         m_World = new b2World(gravity);
         m_World->SetDebugDraw(&g_debugDraw);
+        
+        b2BodyDef bodyDef;
+        m_groundBody = m_World->CreateBody(&bodyDef);
         
         b2BodyDef groundBodyDef;
         groundBodyDef.position.Set(0.0f, -1.25f);
@@ -43,8 +78,19 @@ namespace test {
         b2Body* calf = CreateDynamicBody(calfCenter.x, calfCenter.y, calfSize.x / 2, calfSize.y / 2, 1.0f, 0.3f);
         b2Body* foot = CreateDynamicBody(footCenter.x, footCenter.y, footSize.x / 2, footSize.y / 2, 1.0f, 0.3f);
         
-        //m_TestBody = CreateStaticBody(0.0f, 0.0f, 0.5f, 1.5f);
+        CreateRevoluteJoint(head, thigh, b2Vec2(headCenter.x, headCenter.y - headSize.y / 2));
+        CreateRevoluteJoint(thigh, calf, b2Vec2(headCenter.x, thighCenter.y - thighSize.y / 2));
+        CreateRevoluteJoint(calf, foot, b2Vec2(headCenter.x, calfCenter.y - calfSize.y / 2));
         
+        //m_TestBody = CreateStaticBody(0.0f, 0.0f, 0.5f, 1.5f);
+    }
+
+    b2RevoluteJointDef TestBox2D::CreateRevoluteJoint(b2Body *bodyA, b2Body *bodyB, b2Vec2 anchor)
+    {
+        b2RevoluteJointDef jointDef;
+        jointDef.Initialize(bodyA, bodyB, anchor);
+        m_World->CreateJoint(&jointDef);
+        return jointDef;
     }
 
     b2Body* TestBox2D::CreateDynamicBody(float32 x, float32 y, float32 halfWidth, float32 halfHeight, float32 desity, float32 friction)
@@ -77,38 +123,63 @@ namespace test {
         return body;
     }
 
-//    void TestBox2D::MouseDown(const b2Vec2& p)
-//    {
-//        //m_mouseWorld = p;
-//
-//        if (m_mouseJoint != NULL)
-//        {
-//            return;
-//        }
-//
-//        // Make a small box.
-//        b2AABB aabb;
-//        b2Vec2 d;
-//        d.Set(0.001f, 0.001f);
-//        aabb.lowerBound = p - d;
-//        aabb.upperBound = p + d;
-//
-//        // Query the world for overlapping shapes.
-//        b2QueryCallback callback(p);
-//        m_World->QueryAABB(&callback, aabb);
-//
-//        if (callback.m_fixture)
-//        {
-//            b2Body* body = callback.m_fixture->GetBody();
-//            b2MouseJointDef md;
-//            //md.bodyA = m_groundBody;
-//            md.bodyB = body;
-//            md.target = p;
-//            md.maxForce = 1000.0f * body->GetMass();
-//            m_mouseJoint = (b2MouseJoint*)m_World->CreateJoint(&md);
-//            body->SetAwake(true);
-//        }
-//    }
+    void TestBox2D::MouseDown(const b2Vec2& p)
+    {
+        //m_mouseWorld = p;
+
+        if (m_mouseJoint != NULL)
+        {
+            return;
+        }
+
+        // Make a small box.
+        b2AABB aabb;
+        b2Vec2 d;
+        d.Set(0.001f, 0.001f);
+        aabb.lowerBound = p - d;
+        aabb.upperBound = p + d;
+
+        // Query the world for overlapping shapes.
+        QueryCallback callback(p);
+        m_World->QueryAABB(&callback, aabb);
+
+        if (callback.m_fixture)
+        {
+            b2Body* body = callback.m_fixture->GetBody();
+            b2MouseJointDef md;
+            md.bodyA = m_groundBody;
+            md.bodyB = body;
+            md.target = p;
+            md.maxForce = 1000.0f * body->GetMass();
+            m_mouseJoint = (b2MouseJoint*)m_World->CreateJoint(&md);
+            body->SetAwake(true);
+        }
+    }
+
+    void TestBox2D::ShiftMouseDown(const b2Vec2& p)
+    {
+        if (m_mouseJoint != NULL)
+        {
+            return;
+        }
+    }
+
+    void TestBox2D::MouseUp(const b2Vec2& p)
+    {
+        if (m_mouseJoint)
+        {
+            m_World->DestroyJoint(m_mouseJoint);
+            m_mouseJoint = NULL;
+        }
+    }
+
+    void TestBox2D::MouseMove(const b2Vec2& p)
+    {
+        if (m_mouseJoint)
+        {
+            m_mouseJoint->SetTarget(p);
+        }
+    }
 
     TestBox2D::~TestBox2D()
     {
@@ -120,7 +191,7 @@ namespace test {
     {
         float32 timeStep = 1.0f / 60.0f;
         
-        uint32 flags = b2Draw::e_shapeBit;
+        uint32 flags = b2Draw::e_shapeBit + b2Draw::e_jointBit;
         g_debugDraw.SetFlags(flags);
         
         int32 velocityIterations = 6;
