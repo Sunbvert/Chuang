@@ -10,24 +10,105 @@
 #include <GL/glew.h>
 #include "imgui/imgui.h"
 #include "DebugDraw.hpp"
+#include "glm/glm.hpp"
+#include "DebugDraw.hpp"
 
 namespace test {
     
-    TestBox2D::TestBox2D()
+    TestBox2D::TestBox2D() : m_TestBodyPosition(0, 0), m_HeadInitialPosition(0.0f, 0.0f), m_mouseJoint(nullptr)
     {
         b2Vec2 gravity(0.0f, -10.0f);
         m_World = new b2World(gravity);
         m_World->SetDebugDraw(&g_debugDraw);
         
-        m_TextLine = 30;
-        
         b2BodyDef groundBodyDef;
-        groundBodyDef.position.Set(100.0f, 100.0f);
-        m_GroundBody = m_World->CreateBody(&groundBodyDef);
+        groundBodyDef.position.Set(0.0f, -1.25f);
+        b2Body* groundBody = m_World->CreateBody(&groundBodyDef);
         b2PolygonShape groundBox;
-        groundBox.SetAsBox(100.0f, 100.0f);
-        m_GroundBody->CreateFixture(&groundBox, 0.0f);
+        groundBox.SetAsBox(2.5f, 0.25f);
+        groundBody->CreateFixture(&groundBox, 0.0f);
+        
+        b2Vec2 headSize(0.4f, 0.2f);
+        b2Vec2 thighSize(0.1f, 0.4f);
+        b2Vec2 calfSize(0.1f, 0.3f);
+        b2Vec2 footSize(0.24f, 0.1f);
+        
+        b2Vec2 headCenter(m_HeadInitialPosition.x, m_HeadInitialPosition.y);
+        b2Vec2 thighCenter(headCenter.x, headCenter.y - headSize.y / 2 - thighSize.y / 2);
+        b2Vec2 calfCenter(headCenter.x, thighCenter.y - thighSize.y / 2 - calfSize.y / 2);
+        b2Vec2 footCenter(headCenter.x, calfCenter.y - calfSize.y / 2 - footSize.y / 2);
+        
+        b2Body* head = CreateDynamicBody(headCenter.x, headCenter.y, headSize.x / 2, headSize.y / 2, 1.0f, 0.3f);
+        b2Body* thigh = CreateDynamicBody(thighCenter.x, thighCenter.y, thighSize.x / 2, thighSize.y / 2, 1.0f, 0.3f);
+        b2Body* calf = CreateDynamicBody(calfCenter.x, calfCenter.y, calfSize.x / 2, calfSize.y / 2, 1.0f, 0.3f);
+        b2Body* foot = CreateDynamicBody(footCenter.x, footCenter.y, footSize.x / 2, footSize.y / 2, 1.0f, 0.3f);
+        
+        //m_TestBody = CreateStaticBody(0.0f, 0.0f, 0.5f, 1.5f);
+        
     }
+
+    b2Body* TestBox2D::CreateDynamicBody(float32 x, float32 y, float32 halfWidth, float32 halfHeight, float32 desity, float32 friction)
+    {
+        b2BodyDef bodyDef;
+        bodyDef.type = b2_dynamicBody;
+        bodyDef.position.Set(x, y);
+        b2Body* body = m_World->CreateBody(&bodyDef);
+        b2PolygonShape bodyBox;
+        bodyBox.SetAsBox(halfWidth, halfHeight);
+        
+        b2FixtureDef fixtureDef;
+        fixtureDef.shape = &bodyBox;
+        fixtureDef.density = desity;
+        fixtureDef.friction = friction;
+        body->CreateFixture(&fixtureDef);
+        
+        return body;
+    }
+
+    b2Body* TestBox2D::CreateStaticBody(float32 x, float32 y, float32 halfWidth, float32 halfHeight)
+    {
+        b2BodyDef bodyDef;
+        bodyDef.position.Set(x, y);
+        b2Body* body = m_World->CreateBody(&bodyDef);
+        b2PolygonShape box;
+        box.SetAsBox(halfWidth, halfHeight);
+        body->CreateFixture(&box, 0.0f);
+        
+        return body;
+    }
+
+//    void TestBox2D::MouseDown(const b2Vec2& p)
+//    {
+//        //m_mouseWorld = p;
+//
+//        if (m_mouseJoint != NULL)
+//        {
+//            return;
+//        }
+//
+//        // Make a small box.
+//        b2AABB aabb;
+//        b2Vec2 d;
+//        d.Set(0.001f, 0.001f);
+//        aabb.lowerBound = p - d;
+//        aabb.upperBound = p + d;
+//
+//        // Query the world for overlapping shapes.
+//        b2QueryCallback callback(p);
+//        m_World->QueryAABB(&callback, aabb);
+//
+//        if (callback.m_fixture)
+//        {
+//            b2Body* body = callback.m_fixture->GetBody();
+//            b2MouseJointDef md;
+//            //md.bodyA = m_groundBody;
+//            md.bodyB = body;
+//            md.target = p;
+//            md.maxForce = 1000.0f * body->GetMass();
+//            m_mouseJoint = (b2MouseJoint*)m_World->CreateJoint(&md);
+//            body->SetAwake(true);
+//        }
+//    }
 
     TestBox2D::~TestBox2D()
     {
@@ -49,13 +130,19 @@ namespace test {
         m_World->DrawDebugData();
         g_debugDraw.Flush();
         
-        g_debugDraw.DrawString(5, 5, "Press 'a' to control the flippers");
+        //g_debugDraw.DrawString(5, 5, "Press 'a' to control the flippers");
         //m_TextLine += 16;
     }
 
     void TestBox2D::OnImGuiRender()
     {
-        
+        if (ImGui::Button("Reset View"))
+        {
+            g_camera.center.Set(0.0f, 0.0f);
+            g_camera.zoom = 1.0f;
+        }
+        ImGui::SliderFloat2("Test Body Transform", &m_TestBodyPosition.x, -3.0f, 3.0f);
+        //m_TestBody->SetTransform(b2Vec2(m_TestBodyPosition.x, m_TestBodyPosition.y), 0.0f);
     }
 
 }

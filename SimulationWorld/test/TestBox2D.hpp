@@ -10,6 +10,9 @@
 #include "Test.hpp"
 #include <Box2D/Box2D.h>
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
 namespace test {
 
     class TestBox2D : public Test {
@@ -19,10 +22,23 @@ namespace test {
         
         void OnUpdate(float deltaTime) override;
         void OnImGuiRender() override;
+        void ShiftMouseDown(const b2Vec2& p);
+        void MouseDown(const b2Vec2& p);
+        void MouseUp(const b2Vec2& p);
+        void MouseMove(const b2Vec2& p);
     private:
         b2World* m_World;
-        b2Body* m_GroundBody;
-        int32 m_TextLine;
+        b2Body* CreateDynamicBody(float32 x, float32 y, float32 halfWidth, float32 halfHeight, float32 desity, float32 friction);
+        b2Body* CreateStaticBody(float32 x, float32 y, float32 halfWidth, float32 halfHeight);
+        b2Body* m_TestBody;
+        
+        b2MouseJoint* m_mouseJoint;
+        
+        glm::mat4 m_Proj, m_View;
+        glm::vec3 m_Translation;
+        
+        glm::vec2 m_TestBodyPosition;
+        glm::vec2 m_HeadInitialPosition;
     };
 
 }

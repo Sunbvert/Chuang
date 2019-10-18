@@ -5,6 +5,7 @@
 //  Created by 孙川 on 2019/10/16.
 //  Copyright © 2019 孙川. All rights reserved.
 //
+#pragma once
 
 #include <Box2D/Box2D.h>
 

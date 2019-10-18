@@ -37,6 +37,12 @@
 
 #include "DebugDraw.hpp"
 
+namespace
+{
+    bool rightMouseDown = false;
+    b2Vec2 lastp;
+}
+
 void glfwErrorCallback(int error, const char *description)
 {
     fprintf(stderr, "GLFW error occured. Code: %d. Description: %s\n", error, description);
@@ -48,12 +54,94 @@ static void onResizeWindow(GLFWwindow*, int width, int height)
     g_camera.height = height;
 }
 
+static void onMouseButton(GLFWwindow* window, int32 button, int32 action, int32 mods)
+{
+    //ImGui_ImplGlfwGL_MouseButtonCallback(window, button, action, mods);
+
+    double xd, yd;
+    glfwGetCursorPos(window, &xd, &yd);
+    b2Vec2 ps((float32)xd, (float32)yd);
+
+//    // Use the mouse to move things around.
+//    if (button == GLFW_MOUSE_BUTTON_1)
+//    {
+//        //<##>
+//        //ps.Set(0, 0);
+//        b2Vec2 pw = g_camera.ConvertScreenToWorld(ps);
+//        if (action == GLFW_PRESS)
+//        {
+//            if (mods == GLFW_MOD_SHIFT)
+//            {
+//                test->ShiftMouseDown(pw);
+//            }
+//            else
+//            {
+//                test->MouseDown(pw);
+//            }
+//        }
+//
+//        if (action == GLFW_RELEASE)
+//        {
+//            test->MouseUp(pw);
+//        }
+//    }
+//    else
+    if (button == GLFW_MOUSE_BUTTON_2)
+    {
+        if (action == GLFW_PRESS)
+        {
+            lastp = g_camera.ConvertScreenToWorld(ps);
+            rightMouseDown = true;
+        }
+
+        if (action == GLFW_RELEASE)
+        {
+            rightMouseDown = false;
+        }
+    }
+}
+
+static void onMouseMotion(GLFWwindow*, double xd, double yd)
+{
+    b2Vec2 ps((float)xd, (float)yd);
+
+    b2Vec2 pw = g_camera.ConvertScreenToWorld(ps);
+    //test->MouseMove(pw);
+    
+    if (rightMouseDown)
+    {
+        b2Vec2 diff = pw - lastp;
+        g_camera.center.x -= diff.x;
+        g_camera.center.y -= diff.y;
+        lastp = g_camera.ConvertScreenToWorld(ps);
+    }
+}
+
+static void onMouseScroll(GLFWwindow* window, double dx, double dy)
+{
+    bool mouse_for_ui = ImGui::GetIO().WantCaptureMouse;
+
+    if (!mouse_for_ui)
+    {
+        if (dy > 0)
+        {
+            g_camera.zoom /= 1.1f;
+        }
+        else
+        {
+            g_camera.zoom *= 1.1f;
+        }
+    }
+}
+
 int main(void)
 {
     glfwSetErrorCallback(glfwErrorCallback);
     
     g_camera.width = 1024;
     g_camera.height = 640;
+    g_camera.zoom = 1.0f;
+    g_camera.center.Set(0.0f, 0.0f);
     
     GLFWwindow *window;
     
@@ -81,6 +169,9 @@ int main(void)
     glfwSwapInterval(1);
     
     glfwSetWindowSizeCallback(window, onResizeWindow);
+    glfwSetScrollCallback(window, onMouseScroll);
+    glfwSetCursorPosCallback(window, onMouseMotion);
+    glfwSetMouseButtonCallback(window, onMouseButton);
     
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK)
@@ -108,7 +199,7 @@ int main(void)
         ImGui_ImplOpenGL3_Init(glsl_version);
         ImGui_ImplGlfw_InitForOpenGL(window, true);
         ImGui::StyleColorsDark();
-        bool show_demo_window = true;
+        bool show_demo_window = false;
         
         test::Test* currentTest = nullptr;
         test::TestMenu* testMenu = new test::TestMenu(currentTest);
@@ -125,7 +216,7 @@ int main(void)
         
         while( !glfwWindowShouldClose( window ) )
         {
-            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            glClearColor(0.3f, 0.3f, 0.3f, 1.f);
             // todo: clear depth buffer and enable depth test
             renderer.Clear();
             

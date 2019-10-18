@@ -18,6 +18,7 @@
 #include "imgui/imgui.h"
 
 #define BUFFER_OFFSET(x)  ((const void*) (x))
+#define WORLD_HEIGHT 1.5f
 
 DebugDraw g_debugDraw;
 Camera g_camera;
@@ -31,7 +32,7 @@ b2Vec2 Camera::ConvertScreenToWorld(const b2Vec2& ps)
     float32 v = (h - ps.y) / h;
 
     float32 ratio = w / h;
-    b2Vec2 extents(ratio * 25.0f, 25.0f);
+    b2Vec2 extents(ratio * WORLD_HEIGHT, WORLD_HEIGHT);
     extents *= zoom;
 
     b2Vec2 lower = center - extents;
@@ -49,7 +50,7 @@ b2Vec2 Camera::ConvertWorldToScreen(const b2Vec2& pw)
     float32 w = float32(width);
     float32 h = float32(height);
     float32 ratio = w / h;
-    b2Vec2 extents(ratio * 25.0f, 25.0f);
+    b2Vec2 extents(ratio * WORLD_HEIGHT, WORLD_HEIGHT);
     extents *= zoom;
 
     b2Vec2 lower = center - extents;
@@ -71,7 +72,7 @@ void Camera::BuildProjectionMatrix(float32* m, float32 zBias)
     float32 w = float32(width);
     float32 h = float32(height);
     float32 ratio = w / h;
-    b2Vec2 extents(ratio * 25.0f, 25.0f);
+    b2Vec2 extents(ratio * WORLD_HEIGHT, WORLD_HEIGHT);
     extents *= zoom;
 
     b2Vec2 lower = center - extents;

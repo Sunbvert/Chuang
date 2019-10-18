@@ -79,7 +79,6 @@ namespace test {
 
     void TestTexture2D::OnImGuiRender() {
         ImGui::SliderFloat3("Translation", &m_Translation.x, 0.0f, 960.0f);
-        GLCheckError();
     }
 
 
