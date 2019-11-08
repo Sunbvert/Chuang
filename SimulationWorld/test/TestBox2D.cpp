@@ -11,7 +11,7 @@
 #include "imgui/imgui.h"
 #include "DebugDraw.hpp"
 #include "glm/glm.hpp"
-#include "DebugDraw.hpp"
+#include <GLFW/glfw3.h>
 
 namespace test {
 
@@ -46,6 +46,39 @@ namespace test {
         b2Vec2 m_point;
         b2Fixture* m_fixture;
     };
+
+    class VisionQueryCallback : public b2QueryCallback
+    {
+    public:
+        b2Fixture *m_BodyFixture;
+        b2Fixture *m_GroundFixture;
+        
+        VisionQueryCallback()
+        {
+            m_BodyFixture = nullptr;
+            m_GroundFixture = nullptr;
+        }
+        
+        bool ReportFixture(b2Fixture *fixture) override
+        {
+            b2Body *body = fixture->GetBody();
+            if (body->GetType() == b2_dynamicBody && m_BodyFixture == nullptr)
+            {
+                m_BodyFixture = fixture;
+            }
+            else if (body->GetType() == b2_staticBody && m_GroundFixture == nullptr)
+            {
+                m_GroundFixture = fixture;
+            }
+            
+            if (m_BodyFixture != nullptr && m_GroundFixture != nullptr)
+            {
+                return false;
+            }
+            
+            return true;
+        }
+    };
     
     TestBox2D::TestBox2D() : m_TestBodyPosition(0, 0), m_HeadInitialPosition(0.0f, 0.0f), m_mouseJoint(nullptr)
     {
@@ -78,19 +111,39 @@ namespace test {
         b2Body* calf = CreateDynamicBody(calfCenter.x, calfCenter.y, calfSize.x / 2, calfSize.y / 2, 1.0f, 0.3f);
         b2Body* foot = CreateDynamicBody(footCenter.x, footCenter.y, footSize.x / 2, footSize.y / 2, 1.0f, 0.3f);
         
-        CreateRevoluteJoint(head, thigh, b2Vec2(headCenter.x, headCenter.y - headSize.y / 2));
-        CreateRevoluteJoint(thigh, calf, b2Vec2(headCenter.x, thighCenter.y - thighSize.y / 2));
-        CreateRevoluteJoint(calf, foot, b2Vec2(headCenter.x, calfCenter.y - calfSize.y / 2));
+        m_WaistAngleLimit.Set(-0.25f * b2_pi, 0.5f * b2_pi);
+        m_KneeAngleLimit.Set(-1.0f * b2_pi, 0.1f * b2_pi);
+        m_AnkleAngleLimit.Set(-0.25f * b2_pi, 0.25f * b2_pi);
+        
+        m_WaistJoint = CreateRevoluteJoint(head, thigh, b2Vec2(headCenter.x, headCenter.y - headSize.y / 2), true, m_WaistAngleLimit.x, m_WaistAngleLimit.y);
+        m_KneeJoint = CreateRevoluteJoint(thigh, calf, b2Vec2(headCenter.x, thighCenter.y - thighSize.y / 2), true, m_KneeAngleLimit.x, m_KneeAngleLimit.y);
+        m_AnkleJoint = CreateRevoluteJoint(calf, foot, b2Vec2(headCenter.x, calfCenter.y - calfSize.y / 2), true, m_AnkleAngleLimit.x, m_AnkleAngleLimit.y);
         
         //m_TestBody = CreateStaticBody(0.0f, 0.0f, 0.5f, 1.5f);
     }
 
-    b2RevoluteJointDef TestBox2D::CreateRevoluteJoint(b2Body *bodyA, b2Body *bodyB, b2Vec2 anchor)
+    void TestBox2D::Keyboard(int key)
+    {
+        switch (key) {
+            case GLFW_KEY_A:
+                m_KneeJoint->SetMotorSpeed(-0.2f);
+                break;
+            default:
+                break;
+        }
+    }
+
+    b2RevoluteJoint* TestBox2D::CreateRevoluteJoint(b2Body *bodyA, b2Body *bodyB, b2Vec2 anchor, bool enableLimit, float32 lowerAngle, float32 upperAngle)
     {
         b2RevoluteJointDef jointDef;
         jointDef.Initialize(bodyA, bodyB, anchor);
-        m_World->CreateJoint(&jointDef);
-        return jointDef;
+        jointDef.lowerAngle = lowerAngle;
+        jointDef.upperAngle = upperAngle;
+        jointDef.enableLimit = enableLimit;
+        jointDef.motorSpeed = 0.0f;
+        jointDef.maxMotorTorque = 1.0f;
+        jointDef.enableMotor = true;
+        return (b2RevoluteJoint*)m_World->CreateJoint(&jointDef);
     }
 
     b2Body* TestBox2D::CreateDynamicBody(float32 x, float32 y, float32 halfWidth, float32 halfHeight, float32 desity, float32 friction)
@@ -123,9 +176,22 @@ namespace test {
         return body;
     }
 
+    void TestBox2D::GetVision()
+    {
+        float32 vision[VISION_LENGTH][VISION_LENGTH];
+        b2AABB aabb;
+        
+        for (int i = 0; i < VISION_LENGTH; i++)
+        {
+            for (int j = 0; j < VISION_LENGTH; j++)
+            {
+                
+            }
+        }
+    }
+
     void TestBox2D::MouseDown(const b2Vec2& p)
     {
-        //m_mouseWorld = p;
 
         if (m_mouseJoint != NULL)
         {
@@ -190,19 +256,29 @@ namespace test {
     void TestBox2D::OnUpdate(float deltaTime)
     {
         float32 timeStep = 1.0f / 60.0f;
-        
-        uint32 flags = b2Draw::e_shapeBit + b2Draw::e_jointBit;
-        g_debugDraw.SetFlags(flags);
-        
         int32 velocityIterations = 6;
         int32 positionIterations = 2;
         
+        // Update
+        
+        
         m_World->Step(timeStep, velocityIterations, positionIterations);
-        m_World->DrawDebugData();
-        g_debugDraw.Flush();
+    }
+
+    void TestBox2D::OnRender()
+    {
+        uint32 flags = b2Draw::e_shapeBit + b2Draw::e_jointBit;
+        g_debugDraw.SetFlags(flags);
+        
+        // Render stuff
+        
+        
         
         //g_debugDraw.DrawString(5, 5, "Press 'a' to control the flippers");
         //m_TextLine += 16;
+        
+        m_World->DrawDebugData();
+        g_debugDraw.Flush();
     }
 
     void TestBox2D::OnImGuiRender()

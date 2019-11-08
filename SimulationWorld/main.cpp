@@ -37,6 +37,10 @@
 
 #include "DebugDraw.hpp"
 
+// test
+#include "Brush.hpp"
+
+
 namespace
 {
     test::TestBox2D* testBox2D = nullptr;
@@ -55,6 +59,40 @@ static void onResizeWindow(GLFWwindow*, int width, int height)
     g_camera.width = width;
     g_camera.height = height;
 }
+
+static void onKey(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    bool keys_for_ui = ImGui::GetIO().WantCaptureKeyboard;
+    if (keys_for_ui)
+        return;
+
+    if (action == GLFW_PRESS)
+    {
+        switch (key)
+        {
+        case GLFW_KEY_ESCAPE:
+            // Quit
+            glfwSetWindowShouldClose(window, GL_TRUE);
+            break;
+        case GLFW_KEY_R:
+            // Reset test
+//            delete test;
+//            test = entry->createFcn();
+            break;
+        default:
+            if (box2DSelected)
+            {
+                testBox2D->Keyboard(key);
+            }
+        }
+    }
+    else if (action == GLFW_RELEASE)
+    {
+        //test->KeyboardUp(key);
+    }
+    // else GLFW_REPEAT
+}
+
 
 static void onMouseButton(GLFWwindow* window, int32 button, int32 action, int32 mods)
 {
@@ -171,6 +209,7 @@ int main(void)
     glfwSetScrollCallback(window, onMouseScroll);
     glfwSetCursorPosCallback(window, onMouseMotion);
     glfwSetMouseButtonCallback(window, onMouseButton);
+    glfwSetKeyCallback(window, onKey);
     
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK)
@@ -213,6 +252,9 @@ int main(void)
         double frameTime = 0.0;
         double alpha = 0.9f; // alpha for frame time smooth
         
+        // test
+        Brush *brushTest = new Brush();
+        
         while( !glfwWindowShouldClose( window ) )
         {
             glClearColor(0.3f, 0.3f, 0.3f, 1.f);
@@ -246,6 +288,9 @@ int main(void)
                 currentTest->OnImGuiRender();
                 ImGui::End();
             }
+            
+            // test code
+            brushTest->OnRender();
             
             /* end writing code here */
             

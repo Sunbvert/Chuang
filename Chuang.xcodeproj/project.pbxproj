@@ -12,6 +12,9 @@
 		A12428BB23438744001D2276 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A12428BA23438744001D2276 /* OpenGL.framework */; };
 		A12428BD23438A26001D2276 /* libglfw.3.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A12428BC23438A26001D2276 /* libglfw.3.3.dylib */; };
 		A12428BF23438A4B001D2276 /* libGLEW.2.1.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A12428BE23438A4B001D2276 /* libGLEW.2.1.0.dylib */; };
+		A1484CB3237459F600823B68 /* Brush.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1484CB1237459F600823B68 /* Brush.cpp */; };
+		A1484CB623745B4600823B68 /* Graphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1484CB423745B4600823B68 /* Graphics.cpp */; };
+		A1484CB82374772000823B68 /* BasicColor.shader in CopyFiles */ = {isa = PBXBuildFile; fileRef = A1484CB7237476AC00823B68 /* BasicColor.shader */; };
 		A14F93732354569C00D5C6D0 /* TestClearColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A14F93712354569C00D5C6D0 /* TestClearColor.cpp */; };
 		A14F93762354670000D5C6D0 /* TestMvp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A14F93742354670000D5C6D0 /* TestMvp.cpp */; };
 		A14F93782354A41300D5C6D0 /* Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A14F93772354A41300D5C6D0 /* Test.cpp */; };
@@ -42,6 +45,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
+				A1484CB82374772000823B68 /* BasicColor.shader in CopyFiles */,
 				A1ABABD02347238400141B4F /* Basic.shader in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
@@ -55,6 +59,11 @@
 		A12428BA23438744001D2276 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		A12428BC23438A26001D2276 /* libglfw.3.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.3.dylib; path = ../../../../../usr/local/Cellar/glfw/3.3/lib/libglfw.3.3.dylib; sourceTree = "<group>"; };
 		A12428BE23438A4B001D2276 /* libGLEW.2.1.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.2.1.0.dylib; path = ../../../../../usr/local/Cellar/glew/2.1.0/lib/libGLEW.2.1.0.dylib; sourceTree = "<group>"; };
+		A1484CB1237459F600823B68 /* Brush.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Brush.cpp; sourceTree = "<group>"; };
+		A1484CB2237459F600823B68 /* Brush.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Brush.hpp; sourceTree = "<group>"; };
+		A1484CB423745B4600823B68 /* Graphics.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Graphics.cpp; sourceTree = "<group>"; };
+		A1484CB523745B4600823B68 /* Graphics.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Graphics.hpp; sourceTree = "<group>"; };
+		A1484CB7237476AC00823B68 /* BasicColor.shader */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicColor.shader; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		A14F936F235455A300D5C6D0 /* Test.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Test.hpp; sourceTree = "<group>"; };
 		A14F93712354569C00D5C6D0 /* TestClearColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestClearColor.cpp; sourceTree = "<group>"; };
 		A14F93722354569C00D5C6D0 /* TestClearColor.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TestClearColor.hpp; sourceTree = "<group>"; };
@@ -137,23 +146,11 @@
 		A12428AC23437752001D2276 /* SimulationWorld */ = {
 			isa = PBXGroup;
 			children = (
+				A1484CAF2374529C00823B68 /* render */,
 				A177D6B92356FECD0053A0D6 /* world */,
 				A14F936D2354557D00D5C6D0 /* test */,
 				A1C6F3992350771100C87B58 /* vendor */,
 				A12428AD23437752001D2276 /* main.cpp */,
-				A1EFF1E823476EC000869649 /* Renderer.cpp */,
-				A1EFF1E923476EC000869649 /* Renderer.hpp */,
-				A1EFF1EB2347708700869649 /* VertexBuffer.cpp */,
-				A1EFF1EC2347708700869649 /* VertexBuffer.hpp */,
-				A1EFF1EE2347732700869649 /* IndexBuffer.cpp */,
-				A1EFF1EF2347732700869649 /* IndexBuffer.hpp */,
-				A189B284234DCE8F0022A5DB /* Shader.cpp */,
-				A189B285234DCE8F0022A5DB /* Shader.hpp */,
-				A189B287234DE7910022A5DB /* VertexArray.cpp */,
-				A189B288234DE7910022A5DB /* VertexArray.hpp */,
-				A189B28B234DE85A0022A5DB /* VertexBufferLayout.hpp */,
-				A1C6F39F2350794900C87B58 /* Texture.cpp */,
-				A1C6F3A02350794900C87B58 /* Texture.hpp */,
 			);
 			path = SimulationWorld;
 			sourceTree = "<group>";
@@ -167,6 +164,30 @@
 				A12428B823437FC6001D2276 /* libBox2D.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A1484CAF2374529C00823B68 /* render */ = {
+			isa = PBXGroup;
+			children = (
+				A177D6BA2356FFB50053A0D6 /* DebugDraw.cpp */,
+				A177D6BB2356FFB50053A0D6 /* DebugDraw.hpp */,
+				A1EFF1E823476EC000869649 /* Renderer.cpp */,
+				A1EFF1E923476EC000869649 /* Renderer.hpp */,
+				A1EFF1EB2347708700869649 /* VertexBuffer.cpp */,
+				A1EFF1EC2347708700869649 /* VertexBuffer.hpp */,
+				A1EFF1EE2347732700869649 /* IndexBuffer.cpp */,
+				A1EFF1EF2347732700869649 /* IndexBuffer.hpp */,
+				A189B284234DCE8F0022A5DB /* Shader.cpp */,
+				A189B285234DCE8F0022A5DB /* Shader.hpp */,
+				A189B287234DE7910022A5DB /* VertexArray.cpp */,
+				A189B288234DE7910022A5DB /* VertexArray.hpp */,
+				A189B28B234DE85A0022A5DB /* VertexBufferLayout.hpp */,
+				A1C6F39F2350794900C87B58 /* Texture.cpp */,
+				A1C6F3A02350794900C87B58 /* Texture.hpp */,
+				A1484CB423745B4600823B68 /* Graphics.cpp */,
+				A1484CB523745B4600823B68 /* Graphics.hpp */,
+			);
+			path = render;
 			sourceTree = "<group>";
 		};
 		A14F936D2354557D00D5C6D0 /* test */ = {
@@ -189,8 +210,8 @@
 		A177D6B92356FECD0053A0D6 /* world */ = {
 			isa = PBXGroup;
 			children = (
-				A177D6BA2356FFB50053A0D6 /* DebugDraw.cpp */,
-				A177D6BB2356FFB50053A0D6 /* DebugDraw.hpp */,
+				A1484CB1237459F600823B68 /* Brush.cpp */,
+				A1484CB2237459F600823B68 /* Brush.hpp */,
 			);
 			path = world;
 			sourceTree = "<group>";
@@ -208,6 +229,7 @@
 			isa = PBXGroup;
 			children = (
 				A1ABABCE23471AC000141B4F /* Basic.shader */,
+				A1484CB7237476AC00823B68 /* BasicColor.shader */,
 			);
 			path = Shader;
 			sourceTree = "<group>";
@@ -322,11 +344,13 @@
 				A1C6F39E235078C100C87B58 /* stb_image.cpp in Sources */,
 				A189B289234DE7910022A5DB /* VertexArray.cpp in Sources */,
 				A1C6F3A12350794900C87B58 /* Texture.cpp in Sources */,
+				A1484CB623745B4600823B68 /* Graphics.cpp in Sources */,
 				A1CA44B72353475C00E6C006 /* imgui.cpp in Sources */,
 				A1C6F39C2350774D00C87B58 /* stb_image.hpp in Sources */,
 				A192258D235591320017327B /* TestTexture2D.cpp in Sources */,
 				A1CA44B42353475C00E6C006 /* imgui_impl_opengl3.cpp in Sources */,
 				A14F93762354670000D5C6D0 /* TestMvp.cpp in Sources */,
+				A1484CB3237459F600823B68 /* Brush.cpp in Sources */,
 				A14F93782354A41300D5C6D0 /* Test.cpp in Sources */,
 				A1CA44B82353475C00E6C006 /* imgui_impl_glfw.cpp in Sources */,
 				A14F93732354569C00D5C6D0 /* TestClearColor.cpp in Sources */,
