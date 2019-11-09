@@ -9,6 +9,9 @@
 
 #include <Box2D/Box2D.h>
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
 struct b2AABB;
 struct GLRenderPoints;
 struct GLRenderLines;
@@ -27,7 +30,7 @@ struct Camera
 
     b2Vec2 ConvertScreenToWorld(const b2Vec2& screenPoint);
     b2Vec2 ConvertWorldToScreen(const b2Vec2& worldPoint);
-    void BuildProjectionMatrix(float32* m, float32 zBias);
+    glm::mat4 BuildProjectionMatrix(float32 zBias);
 
     b2Vec2 center;
     float32 zoom;

@@ -66,8 +66,7 @@ b2Vec2 Camera::ConvertWorldToScreen(const b2Vec2& pw)
 }
 
 // Convert from world coordinates to normalized device coordinates.
-// http://www.songho.ca/opengl/gl_projectionmatrix.html
-void Camera::BuildProjectionMatrix(float32* m, float32 zBias)
+glm::mat4 Camera::BuildProjectionMatrix(float32 zBias)
 {
     float32 w = float32(width);
     float32 h = float32(height);
@@ -75,28 +74,10 @@ void Camera::BuildProjectionMatrix(float32* m, float32 zBias)
     b2Vec2 extents(ratio * WORLD_HEIGHT, WORLD_HEIGHT);
     extents *= zoom;
 
-    b2Vec2 lower = center - extents;
-    b2Vec2 upper = center + extents;
-
-    m[0] = 2.0f / (upper.x - lower.x);
-    m[1] = 0.0f;
-    m[2] = 0.0f;
-    m[3] = 0.0f;
-
-    m[4] = 0.0f;
-    m[5] = 2.0f / (upper.y - lower.y);
-    m[6] = 0.0f;
-    m[7] = 0.0f;
-
-    m[8] = 0.0f;
-    m[9] = 0.0f;
-    m[10] = 1.0f;
-    m[11] = 0.0f;
-
-    m[12] = -(upper.x + lower.x) / (upper.x - lower.x);
-    m[13] = -(upper.y + lower.y) / (upper.y - lower.y);
-    m[14] = zBias;
-    m[15] = 1.0f;
+    glm::mat4 proj = glm::ortho(-extents.x, extents.x, -extents.y, extents.y, -1.0f, 1.0f);
+    glm::mat4 view = glm::mat4(glm::translate(glm::mat4(1.0f), glm::vec3(-center.x, -center.y, zBias)));
+    
+    return proj * view;
 }
 
 //
@@ -278,10 +259,9 @@ struct GLRenderPoints
         
         glUseProgram(m_programId);
         
-        float32 proj[16] = { 0.0f };
-        g_camera.BuildProjectionMatrix(proj, 0.0f);
+        glm::mat4 proj = g_camera.BuildProjectionMatrix(0.0f);
         
-        glUniformMatrix4fv(m_projectionUniform, 1, GL_FALSE, proj);
+        glUniformMatrix4fv(m_projectionUniform, 1, GL_FALSE, &proj[0][0]);
         
         glBindVertexArray(m_vaoId);
         
@@ -413,10 +393,9 @@ struct GLRenderLines
         
         glUseProgram(m_programId);
         
-        float32 proj[16] = { 0.0f };
-        g_camera.BuildProjectionMatrix(proj, 0.1f);
+        glm::mat4 proj = g_camera.BuildProjectionMatrix(0.1f);
         
-        glUniformMatrix4fv(m_projectionUniform, 1, GL_FALSE, proj);
+        glUniformMatrix4fv(m_projectionUniform, 1, GL_FALSE, &proj[0][0]);
         
         glBindVertexArray(m_vaoId);
         
@@ -541,10 +520,9 @@ struct GLRenderTriangles
         
         glUseProgram(m_programId);
         
-        float32 proj[16] = { 0.0f };
-        g_camera.BuildProjectionMatrix(proj, 0.2f);
+        glm::mat4 proj = g_camera.BuildProjectionMatrix(0.2f);
         
-        glUniformMatrix4fv(m_projectionUniform, 1, GL_FALSE, proj);
+        glUniformMatrix4fv(m_projectionUniform, 1, GL_FALSE, &proj[0][0]);
         
         glBindVertexArray(m_vaoId);
         

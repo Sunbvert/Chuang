@@ -12,7 +12,7 @@
 		A12428BB23438744001D2276 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A12428BA23438744001D2276 /* OpenGL.framework */; };
 		A12428BD23438A26001D2276 /* libglfw.3.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A12428BC23438A26001D2276 /* libglfw.3.3.dylib */; };
 		A12428BF23438A4B001D2276 /* libGLEW.2.1.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A12428BE23438A4B001D2276 /* libGLEW.2.1.0.dylib */; };
-		A1484CB3237459F600823B68 /* Brush.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1484CB1237459F600823B68 /* Brush.cpp */; };
+		A1484CB3237459F600823B68 /* Canvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1484CB1237459F600823B68 /* Canvas.cpp */; };
 		A1484CB623745B4600823B68 /* Graphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1484CB423745B4600823B68 /* Graphics.cpp */; };
 		A1484CB82374772000823B68 /* BasicColor.shader in CopyFiles */ = {isa = PBXBuildFile; fileRef = A1484CB7237476AC00823B68 /* BasicColor.shader */; };
 		A14F93732354569C00D5C6D0 /* TestClearColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A14F93712354569C00D5C6D0 /* TestClearColor.cpp */; };
@@ -59,8 +59,8 @@
 		A12428BA23438744001D2276 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		A12428BC23438A26001D2276 /* libglfw.3.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.3.dylib; path = ../../../../../usr/local/Cellar/glfw/3.3/lib/libglfw.3.3.dylib; sourceTree = "<group>"; };
 		A12428BE23438A4B001D2276 /* libGLEW.2.1.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.2.1.0.dylib; path = ../../../../../usr/local/Cellar/glew/2.1.0/lib/libGLEW.2.1.0.dylib; sourceTree = "<group>"; };
-		A1484CB1237459F600823B68 /* Brush.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Brush.cpp; sourceTree = "<group>"; };
-		A1484CB2237459F600823B68 /* Brush.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Brush.hpp; sourceTree = "<group>"; };
+		A1484CB1237459F600823B68 /* Canvas.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Canvas.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		A1484CB2237459F600823B68 /* Canvas.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Canvas.hpp; sourceTree = "<group>"; };
 		A1484CB423745B4600823B68 /* Graphics.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Graphics.cpp; sourceTree = "<group>"; };
 		A1484CB523745B4600823B68 /* Graphics.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Graphics.hpp; sourceTree = "<group>"; };
 		A1484CB7237476AC00823B68 /* BasicColor.shader */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicColor.shader; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -70,6 +70,7 @@
 		A14F93742354670000D5C6D0 /* TestMvp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestMvp.cpp; sourceTree = "<group>"; };
 		A14F93752354670000D5C6D0 /* TestMvp.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TestMvp.hpp; sourceTree = "<group>"; };
 		A14F93772354A41300D5C6D0 /* Test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Test.cpp; sourceTree = "<group>"; };
+		A16170772376E74B0055D8DE /* cute_c2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cute_c2.h; sourceTree = "<group>"; };
 		A177D6BA2356FFB50053A0D6 /* DebugDraw.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DebugDraw.cpp; sourceTree = "<group>"; };
 		A177D6BB2356FFB50053A0D6 /* DebugDraw.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DebugDraw.hpp; sourceTree = "<group>"; };
 		A177D6BD235710420053A0D6 /* TestBox2D.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestBox2D.cpp; sourceTree = "<group>"; };
@@ -207,11 +208,19 @@
 			path = test;
 			sourceTree = "<group>";
 		};
+		A16170742376A1A30055D8DE /* cute */ = {
+			isa = PBXGroup;
+			children = (
+				A16170772376E74B0055D8DE /* cute_c2.h */,
+			);
+			path = cute;
+			sourceTree = "<group>";
+		};
 		A177D6B92356FECD0053A0D6 /* world */ = {
 			isa = PBXGroup;
 			children = (
-				A1484CB1237459F600823B68 /* Brush.cpp */,
-				A1484CB2237459F600823B68 /* Brush.hpp */,
+				A1484CB1237459F600823B68 /* Canvas.cpp */,
+				A1484CB2237459F600823B68 /* Canvas.hpp */,
 			);
 			path = world;
 			sourceTree = "<group>";
@@ -237,6 +246,7 @@
 		A1C6F3992350771100C87B58 /* vendor */ = {
 			isa = PBXGroup;
 			children = (
+				A16170742376A1A30055D8DE /* cute */,
 				A1CA44A42353473900E6C006 /* imgui */,
 				A1CA44A02352FF1E00E6C006 /* glm */,
 				A1C6F39A2350772800C87B58 /* stb_image */,
@@ -350,7 +360,7 @@
 				A192258D235591320017327B /* TestTexture2D.cpp in Sources */,
 				A1CA44B42353475C00E6C006 /* imgui_impl_opengl3.cpp in Sources */,
 				A14F93762354670000D5C6D0 /* TestMvp.cpp in Sources */,
-				A1484CB3237459F600823B68 /* Brush.cpp in Sources */,
+				A1484CB3237459F600823B68 /* Canvas.cpp in Sources */,
 				A14F93782354A41300D5C6D0 /* Test.cpp in Sources */,
 				A1CA44B82353475C00E6C006 /* imgui_impl_glfw.cpp in Sources */,
 				A14F93732354569C00D5C6D0 /* TestClearColor.cpp in Sources */,
@@ -484,6 +494,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				GCC_NO_COMMON_BLOCKS = YES;
 				HEADER_SEARCH_PATHS = (
 					"${SRCROOT}/ExternalLibraries/Box2D/Include",
 					/usr/local/include,
@@ -503,6 +514,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				GCC_NO_COMMON_BLOCKS = YES;
 				HEADER_SEARCH_PATHS = (
 					"${SRCROOT}/ExternalLibraries/Box2D/Include",
 					/usr/local/include,

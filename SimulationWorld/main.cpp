@@ -38,7 +38,7 @@
 #include "DebugDraw.hpp"
 
 // test
-#include "Brush.hpp"
+#include "Canvas.hpp"
 
 
 namespace
@@ -253,7 +253,8 @@ int main(void)
         double alpha = 0.9f; // alpha for frame time smooth
         
         // test
-        Brush *brushTest = new Brush();
+//        Canvas *canvasTest = new Canvas;
+//        canvasTest->AddSquare(1, 1.0f, 1.0f, 0.1f, 0.1f);
         
         while( !glfwWindowShouldClose( window ) )
         {
@@ -290,7 +291,7 @@ int main(void)
             }
             
             // test code
-            brushTest->OnRender();
+//            canvasTest->OnRender();
             
             /* end writing code here */
             
@@ -323,6 +324,8 @@ int main(void)
             // pool for and process events
             glfwPollEvents();
         }
+        
+       // delete canvasTest;
         delete currentTest;
         if (currentTest != testMenu)
             delete testMenu;
