@@ -36,139 +36,14 @@
 #include "TestBox2D.hpp"
 
 #include "DebugDraw.hpp"
+#include "WindowEventCallback.hpp"
 
 // test
 #include "Canvas.hpp"
 
-
-namespace
-{
-    test::TestBox2D* testBox2D = nullptr;
-    bool rightMouseDown = false;
-    b2Vec2 lastp;
-    bool box2DSelected = false;
-}
-
 void glfwErrorCallback(int error, const char *description)
 {
     fprintf(stderr, "GLFW error occured. Code: %d. Description: %s\n", error, description);
-}
-
-static void onResizeWindow(GLFWwindow*, int width, int height)
-{
-    g_camera.width = width;
-    g_camera.height = height;
-}
-
-static void onKey(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    bool keys_for_ui = ImGui::GetIO().WantCaptureKeyboard;
-    if (keys_for_ui)
-        return;
-
-    if (action == GLFW_PRESS)
-    {
-        switch (key)
-        {
-        case GLFW_KEY_ESCAPE:
-            // Quit
-            glfwSetWindowShouldClose(window, GL_TRUE);
-            break;
-        case GLFW_KEY_R:
-            // Reset test
-//            delete test;
-//            test = entry->createFcn();
-            break;
-        default:
-            if (box2DSelected)
-            {
-                testBox2D->Keyboard(key);
-            }
-        }
-    }
-    else if (action == GLFW_RELEASE)
-    {
-        //test->KeyboardUp(key);
-    }
-    // else GLFW_REPEAT
-}
-
-
-static void onMouseButton(GLFWwindow* window, int32 button, int32 action, int32 mods)
-{
-    double xd, yd;
-    glfwGetCursorPos(window, &xd, &yd);
-    b2Vec2 ps((float32)xd, (float32)yd);
-
-    // Use the mouse to move things around.
-    if (button == GLFW_MOUSE_BUTTON_1 && box2DSelected)
-    {
-        b2Vec2 pw = g_camera.ConvertScreenToWorld(ps);
-        if (action == GLFW_PRESS)
-        {
-            if (mods == GLFW_MOD_SHIFT)
-            {
-                testBox2D->ShiftMouseDown(pw);
-            }
-            else
-            {
-                testBox2D->MouseDown(pw);
-            }
-        }
-
-        if (action == GLFW_RELEASE)
-        {
-            testBox2D->MouseUp(pw);
-        }
-    }
-    else if (button == GLFW_MOUSE_BUTTON_2)
-    {
-        if (action == GLFW_PRESS)
-        {
-            lastp = g_camera.ConvertScreenToWorld(ps);
-            rightMouseDown = true;
-        }
-
-        if (action == GLFW_RELEASE)
-        {
-            rightMouseDown = false;
-        }
-    }
-}
-
-static void onMouseMotion(GLFWwindow*, double xd, double yd)
-{
-    b2Vec2 ps((float)xd, (float)yd);
-
-    b2Vec2 pw = g_camera.ConvertScreenToWorld(ps);
-    
-    if (box2DSelected)
-        testBox2D->MouseMove(pw);
-    
-    if (rightMouseDown)
-    {
-        b2Vec2 diff = pw - lastp;
-        g_camera.center.x -= diff.x;
-        g_camera.center.y -= diff.y;
-        lastp = g_camera.ConvertScreenToWorld(ps);
-    }
-}
-
-static void onMouseScroll(GLFWwindow* window, double dx, double dy)
-{
-    bool mouse_for_ui = ImGui::GetIO().WantCaptureMouse;
-
-    if (!mouse_for_ui)
-    {
-        if (dy > 0)
-        {
-            g_camera.zoom /= 1.1f;
-        }
-        else
-        {
-            g_camera.zoom *= 1.1f;
-        }
-    }
 }
 
 int main(void)
@@ -205,11 +80,11 @@ int main(void)
     glfwMakeContextCurrent( window );
     glfwSwapInterval(1);
     
-    glfwSetWindowSizeCallback(window, onResizeWindow);
-    glfwSetScrollCallback(window, onMouseScroll);
-    glfwSetCursorPosCallback(window, onMouseMotion);
-    glfwSetMouseButtonCallback(window, onMouseButton);
-    glfwSetKeyCallback(window, onKey);
+    glfwSetWindowSizeCallback(window, WindowEventCallback::onResizeWindow);
+    glfwSetScrollCallback(window, WindowEventCallback::onMouseScroll);
+    glfwSetCursorPosCallback(window, WindowEventCallback::onMouseMotion);
+    glfwSetMouseButtonCallback(window, WindowEventCallback::onMouseButton);
+    glfwSetKeyCallback(window, WindowEventCallback::onKey);
     
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK)
@@ -238,6 +113,7 @@ int main(void)
         ImGui_ImplGlfw_InitForOpenGL(window, true);
         ImGui::StyleColorsDark();
         bool show_demo_window = false;
+        bool enable_test = true;
         
         test::Test* currentTest = nullptr;
         test::TestMenu* testMenu = new test::TestMenu(currentTest);
@@ -271,11 +147,11 @@ int main(void)
             
             if (currentTest)
             {
-                if (typeid(*currentTest) == typeid(test::TestBox2D) && !box2DSelected) {
-                    testBox2D = (test::TestBox2D*)currentTest;
-                    box2DSelected = true;
+                if (typeid(*currentTest) == typeid(test::TestBox2D) && !WindowEventCallback::box2DSelected) {
+                    WindowEventCallback::testBox2D = (test::TestBox2D*)currentTest;
+                    WindowEventCallback::box2DSelected = true;
                 } else if (typeid(*currentTest) != typeid(test::TestBox2D)) {
-                    box2DSelected = false;
+                    WindowEventCallback::box2DSelected = false;
                 }
                 
                 currentTest->OnUpdate(0.0f);

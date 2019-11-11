@@ -85,8 +85,8 @@ private:
     b2RevoluteJoint* m_AnkleJoint;
     
     // 以机器人头部中心为原点，上下左右各一米的范围作为机器人的视觉范围
-    // 将该范围内看到的内容储存到 10 * 10 的数组中
-    static const int VISION_SIZE = 40;
+    // 将该范围内看到的内容储存到 VISION_SIZE 的数组中
+    static const int VISION_SIZE = 20;
     constexpr static const float VISION_LENGTH = 2.0f;
     float32 m_Vision [VISION_SIZE][VISION_SIZE];
     

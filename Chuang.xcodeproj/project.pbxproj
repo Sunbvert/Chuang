@@ -20,6 +20,8 @@
 		A14F93782354A41300D5C6D0 /* Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A14F93772354A41300D5C6D0 /* Test.cpp */; };
 		A177D6BC2356FFB50053A0D6 /* DebugDraw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A177D6BA2356FFB50053A0D6 /* DebugDraw.cpp */; };
 		A177D6BF235710420053A0D6 /* TestBox2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A177D6BD235710420053A0D6 /* TestBox2D.cpp */; };
+		A188B44723795582003A637E /* World.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A188B44523795582003A637E /* World.cpp */; };
+		A188B44C23795A70003A637E /* WindowEventCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A188B44A23795A70003A637E /* WindowEventCallback.cpp */; };
 		A189B286234DCE8F0022A5DB /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A189B284234DCE8F0022A5DB /* Shader.cpp */; };
 		A189B289234DE7910022A5DB /* VertexArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A189B287234DE7910022A5DB /* VertexArray.cpp */; };
 		A192258D235591320017327B /* TestTexture2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A192258B235591320017327B /* TestTexture2D.cpp */; };
@@ -75,6 +77,10 @@
 		A177D6BB2356FFB50053A0D6 /* DebugDraw.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DebugDraw.hpp; sourceTree = "<group>"; };
 		A177D6BD235710420053A0D6 /* TestBox2D.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestBox2D.cpp; sourceTree = "<group>"; };
 		A177D6BE235710420053A0D6 /* TestBox2D.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TestBox2D.hpp; sourceTree = "<group>"; };
+		A188B44523795582003A637E /* World.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = World.cpp; sourceTree = "<group>"; };
+		A188B44623795582003A637E /* World.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = World.hpp; sourceTree = "<group>"; };
+		A188B44A23795A70003A637E /* WindowEventCallback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WindowEventCallback.cpp; sourceTree = "<group>"; };
+		A188B44B23795A70003A637E /* WindowEventCallback.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = WindowEventCallback.hpp; sourceTree = "<group>"; };
 		A189B284234DCE8F0022A5DB /* Shader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Shader.cpp; sourceTree = "<group>"; };
 		A189B285234DCE8F0022A5DB /* Shader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Shader.hpp; sourceTree = "<group>"; };
 		A189B287234DE7910022A5DB /* VertexArray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VertexArray.cpp; sourceTree = "<group>"; };
@@ -152,6 +158,8 @@
 				A14F936D2354557D00D5C6D0 /* test */,
 				A1C6F3992350771100C87B58 /* vendor */,
 				A12428AD23437752001D2276 /* main.cpp */,
+				A188B44A23795A70003A637E /* WindowEventCallback.cpp */,
+				A188B44B23795A70003A637E /* WindowEventCallback.hpp */,
 			);
 			path = SimulationWorld;
 			sourceTree = "<group>";
@@ -221,6 +229,8 @@
 			children = (
 				A1484CB1237459F600823B68 /* Canvas.cpp */,
 				A1484CB2237459F600823B68 /* Canvas.hpp */,
+				A188B44523795582003A637E /* World.cpp */,
+				A188B44623795582003A637E /* World.hpp */,
 			);
 			path = world;
 			sourceTree = "<group>";
@@ -351,11 +361,13 @@
 			files = (
 				A1CA44B62353475C00E6C006 /* imgui_draw.cpp in Sources */,
 				A1EFF1EA23476EC000869649 /* Renderer.cpp in Sources */,
+				A188B44723795582003A637E /* World.cpp in Sources */,
 				A1C6F39E235078C100C87B58 /* stb_image.cpp in Sources */,
 				A189B289234DE7910022A5DB /* VertexArray.cpp in Sources */,
 				A1C6F3A12350794900C87B58 /* Texture.cpp in Sources */,
 				A1484CB623745B4600823B68 /* Graphics.cpp in Sources */,
 				A1CA44B72353475C00E6C006 /* imgui.cpp in Sources */,
+				A188B44C23795A70003A637E /* WindowEventCallback.cpp in Sources */,
 				A1C6F39C2350774D00C87B58 /* stb_image.hpp in Sources */,
 				A192258D235591320017327B /* TestTexture2D.cpp in Sources */,
 				A1CA44B42353475C00E6C006 /* imgui_impl_opengl3.cpp in Sources */,

@@ -72,36 +72,22 @@ public:
             
         if (body->GetType() == b2_dynamicBody && m_BodyFixture == nullptr)
         {
-            m_BodyFixture = fixture;
-            
-            if (fixture->GetShape()->GetType() == b2Shape::e_polygon)
+            if (CollidWithFixture(fixture, body))
             {
-                b2Transform transform = body->GetTransform();
-                b2PolygonShape *shape = (b2PolygonShape*)fixture->GetShape();
-                c2AABB a;
-                a.min = b2vToc2v(m_AABB->lowerBound);
-                a.max = b2vToc2v(m_AABB->upperBound);
-                c2Poly b;
-                b.count = shape->m_count;
-                copyArrayToc2v(b.verts, shape->m_vertices, b.count);
-                copyArrayToc2v(b.norms, shape->m_normals, b.count);
-                c2x x;
-                x.p = b2vToc2v(transform.p);
-                x.r = b2rToc2r(transform.q);
-                if(c2AABBtoPoly(a, &b, &x))
-                {
-                    
-                }
+                m_BodyFixture = fixture;
             }
         }
         else if (body->GetType() == b2_staticBody && m_GroundFixture == nullptr)
         {
-            //m_GroundFixture = fixture;
+            if (CollidWithFixture(fixture, body))
+            {
+                m_GroundFixture = fixture;
+            }
         }
         
         if (m_BodyFixture != nullptr && m_GroundFixture != nullptr)
         {
-            //return false;
+            return false;
         }
         
         return true;
@@ -129,6 +115,31 @@ public:
         {
             c2vArray[i] = b2vToc2v(b2vArray[i]);
         }
+    }
+    
+    bool CollidWithFixture(b2Fixture *fixture, b2Body *body)
+    {
+        if (fixture->GetShape()->GetType() == b2Shape::e_polygon)
+        {
+            b2Transform transform = body->GetTransform();
+            b2PolygonShape *shape = (b2PolygonShape*)fixture->GetShape();
+            c2AABB a;
+            a.min = b2vToc2v(m_AABB->lowerBound);
+            a.max = b2vToc2v(m_AABB->upperBound);
+            c2Poly b;
+            b.count = shape->m_count;
+            copyArrayToc2v(b.verts, shape->m_vertices, b.count);
+            copyArrayToc2v(b.norms, shape->m_normals, b.count);
+            c2x x;
+            x.p = b2vToc2v(transform.p);
+            x.r = b2rToc2r(transform.q);
+            if(c2AABBtoPoly(a, &b, &x))
+            {
+                return true;
+            }
+        }
+        
+        return false;
     }
 };
 
