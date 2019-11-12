@@ -12,10 +12,10 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
-test::TestBox2D*  WindowEventCallback::testBox2D = nullptr;
+
 bool WindowEventCallback::rightMouseDown = false;
 b2Vec2 WindowEventCallback::lastp(0, 0);
-bool WindowEventCallback::box2DSelected = false;
+World* WindowEventCallback::world = nullptr;
 
 
 void WindowEventCallback::onResizeWindow(GLFWwindow*, int width, int height)
@@ -44,10 +44,7 @@ void WindowEventCallback::onKey(GLFWwindow* window, int key, int scancode, int a
 //            test = entry->createFcn();
             break;
         default:
-            if (box2DSelected)
-            {
-                testBox2D->Keyboard(key);
-            }
+            world->Keyboard(key);
         }
     }
     else if (action == GLFW_RELEASE)
@@ -65,24 +62,24 @@ void WindowEventCallback::onMouseButton(GLFWwindow* window, int32 button, int32 
     b2Vec2 ps((float32)xd, (float32)yd);
 
     // Use the mouse to move things around.
-    if (button == GLFW_MOUSE_BUTTON_1 && box2DSelected)
+    if (button == GLFW_MOUSE_BUTTON_1)
     {
         b2Vec2 pw = g_camera.ConvertScreenToWorld(ps);
         if (action == GLFW_PRESS)
         {
             if (mods == GLFW_MOD_SHIFT)
             {
-                testBox2D->ShiftMouseDown(pw);
+                world->ShiftMouseDown(pw);
             }
             else
             {
-                testBox2D->MouseDown(pw);
+                world->MouseDown(pw);
             }
         }
 
         if (action == GLFW_RELEASE)
         {
-            testBox2D->MouseUp(pw);
+            world->MouseUp(pw);
         }
     }
     else if (button == GLFW_MOUSE_BUTTON_2)
@@ -106,8 +103,7 @@ void WindowEventCallback::onMouseMotion(GLFWwindow*, double xd, double yd)
 
     b2Vec2 pw = g_camera.ConvertScreenToWorld(ps);
     
-    if (box2DSelected)
-        testBox2D->MouseMove(pw);
+    world->MouseMove(pw);
     
     if (rightMouseDown)
     {

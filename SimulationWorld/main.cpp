@@ -15,28 +15,12 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
 
 #include "Renderer.hpp"
 
-#include "VertexBuffer.hpp"
-#include "VertexBufferLayout.hpp"
-#include "IndexBuffer.hpp"
-#include "Shader.hpp"
-#include "Texture.hpp"
-#include "VertexArray.hpp"
-
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-
-#include "TestClearColor.hpp"
-#include "TestTexture2D.hpp"
-#include "TestBox2D.hpp"
-
 #include "DebugDraw.hpp"
 #include "WindowEventCallback.hpp"
+#include "World.hpp"
 
 // test
 #include "Canvas.hpp"
@@ -113,24 +97,14 @@ int main(void)
         ImGui_ImplGlfw_InitForOpenGL(window, true);
         ImGui::StyleColorsDark();
         bool show_demo_window = false;
-        bool enable_test = true;
-        
-        test::Test* currentTest = nullptr;
-        test::TestMenu* testMenu = new test::TestMenu(currentTest);
-        currentTest = testMenu;
-        
-        testMenu->RegisterTest<test::TestClearColor>("Clear Color");
-        testMenu->RegisterTest<test::TestTexture2D>("2D Texture");
-        testMenu->RegisterTest<test::TestBox2D>("Box2D");
         
         double time1 = glfwGetTime();
         double time2;
         double frameTime = 0.0;
         double alpha = 0.9f; // alpha for frame time smooth
         
-        // test
-//        Canvas *canvasTest = new Canvas;
-//        canvasTest->AddSquare(1, 1.0f, 1.0f, 0.1f, 0.1f);
+        World *world = new World();
+        WindowEventCallback::world = world;
         
         while( !glfwWindowShouldClose( window ) )
         {
@@ -144,31 +118,11 @@ int main(void)
             ImGui::NewFrame();
             
             /* begin writing code here */
-            
-            if (currentTest)
-            {
-                if (typeid(*currentTest) == typeid(test::TestBox2D) && !WindowEventCallback::box2DSelected) {
-                    WindowEventCallback::testBox2D = (test::TestBox2D*)currentTest;
-                    WindowEventCallback::box2DSelected = true;
-                } else if (typeid(*currentTest) != typeid(test::TestBox2D)) {
-                    WindowEventCallback::box2DSelected = false;
-                }
-                
-                currentTest->OnUpdate(0.0f);
-                currentTest->OnRender();
-                ImGui::Begin("Test");
-                if (currentTest != testMenu && ImGui::Button("<-"))
-                {
-                    delete currentTest;
-                    currentTest = testMenu;
-                }
-                currentTest->OnImGuiRender();
-                ImGui::End();
-            }
-            
-            // test code
-//            canvasTest->OnRender();
-            
+
+            world->Step();
+            world->OnRender();
+            world->OnImGuiRender();
+     
             /* end writing code here */
             
             // Show frame time
@@ -201,10 +155,8 @@ int main(void)
             glfwPollEvents();
         }
         
-       // delete canvasTest;
-        delete currentTest;
-        if (currentTest != testMenu)
-            delete testMenu;
+       // TODO: delete pointers;
+        delete world;
     }
     
     // Cleanup

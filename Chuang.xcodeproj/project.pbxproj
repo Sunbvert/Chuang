@@ -22,6 +22,9 @@
 		A177D6BF235710420053A0D6 /* TestBox2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A177D6BD235710420053A0D6 /* TestBox2D.cpp */; };
 		A188B44723795582003A637E /* World.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A188B44523795582003A637E /* World.cpp */; };
 		A188B44C23795A70003A637E /* WindowEventCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A188B44A23795A70003A637E /* WindowEventCallback.cpp */; };
+		A188B45023799626003A637E /* librabbitmq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A188B44F23799626003A637E /* librabbitmq.a */; };
+		A188B456237996E4003A637E /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = A188B451237996E3003A637E /* utils.c */; };
+		A188B457237996E4003A637E /* FibonacciRpcClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A188B454237996E3003A637E /* FibonacciRpcClient.cpp */; };
 		A189B286234DCE8F0022A5DB /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A189B284234DCE8F0022A5DB /* Shader.cpp */; };
 		A189B289234DE7910022A5DB /* VertexArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A189B287234DE7910022A5DB /* VertexArray.cpp */; };
 		A192258D235591320017327B /* TestTexture2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A192258B235591320017327B /* TestTexture2D.cpp */; };
@@ -81,6 +84,11 @@
 		A188B44623795582003A637E /* World.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = World.hpp; sourceTree = "<group>"; };
 		A188B44A23795A70003A637E /* WindowEventCallback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WindowEventCallback.cpp; sourceTree = "<group>"; };
 		A188B44B23795A70003A637E /* WindowEventCallback.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = WindowEventCallback.hpp; sourceTree = "<group>"; };
+		A188B44F23799626003A637E /* librabbitmq.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = librabbitmq.a; path = ExternalLibraries/RabbitMQ/lib/librabbitmq.a; sourceTree = "<group>"; };
+		A188B451237996E3003A637E /* utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };
+		A188B452237996E3003A637E /* FibonacciRpcClient.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FibonacciRpcClient.hpp; sourceTree = "<group>"; };
+		A188B453237996E3003A637E /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		A188B454237996E3003A637E /* FibonacciRpcClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FibonacciRpcClient.cpp; sourceTree = "<group>"; };
 		A189B284234DCE8F0022A5DB /* Shader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Shader.cpp; sourceTree = "<group>"; };
 		A189B285234DCE8F0022A5DB /* Shader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Shader.hpp; sourceTree = "<group>"; };
 		A189B287234DE7910022A5DB /* VertexArray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VertexArray.cpp; sourceTree = "<group>"; };
@@ -122,6 +130,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A188B45023799626003A637E /* librabbitmq.a in Frameworks */,
 				A12428BF23438A4B001D2276 /* libGLEW.2.1.0.dylib in Frameworks */,
 				A12428BD23438A26001D2276 /* libglfw.3.3.dylib in Frameworks */,
 				A12428BB23438744001D2276 /* OpenGL.framework in Frameworks */,
@@ -153,6 +162,7 @@
 		A12428AC23437752001D2276 /* SimulationWorld */ = {
 			isa = PBXGroup;
 			children = (
+				A188B44E23799558003A637E /* mq_client */,
 				A1484CAF2374529C00823B68 /* render */,
 				A177D6B92356FECD0053A0D6 /* world */,
 				A14F936D2354557D00D5C6D0 /* test */,
@@ -167,6 +177,7 @@
 		A12428B723437FC6001D2276 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A188B44F23799626003A637E /* librabbitmq.a */,
 				A12428BE23438A4B001D2276 /* libGLEW.2.1.0.dylib */,
 				A12428BC23438A26001D2276 /* libglfw.3.3.dylib */,
 				A12428BA23438744001D2276 /* OpenGL.framework */,
@@ -233,6 +244,17 @@
 				A188B44623795582003A637E /* World.hpp */,
 			);
 			path = world;
+			sourceTree = "<group>";
+		};
+		A188B44E23799558003A637E /* mq_client */ = {
+			isa = PBXGroup;
+			children = (
+				A188B454237996E3003A637E /* FibonacciRpcClient.cpp */,
+				A188B452237996E3003A637E /* FibonacciRpcClient.hpp */,
+				A188B451237996E3003A637E /* utils.c */,
+				A188B453237996E3003A637E /* utils.h */,
+			);
+			path = mq_client;
 			sourceTree = "<group>";
 		};
 		A1ABABCC2347192300141B4F /* Res */ = {
@@ -366,6 +388,7 @@
 				A189B289234DE7910022A5DB /* VertexArray.cpp in Sources */,
 				A1C6F3A12350794900C87B58 /* Texture.cpp in Sources */,
 				A1484CB623745B4600823B68 /* Graphics.cpp in Sources */,
+				A188B456237996E4003A637E /* utils.c in Sources */,
 				A1CA44B72353475C00E6C006 /* imgui.cpp in Sources */,
 				A188B44C23795A70003A637E /* WindowEventCallback.cpp in Sources */,
 				A1C6F39C2350774D00C87B58 /* stb_image.hpp in Sources */,
@@ -384,6 +407,7 @@
 				A1CA44B32353475C00E6C006 /* imgui_demo.cpp in Sources */,
 				A189B286234DCE8F0022A5DB /* Shader.cpp in Sources */,
 				A177D6BC2356FFB50053A0D6 /* DebugDraw.cpp in Sources */,
+				A188B457237996E4003A637E /* FibonacciRpcClient.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -510,12 +534,14 @@
 				HEADER_SEARCH_PATHS = (
 					"${SRCROOT}/ExternalLibraries/Box2D/Include",
 					/usr/local/include,
+					"${SRCROOT}/ExternalLibraries/RabbitMQ/header",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/ExternalLibraries/Box2D/Lib",
 					/usr/local/Cellar/glfw/3.3/lib,
 					/usr/local/Cellar/glew/2.1.0/lib,
+					"$(PROJECT_DIR)/ExternalLibraries/RabbitMQ/lib",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -530,12 +556,14 @@
 				HEADER_SEARCH_PATHS = (
 					"${SRCROOT}/ExternalLibraries/Box2D/Include",
 					/usr/local/include,
+					"${SRCROOT}/ExternalLibraries/RabbitMQ/header",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/ExternalLibraries/Box2D/Lib",
 					/usr/local/Cellar/glfw/3.3/lib,
 					/usr/local/Cellar/glew/2.1.0/lib,
+					"$(PROJECT_DIR)/ExternalLibraries/RabbitMQ/lib",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

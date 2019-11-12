@@ -15,8 +15,8 @@
 #include "DebugDraw.hpp"
 #include "glm/glm.hpp"
 
-#define CUTE_C2_IMPLEMENTATION
-#include "cute_c2.h"
+//#define CUTE_C2_IMPLEMENTATION
+//#include "cute_c2.h"
 
 namespace test {
 
@@ -68,79 +68,79 @@ public:
     
     bool ReportFixture(b2Fixture *fixture) override
     {
-        b2Body *body = fixture->GetBody();
-            
-        if (body->GetType() == b2_dynamicBody && m_BodyFixture == nullptr)
-        {
-            if (CollidWithFixture(fixture, body))
-            {
-                m_BodyFixture = fixture;
-            }
-        }
-        else if (body->GetType() == b2_staticBody && m_GroundFixture == nullptr)
-        {
-            if (CollidWithFixture(fixture, body))
-            {
-                m_GroundFixture = fixture;
-            }
-        }
-        
-        if (m_BodyFixture != nullptr && m_GroundFixture != nullptr)
-        {
-            return false;
-        }
+//        b2Body *body = fixture->GetBody();
+//
+//        if (body->GetType() == b2_dynamicBody && m_BodyFixture == nullptr)
+//        {
+//            if (CollidWithFixture(fixture, body))
+//            {
+//                m_BodyFixture = fixture;
+//            }
+//        }
+//        else if (body->GetType() == b2_staticBody && m_GroundFixture == nullptr)
+//        {
+//            if (CollidWithFixture(fixture, body))
+//            {
+//                m_GroundFixture = fixture;
+//            }
+//        }
+//
+//        if (m_BodyFixture != nullptr && m_GroundFixture != nullptr)
+//        {
+//            return false;
+//        }
         
         return true;
     }
     
-    c2v b2vToc2v(b2Vec2 b2)
-    {
-        c2v c2;
-        c2.x = b2.x;
-        c2.y = b2.y;
-        return c2;
-    }
-    
-    c2r b2rToc2r(b2Rot b2)
-    {
-        c2r c2;
-        c2.c = b2.c;
-        c2.s = b2.s;
-        return c2;
-    }
-    
-    void copyArrayToc2v(c2v c2vArray[], b2Vec2 b2vArray[], int count)
-    {
-        for (int i = 0; i < count; i++)
-        {
-            c2vArray[i] = b2vToc2v(b2vArray[i]);
-        }
-    }
-    
-    bool CollidWithFixture(b2Fixture *fixture, b2Body *body)
-    {
-        if (fixture->GetShape()->GetType() == b2Shape::e_polygon)
-        {
-            b2Transform transform = body->GetTransform();
-            b2PolygonShape *shape = (b2PolygonShape*)fixture->GetShape();
-            c2AABB a;
-            a.min = b2vToc2v(m_AABB->lowerBound);
-            a.max = b2vToc2v(m_AABB->upperBound);
-            c2Poly b;
-            b.count = shape->m_count;
-            copyArrayToc2v(b.verts, shape->m_vertices, b.count);
-            copyArrayToc2v(b.norms, shape->m_normals, b.count);
-            c2x x;
-            x.p = b2vToc2v(transform.p);
-            x.r = b2rToc2r(transform.q);
-            if(c2AABBtoPoly(a, &b, &x))
-            {
-                return true;
-            }
-        }
-        
-        return false;
-    }
+//    c2v b2vToc2v(b2Vec2 b2)
+//    {
+//        c2v c2;
+//        c2.x = b2.x;
+//        c2.y = b2.y;
+//        return c2;
+//    }
+//
+//    c2r b2rToc2r(b2Rot b2)
+//    {
+//        c2r c2;
+//        c2.c = b2.c;
+//        c2.s = b2.s;
+//        return c2;
+//    }
+//
+//    void copyArrayToc2v(c2v c2vArray[], b2Vec2 b2vArray[], int count)
+//    {
+//        for (int i = 0; i < count; i++)
+//        {
+//            c2vArray[i] = b2vToc2v(b2vArray[i]);
+//        }
+//    }
+//
+//    bool CollidWithFixture(b2Fixture *fixture, b2Body *body)
+//    {
+//        if (fixture->GetShape()->GetType() == b2Shape::e_polygon)
+//        {
+//            b2Transform transform = body->GetTransform();
+//            b2PolygonShape *shape = (b2PolygonShape*)fixture->GetShape();
+//            c2AABB a;
+//            a.min = b2vToc2v(m_AABB->lowerBound);
+//            a.max = b2vToc2v(m_AABB->upperBound);
+//            c2Poly b;
+//            b.count = shape->m_count;
+//            copyArrayToc2v(b.verts, shape->m_vertices, b.count);
+//            copyArrayToc2v(b.norms, shape->m_normals, b.count);
+//            c2x x;
+//            x.p = b2vToc2v(transform.p);
+//            x.r = b2rToc2r(transform.q);
+////            if(c2AABBtoPoly(a, &b, &x))
+////            {
+////                return true;
+////            }
+//        }
+//
+//        return false;
+//    }
 };
 
 TestBox2D::TestBox2D() : m_TestBodyPosition(0, 0), m_HeadInitialPosition(0.0f, 0.0f), m_mouseJoint(nullptr)
