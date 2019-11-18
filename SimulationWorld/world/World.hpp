@@ -16,6 +16,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include "Canvas.hpp"
+#include "Environment.hpp"
 
 // 机器人身体和模拟环境用户数据
 enum WorldBodyType {
@@ -43,26 +44,35 @@ struct RobotBodyPart
     WorldBodyType worldBodyType;
 };
 
-class World
+class World : Environment
 {
 public:
     World();
     ~World();
+    
 
-    void Step();
-    void OnRender();
-    void OnImGuiRender();
+    Result Reset() override;
+    Result Step(Action &action) override;
+    void Render() override;
+    
     void MouseDown(const b2Vec2& p);
     void MouseUp(const b2Vec2& p);
     void ShiftMouseDown(const b2Vec2& p);
     void MouseMove(const b2Vec2& p);
     void Keyboard(int key);
-    void GetVision();
-    
+
+private:
+    void GetVision(float vision[]);
     void SetWaistMotorSpeed(float speed);
     void SetKneeMotorSpeed(float speed);
     void SetAnkleMotorSpeed(float speed);
-private:
+    
+    void OnRender();
+    void OnImGuiRender();
+    void CreateHopperRobot();
+    
+    float GetVisionScore(b2Fixture *body, b2Fixture* ground);
+    
     b2World* m_World;
     b2Body* CreateDynamicBody(float32 x, float32 y, float32 halfWidth, float32 halfHeight, float32 desity, float32 friction);
     b2Body* CreateStaticBody(float32 x, float32 y, float32 halfWidth, float32 halfHeight);
@@ -93,9 +103,12 @@ private:
     // 将该范围内看到的内容储存到 VISION_SIZE 的数组中
     static const int VISION_SIZE = 20;
     constexpr static const float VISION_LENGTH = 2.0f;
-    float32 m_Vision [VISION_SIZE][VISION_SIZE];
+    float32 m_Vision [VISION_SIZE * VISION_SIZE];
 
     RobotBodyPart m_RobotHead;
+    RobotBodyPart m_RobotThigh;
+    RobotBodyPart m_RobotCalf;
+    RobotBodyPart m_RobotFoot;
 
     Canvas *m_Canvas;
 };

@@ -119,9 +119,9 @@ int main(void)
             
             /* begin writing code here */
 
-            world->Step();
-            world->OnRender();
-            world->OnImGuiRender();
+            Action action;
+            world->Step(action);
+            world->Render();
      
             /* end writing code here */
             

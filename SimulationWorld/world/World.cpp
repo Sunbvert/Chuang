@@ -10,6 +10,7 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <iostream>
 
 #include "imgui/imgui.h"
 #include "DebugDraw.hpp"
@@ -147,7 +148,15 @@ World::World() : m_TestBodyPosition(0, 0), m_HeadInitialPosition(0.0f, 0.0f), m_
     b2Vec2 gravity(0.0f, -10.0f);
     m_World = new b2World(gravity);
     m_World->SetDebugDraw(&g_debugDraw);
+    
+    CreateHopperRobot();
 
+    m_Canvas = new Canvas();
+//    GetVision();
+}
+
+void World::CreateHopperRobot()
+{
     b2BodyDef bodyDef;
     m_groundBody = m_World->CreateBody(&bodyDef);
 
@@ -174,14 +183,14 @@ World::World() : m_TestBodyPosition(0, 0), m_HeadInitialPosition(0.0f, 0.0f), m_
     b2Body* foot = CreateDynamicBody(footCenter.x, footCenter.y, footSize.x / 2, footSize.y / 2, 1.0f, 0.3f);
 
     m_RobotHead.Set(head, HEAD);
-    RobotBodyPart robotThigh(thigh, THIGH);
-    RobotBodyPart robotCalf(calf, CALF);
-    RobotBodyPart robotFoot(foot, FOOT);
+    m_RobotThigh.Set(thigh, THIGH);
+    m_RobotCalf.Set(calf, CALF);
+    m_RobotFoot.Set(foot, FOOT);
 
     head->SetUserData(&m_RobotHead);
-    thigh->SetUserData(&robotThigh);
-    calf->SetUserData(&robotCalf);
-    foot->SetUserData(&robotFoot);
+    thigh->SetUserData(&m_RobotThigh);
+    calf->SetUserData(&m_RobotCalf);
+    foot->SetUserData(&m_RobotFoot);
 
     m_WaistAngleLimit.Set(-0.25f * b2_pi, 0.5f * b2_pi);
     m_KneeAngleLimit.Set(-1.0f * b2_pi, 0.1f * b2_pi);
@@ -190,9 +199,6 @@ World::World() : m_TestBodyPosition(0, 0), m_HeadInitialPosition(0.0f, 0.0f), m_
     m_WaistJoint = CreateRevoluteJoint(head, thigh, b2Vec2(headCenter.x, headCenter.y - headSize.y / 2), true, m_WaistAngleLimit.x, m_WaistAngleLimit.y);
     m_KneeJoint = CreateRevoluteJoint(thigh, calf, b2Vec2(headCenter.x, thighCenter.y - thighSize.y / 2), true, m_KneeAngleLimit.x, m_KneeAngleLimit.y);
     m_AnkleJoint = CreateRevoluteJoint(calf, foot, b2Vec2(headCenter.x, calfCenter.y - calfSize.y / 2), true, m_AnkleAngleLimit.x, m_AnkleAngleLimit.y);
-
-    m_Canvas = new Canvas();
-//    GetVision();
 }
 
 void World::Keyboard(int key)
@@ -264,10 +270,9 @@ b2Body* World::CreateStaticBody(float32 x, float32 y, float32 halfWidth, float32
     return body;
 }
 
-void World::GetVision()
+void World::GetVision(float vision[])
 {
     b2Vec2 visionCenter = m_RobotHead.body->GetWorldCenter();
-    float32 vision[VISION_SIZE][VISION_SIZE];
     b2AABB aabb;
 
     float cellLength = VISION_LENGTH / VISION_SIZE;
@@ -286,19 +291,62 @@ void World::GetVision()
             aabb.upperBound = b2Vec2(visionCenter.x - VISION_LENGTH / 2 + j * cellLength, visionCenter.y + VISION_LENGTH / 2 - i * cellLength);
             aabb.lowerBound = aabb.upperBound + b2Vec2(cellLength, -cellLength);
 
-//            b2Vec2 center = aabb.GetCenter();
-//            m_Canvas->DrawSquare(center.x, center.y, cellLength, cellLength, color);
-
             VisionQueryCallback callback(&aabb);
             m_World->QueryAABB(&callback, aabb);
 
-            if (callback.m_BodyFixture || callback.m_GroundFixture)
-            {
+//            if (callback.m_BodyFixture && callback.m_GroundFixture)
+//            {
+                float score = GetVisionScore(callback.m_BodyFixture, callback.m_GroundFixture);
+            
+                vision[j + i * VISION_SIZE] = score;
+                
                 b2Vec2 center = aabb.GetCenter();
-                m_Canvas->DrawSquare(center.x, center.y, cellLength, cellLength, color);
-            }
+                m_Canvas->DrawSquare(center.x, center.y, cellLength, cellLength, glm::vec4(score, 0.0f, 0.0f, 1.0f));
+//            }
+//            else if (callback.m_BodyFixture)
+//            {
+//
+//            }
+//            else if (callback.m_GroundFixture)
+//            {
+//
+//            }
+//            else
+//            {
+//
+//            }
         }
     }
+}
+
+float World::GetVisionScore(b2Fixture *body, b2Fixture *ground)
+{
+    float score = 0;
+    if (body)
+    {
+        RobotBodyPart *part = (RobotBodyPart*)body->GetBody()->GetUserData();
+        switch (part->worldBodyType) {
+            case HEAD:
+                score = 0.1f;
+                break;
+            case THIGH:
+                score = 0.2f;
+                break;
+            case CALF:
+                score = 0.3f;
+                break;
+            case FOOT:
+                score = 0.4f;
+                break;
+            default:
+                break;
+        }
+    }
+    if (ground)
+    {
+        score += 0.5f;
+    }
+    return score;
 }
 
 void World::MouseDown(const b2Vec2& p)
@@ -364,18 +412,37 @@ World::~World()
     m_World = nullptr;
 }
 
-void World::Step()
+Result World::Step(Action &action)
 {
     float32 timeStep = 1.0f / 60.0f;
     int32 velocityIterations = 6;
     int32 positionIterations = 2;
 
     // Update
-
+    
 
     m_World->Step(timeStep, velocityIterations, positionIterations);
     
-    GetVision();
+    //GetVision(m_Vision);
+    
+    float a[] = {1.0f, 1.0f};
+    std::map<std::string, std::string> b;
+    Result result(a, 1.0f, true, b);
+    return result;
+}
+
+void World::Render()
+{
+    OnRender();
+    OnImGuiRender();
+}
+
+Result World::Reset()
+{
+    float a[] = {1.0f, 1.0f};
+    std::map<std::string, std::string> b;
+    Result result(a, 1.0f, true, b);
+    return result;
 }
 
 void World::OnRender()
@@ -386,9 +453,6 @@ void World::OnRender()
     // Render stuff
 
     m_Canvas->OnRender();
-
-    //g_debugDraw.DrawString(5, 5, "Press 'a' to control the flippers");
-    //m_TextLine += 16;
 
     m_World->DrawDebugData();
     g_debugDraw.Flush();
@@ -401,7 +465,6 @@ void World::OnImGuiRender()
         g_camera.center.Set(0.0f, 0.0f);
         g_camera.zoom = 1.0f;
     }
-    ImGui::SliderFloat2("Test Body Transform", &m_TestBodyPosition.x, -3.0f, 3.0f);
     if (ImGui::Button("begin RPC"))
     {
         FibonacciRpcClient *client = new FibonacciRpcClient();
