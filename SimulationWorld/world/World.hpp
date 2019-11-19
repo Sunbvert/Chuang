@@ -117,7 +117,6 @@ private:
     b2World* m_World;
     b2Body* CreateDynamicBody(float32 x, float32 y, float32 halfWidth, float32 halfHeight, float32 desity, float32 friction);
     b2Body* CreateStaticBody(float32 x, float32 y, float32 halfWidth, float32 halfHeight);
-    b2Body* m_TestBody;
     b2Body* m_groundBody;
 
     bool debugDraw = false;
@@ -127,10 +126,6 @@ private:
 
     b2MouseJoint* m_mouseJoint;
 
-    glm::mat4 m_Proj, m_View;
-    glm::vec3 m_Translation;
-
-    glm::vec2 m_TestBodyPosition;
     glm::vec2 m_HeadInitialPosition;
 
     b2Vec2 m_WaistAngleLimit;

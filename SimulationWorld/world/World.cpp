@@ -143,7 +143,7 @@ public:
     }
 };
 
-World::World() : m_TestBodyPosition(0, 0), m_HeadInitialPosition(0.0f, 0.0f), m_mouseJoint(nullptr)
+World::World() : m_HeadInitialPosition(0.0f, 0.0f), m_mouseJoint(nullptr)
 {
     b2Vec2 gravity(0.0f, -10.0f);
     m_World = new b2World(gravity);
@@ -152,19 +152,6 @@ World::World() : m_TestBodyPosition(0, 0), m_HeadInitialPosition(0.0f, 0.0f), m_
     m_HeadContactListener = new HeadContactListener(&done);
     m_World->SetContactListener(m_HeadContactListener);
     
-    CreateHopperRobot();
-    
-    observation_space.Set(VISION_SIZE * VISION_SIZE + FEATURE_SIZE, 1);
-    action_space.Set(FEATURE_SIZE, 1);
-    
-    Reset();
-
-    m_Canvas = new Canvas();
-//    GetObservation();
-}
-
-void World::CreateHopperRobot()
-{
     b2BodyDef bodyDef;
     m_groundBody = m_World->CreateBody(&bodyDef);
 
@@ -174,7 +161,21 @@ void World::CreateHopperRobot()
     b2PolygonShape groundBox;
     groundBox.SetAsBox(2.5f, 0.25f);
     groundBody->CreateFixture(&groundBox, 0.0f);
+    
+    CreateHopperRobot();
+    
+    observation_space.Set(VISION_SIZE * VISION_SIZE + FEATURE_SIZE, 1);
+    action_space.Set(FEATURE_SIZE, 1);
+    
+    done = false;
+    WorldRunTime = 0;
+    WorldBeginTime = glfwGetTime();
 
+    m_Canvas = new Canvas();
+}
+
+void World::CreateHopperRobot()
+{
     b2Vec2 headSize(0.4f, 0.2f);
     b2Vec2 thighSize(0.1f, 0.4f);
     b2Vec2 calfSize(0.1f, 0.3f);
@@ -275,7 +276,7 @@ void World::GetObservation(float observation[])
 
     //b2Vec2 center = aabb.GetCenter();
     m_Canvas->Clear();
-    m_Canvas->DrawSquare(-1.0, 1.0, cellLength, cellLength, color);
+//    m_Canvas->DrawSquare(-1.0, 1.0, cellLength, cellLength, color);
 
     for (int i = 0; i < VISION_SIZE; i++)
     {
@@ -308,7 +309,7 @@ float World::GetReward()
     WorldRunTime = glfwGetTime() - WorldBeginTime;
     float reward = position.x * 100 - (float)WorldRunTime;
     
-    std::cout << reward << std::endl;
+    //std::cout << reward << std::endl;
     return reward;
 }
 
@@ -458,9 +459,24 @@ void World::Render()
 
 Result World::Reset()
 {
+    // Delete
+    m_World->DestroyBody(m_RobotHead.body);
+    m_World->DestroyBody(m_RobotThigh.body);
+    m_World->DestroyBody(m_RobotCalf.body);
+    m_World->DestroyBody(m_RobotFoot.body);
+    
+    delete m_HeadContactListener;
+    m_HeadContactListener = nullptr;
+    
+    // Regernate
     done = false;
     WorldRunTime = 0;
     WorldBeginTime = glfwGetTime();
+    
+    CreateHopperRobot();
+    
+    m_HeadContactListener = new HeadContactListener(&done);
+    m_World->SetContactListener(m_HeadContactListener);
     
     float a[] = {1.0f, 1.0f};
     std::map<std::string, std::string> b;
