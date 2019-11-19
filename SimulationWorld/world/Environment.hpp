@@ -29,9 +29,14 @@ struct Result
     }
 };
 
-struct Action
+struct Space
 {
-    float *action = nullptr;
+    int Size[2];
+    void Set(int x, int y)
+    {
+        Size[0] = x;
+        Size[1] = y;
+    }
 };
 
 class Environment
@@ -39,7 +44,7 @@ class Environment
 public:
     Environment() {}
     virtual ~Environment() {}
-    virtual Result Step(Action &action) = 0;
+    virtual Result Step(float action[]) = 0;
     virtual Result Reset() = 0;
     virtual void Render() = 0;
 };

@@ -32,6 +32,7 @@ void glfwErrorCallback(int error, const char *description)
 
 int main(void)
 {
+    srand (static_cast <unsigned> (time(0)));
     glfwSetErrorCallback(glfwErrorCallback);
     
     g_camera.width = 1024;
@@ -119,7 +120,8 @@ int main(void)
             
             /* begin writing code here */
 
-            Action action;
+            float action[3];
+            world->SampleAction(action);
             world->Step(action);
             world->Render();
      

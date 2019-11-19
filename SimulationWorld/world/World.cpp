@@ -149,10 +149,18 @@ World::World() : m_TestBodyPosition(0, 0), m_HeadInitialPosition(0.0f, 0.0f), m_
     m_World = new b2World(gravity);
     m_World->SetDebugDraw(&g_debugDraw);
     
+    m_HeadContactListener = new HeadContactListener(&done);
+    m_World->SetContactListener(m_HeadContactListener);
+    
     CreateHopperRobot();
+    
+    observation_space.Set(VISION_SIZE * VISION_SIZE + FEATURE_SIZE, 1);
+    action_space.Set(FEATURE_SIZE, 1);
+    
+    Reset();
 
     m_Canvas = new Canvas();
-//    GetVision();
+//    GetObservation();
 }
 
 void World::CreateHopperRobot()
@@ -212,21 +220,6 @@ void World::Keyboard(int key)
     }
 }
 
-void World::SetWaistMotorSpeed(float speed)
-{
-    m_WaistJoint->SetMotorSpeed(speed);
-}
-
-void World::SetKneeMotorSpeed(float speed)
-{
-    m_KneeJoint->SetMotorSpeed(speed);
-}
-
-void World::SetAnkleMotorSpeed(float speed)
-{
-    m_AnkleJoint->SetMotorSpeed(speed);
-}
-
 b2RevoluteJoint* World::CreateRevoluteJoint(b2Body *bodyA, b2Body *bodyB, b2Vec2 anchor, bool enableLimit, float32 lowerAngle, float32 upperAngle)
 {
     b2RevoluteJointDef jointDef;
@@ -270,7 +263,7 @@ b2Body* World::CreateStaticBody(float32 x, float32 y, float32 halfWidth, float32
     return body;
 }
 
-void World::GetVision(float vision[])
+void World::GetObservation(float observation[])
 {
     b2Vec2 visionCenter = m_RobotHead.body->GetWorldCenter();
     b2AABB aabb;
@@ -294,29 +287,29 @@ void World::GetVision(float vision[])
             VisionQueryCallback callback(&aabb);
             m_World->QueryAABB(&callback, aabb);
 
-//            if (callback.m_BodyFixture && callback.m_GroundFixture)
-//            {
-                float score = GetVisionScore(callback.m_BodyFixture, callback.m_GroundFixture);
+            float score = GetVisionScore(callback.m_BodyFixture, callback.m_GroundFixture);
+        
+            observation[j + i * VISION_SIZE] = score;
             
-                vision[j + i * VISION_SIZE] = score;
-                
-                b2Vec2 center = aabb.GetCenter();
-                m_Canvas->DrawSquare(center.x, center.y, cellLength, cellLength, glm::vec4(score, 0.0f, 0.0f, 1.0f));
-//            }
-//            else if (callback.m_BodyFixture)
-//            {
-//
-//            }
-//            else if (callback.m_GroundFixture)
-//            {
-//
-//            }
-//            else
-//            {
-//
-//            }
+            b2Vec2 center = aabb.GetCenter();
+            m_Canvas->DrawSquare(center.x, center.y, cellLength, cellLength, glm::vec4(score, 0.0f, 0.0f, 1.0f));
         }
     }
+    
+    int featureStart = VISION_SIZE * VISION_SIZE;
+    observation[featureStart] = m_WaistJoint->GetJointSpeed();
+    observation[featureStart + 1] = m_KneeJoint->GetJointSpeed();
+    observation[featureStart + 2] = m_AnkleJoint->GetJointSpeed();
+}
+
+float World::GetReward()
+{
+    b2Vec2 position = m_RobotHead.body->GetPosition();
+    WorldRunTime = glfwGetTime() - WorldBeginTime;
+    float reward = position.x * 100 - (float)WorldRunTime;
+    
+    std::cout << reward << std::endl;
+    return reward;
 }
 
 float World::GetVisionScore(b2Fixture *body, b2Fixture *ground)
@@ -409,26 +402,52 @@ void World::MouseMove(const b2Vec2& p)
 World::~World()
 {
     delete m_World;
-    m_World = nullptr;
+    delete m_HeadContactListener;
+    //m_World = nullptr;
 }
 
-Result World::Step(Action &action)
+Result World::Step(float action[])
 {
     float32 timeStep = 1.0f / 60.0f;
     int32 velocityIterations = 6;
     int32 positionIterations = 2;
 
     // Update
+    TakeAction(action);
     
-
     m_World->Step(timeStep, velocityIterations, positionIterations);
     
-    //GetVision(m_Vision);
+    GetObservation(m_Observation);
+    float reward = GetReward();
     
-    float a[] = {1.0f, 1.0f};
+    if (done)
+    {
+        reward -= 100;
+    }
+    
     std::map<std::string, std::string> b;
-    Result result(a, 1.0f, true, b);
+    Result result(m_Observation, reward, true, b);
     return result;
+}
+
+void World::SampleAction(float action[])
+{
+    float action_low = -20.0f;
+    float action_high = 20.0f;
+    
+    for (int i = 0; i < FEATURE_SIZE; i++)
+    {
+        /* generate secret number between 0.0 and 1.0 : */
+        float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+        action[i] = r * (action_high - action_low) - action_high;
+    }
+}
+
+void World::TakeAction(float action[])
+{
+    m_WaistJoint->SetMotorSpeed(action[0]);
+    m_KneeJoint->SetMotorSpeed(action[1]);
+    m_AnkleJoint->SetMotorSpeed(action[2]);
 }
 
 void World::Render()
@@ -439,6 +458,10 @@ void World::Render()
 
 Result World::Reset()
 {
+    done = false;
+    WorldRunTime = 0;
+    WorldBeginTime = glfwGetTime();
+    
     float a[] = {1.0f, 1.0f};
     std::map<std::string, std::string> b;
     Result result(a, 1.0f, true, b);
@@ -469,5 +492,19 @@ void World::OnImGuiRender()
     {
         FibonacciRpcClient *client = new FibonacciRpcClient();
         client->Call();
+    }
+    
+    if (ImGui::Button("Reset World"))
+    {
+        Reset();
+    }
+    
+    ImGui::Text("my waist angle speed: %f", m_WaistJoint->GetJointSpeed());
+    ImGui::Text("my knee angle speed: %f", m_KneeJoint->GetJointSpeed());
+    ImGui::Text("my ankle angle speed: %f", m_AnkleJoint->GetJointSpeed());
+    
+    if (done)
+    {
+        ImGui::Text("Done, Head contact detacted!");
     }
 }
