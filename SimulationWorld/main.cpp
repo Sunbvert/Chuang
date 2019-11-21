@@ -121,7 +121,7 @@ int main(void)
             /* begin writing code here */
 
             float action[3] = {0.0f, 0.0f, 0.0f};
-            //world->SampleAction(action);
+            world->SampleAction(action);
             world->Step(action);
             world->Render();
      

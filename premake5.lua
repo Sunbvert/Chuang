@@ -3,17 +3,27 @@
 
 workspace 'Chuang'
     configurations('Debug', 'Release')
+    location 'Build'
+    cppdialect 'C++17'
+    platforms { 'x86_64' }
 
 project 'Chuang'
     kind 'ConsoleApp'
-    libdirs { "ExternalLibraries/Box2D/Lib", "ExternalLibraries/RabbitMQ/lib" }
-    includedirs { '.' }
+    includedirs
+    {
+         'SimulationWorld/mq_client',
+         'SimulationWorld/render',
+         'SimulationWorld/world',
+         'SimulationWorld/test',
+         'SimulationWorld/vendor/cute',
+         'SimulationWorld/vendor/stb_image',
+         'SimulationWorld/vendor'
+     }
     language 'C++'
-
     files
     {
         'Res/Texture/*',
-        'Res/Shader/*',
+        'Res/Shader/*.shader',
         'SimulationWorld/mq_client/*',
         'SimulationWorld/render/*',
         'SimulationWorld/world/*',
@@ -26,11 +36,52 @@ project 'Chuang'
         'SimulationWorld/*.hpp'
     }
 
+    filter { 'system:macosx' }
+        libdirs
+        {
+             'ExternalLibraries/macosx/Box2D/Lib',
+             'ExternalLibraries/macosx/RabbitMQ/lib',
+             'ExternalLibraries/macosx/GLEW/lib',
+             'ExternalLibraries/macosx/GLFW/lib'
+         }
+         includedirs
+         {
+              'ExternalLibraries/macosx/Box2D/Include',
+              'ExternalLibraries/macosx/RabbitMQ/header'
+         }
+        links
+        {
+            'Box2D',
+            'Opengl.framework',
+            'rabbitmq',
+            'GLEW',
+            'glfw'
+        }
+    filter {}
+
     filter { 'system:linux' }
+        libdirs
+        {
+             'ExternalLibraries/linux/Box2D/Lib',
+             'ExternalLibraries/linux/RabbitMQ/lib'
+         }
+         includedirs
+         {
+              'ExternalLibraries/linux/Box2D/Include',
+              'ExternalLibraries/linux/RabbitMQ/header'
+         }
         links
         {
             'Box2D',
             'GL',
             'GLEW',
-            'glfw'
+            'glfw3',
+            'X11',
+            'Xrandr',
+            'Xinerama',
+            'Xcursor',
+            'pthread',
+            'dl',
+            'rabbitmq'
         }
+    filter {}

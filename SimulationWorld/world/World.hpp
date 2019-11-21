@@ -145,7 +145,7 @@ private:
     // 将该范围内看到的内容储存到 VISION_SIZE 的数组中
     static const int VISION_SIZE = 20;
     static const int FEATURE_SIZE = 3;
-    constexpr static const float VISION_LENGTH = 2.0f;
+    constexpr static const float VISION_LENGTH = 4.0f;
     float32 m_Observation [VISION_SIZE * VISION_SIZE + FEATURE_SIZE];
 
     RobotBodyPart m_RobotHead;

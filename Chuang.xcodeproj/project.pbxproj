@@ -14,13 +14,14 @@
 		A12428BF23438A4B001D2276 /* libGLEW.2.1.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A12428BE23438A4B001D2276 /* libGLEW.2.1.0.dylib */; };
 		A1484CB3237459F600823B68 /* Canvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1484CB1237459F600823B68 /* Canvas.cpp */; };
 		A1484CB623745B4600823B68 /* Graphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1484CB423745B4600823B68 /* Graphics.cpp */; };
-		A1484CB82374772000823B68 /* BasicColor.shader in CopyFiles */ = {isa = PBXBuildFile; fileRef = A1484CB7237476AC00823B68 /* BasicColor.shader */; };
 		A14F93732354569C00D5C6D0 /* TestClearColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A14F93712354569C00D5C6D0 /* TestClearColor.cpp */; };
 		A14F93762354670000D5C6D0 /* TestMvp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A14F93742354670000D5C6D0 /* TestMvp.cpp */; };
 		A14F93782354A41300D5C6D0 /* Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A14F93772354A41300D5C6D0 /* Test.cpp */; };
 		A165EB2E23812C1A0018F049 /* Environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A165EB2C23812C1A0018F049 /* Environment.cpp */; };
 		A177D6BC2356FFB50053A0D6 /* DebugDraw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A177D6BA2356FFB50053A0D6 /* DebugDraw.cpp */; };
 		A177D6BF235710420053A0D6 /* TestBox2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A177D6BD235710420053A0D6 /* TestBox2D.cpp */; };
+		A17C5FAD238680380024C87E /* Basic.shader in CopyFiles */ = {isa = PBXBuildFile; fileRef = A1ABABCE23471AC000141B4F /* Basic.shader */; };
+		A17C5FAE2386803F0024C87E /* BasicColor.shader in CopyFiles */ = {isa = PBXBuildFile; fileRef = A1484CB7237476AC00823B68 /* BasicColor.shader */; };
 		A188B44723795582003A637E /* World.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A188B44523795582003A637E /* World.cpp */; };
 		A188B44C23795A70003A637E /* WindowEventCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A188B44A23795A70003A637E /* WindowEventCallback.cpp */; };
 		A188B45023799626003A637E /* librabbitmq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A188B44F23799626003A637E /* librabbitmq.a */; };
@@ -29,7 +30,6 @@
 		A189B286234DCE8F0022A5DB /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A189B284234DCE8F0022A5DB /* Shader.cpp */; };
 		A189B289234DE7910022A5DB /* VertexArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A189B287234DE7910022A5DB /* VertexArray.cpp */; };
 		A192258D235591320017327B /* TestTexture2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A192258B235591320017327B /* TestTexture2D.cpp */; };
-		A1ABABD02347238400141B4F /* Basic.shader in CopyFiles */ = {isa = PBXBuildFile; fileRef = A1ABABCE23471AC000141B4F /* Basic.shader */; };
 		A1C6F39C2350774D00C87B58 /* stb_image.hpp in Sources */ = {isa = PBXBuildFile; fileRef = A1C6F39B2350774D00C87B58 /* stb_image.hpp */; };
 		A1C6F39E235078C100C87B58 /* stb_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1C6F39D235078C100C87B58 /* stb_image.cpp */; };
 		A1C6F3A12350794900C87B58 /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1C6F39F2350794900C87B58 /* Texture.cpp */; };
@@ -51,8 +51,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
-				A1484CB82374772000823B68 /* BasicColor.shader in CopyFiles */,
-				A1ABABD02347238400141B4F /* Basic.shader in CopyFiles */,
+				A17C5FAE2386803F0024C87E /* BasicColor.shader in CopyFiles */,
+				A17C5FAD238680380024C87E /* Basic.shader in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
