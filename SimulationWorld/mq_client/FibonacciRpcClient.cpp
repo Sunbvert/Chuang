@@ -11,7 +11,7 @@
 FibonacciRpcClient::FibonacciRpcClient()
 {
     m_Exchange = "";
-    m_Routingkey = "rpc_queue";
+    m_Routingkey = "ask_python";
     m_Messagebody = "Hello RPC!";
     
     /*

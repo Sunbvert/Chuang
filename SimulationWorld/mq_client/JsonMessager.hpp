@@ -21,7 +21,8 @@ class JsonMessager
 public:
     JsonMessager();
     ~JsonMessager();
-    
+   
+
     
 };
 
