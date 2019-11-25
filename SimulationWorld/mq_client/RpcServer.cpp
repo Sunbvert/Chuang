@@ -45,235 +45,117 @@
 RpcServer::RpcServer()
 {
     char const *hostname;
-  int port, status;
-  char const *exchange;
-  char const *bindingkey;
-  amqp_socket_t *socket = NULL;
+    int port, status;
+    char const *queuename;
+    amqp_socket_t *socket = NULL;
+    char const *messagebody;
 
-  amqp_bytes_t queuename;
+    hostname = "localhost";
+    port = 5672;
+    queuename = "ask_cpp";
 
-  if (argc < 3) {
-    fprintf(stderr, "Usage: amqp_consumer host port\n");
-    return 1;
-  }
+    m_conn = amqp_new_connection();
+    m_channel_id = 2;
 
-  hostname = "hostname";
-  port = 5672;
-  exchange = "";   /* argv[3]; */
-  bindingkey = "ask_cpp"; /* argv[4]; */
-
-  m_Connection = amqp_new_connection();
-
-  socket = amqp_tcp_socket_new(m_Connection);
-  if (!socket) {
-    die("creating TCP socket");
-  }
-
-  status = amqp_socket_open(socket, hostname, port);
-  if (status) {
-    die("opening TCP socket");
-  }
-
-  die_on_amqp_error(amqp_login(m_Connection, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN,
-                               "guest", "guest"),
-                    "Logging in");
-  amqp_channel_open(m_Connection, 1);
-  die_on_amqp_error(amqp_get_rpc_reply(m_Connection), "Opening channel");
-
-  {
-    amqp_queue_declare_ok_t *r = amqp_queue_declare(
-        m_Connection, 1, amqp_empty_bytes, 0, 0, 0, 1, amqp_empty_table);
-    die_on_amqp_error(amqp_get_rpc_reply(m_Connection), "Declaring queue");
-    queuename = amqp_bytes_malloc_dup(r->queue);
-    if (queuename.bytes == NULL) {
-      fprintf(stderr, "Out of memory while copying queue name");
-      return 1;
+    socket = amqp_tcp_socket_new(m_conn);
+    if (!socket)
+    {
+        die("creating TCP socket");
     }
-  }
 
-  amqp_queue_bind(m_Connection, 1, queuename, amqp_cstring_bytes(exchange),
-                  amqp_cstring_bytes(bindingkey), amqp_empty_table);
-  die_on_amqp_error(amqp_get_rpc_reply(m_Connection), "Binding queue");
+    status = amqp_socket_open(socket, hostname, port);
+    if (status)
+    {
+        die("opening TCP socket");
+    }
 
-  amqp_basic_consume(m_Connection, 1, queuename, amqp_empty_bytes, 0, 1, 0,
-                     amqp_empty_table);
-  die_on_amqp_error(amqp_get_rpc_reply(m_Connection), "Consuming");
+    die_on_amqp_error(amqp_login(m_conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN, "guest", "guest"),
+                    "Logging in");
+    amqp_channel_open(m_conn, m_channel_id);
+    die_on_amqp_error(amqp_get_rpc_reply(m_conn), "Opening channel");
+    
+    amqp_queue_declare(m_conn, m_channel_id, amqp_cstring_bytes(queuename), 0, 0, 0, 1, amqp_empty_table);
 
-  Run(m_Connection);
+    amqp_basic_consume(m_conn, m_channel_id, amqp_cstring_bytes(queuename), amqp_empty_bytes, 0, 1, 0, amqp_empty_table);
+    
+    die_on_amqp_error(amqp_get_rpc_reply(m_conn), "Consuming");
 }
 
 RpcServer::~RpcServer()
 {
-  die_on_amqp_error(amqp_channel_close(m_Connection, 1, AMQP_REPLY_SUCCESS),
+    die_on_amqp_error(amqp_channel_close(m_conn, m_channel_id, AMQP_REPLY_SUCCESS),
                     "Closing channel");
-  die_on_amqp_error(amqp_connection_close(m_Connection, AMQP_REPLY_SUCCESS),
+    die_on_amqp_error(amqp_connection_close(m_conn, AMQP_REPLY_SUCCESS),
                     "Closing connection");
-  die_on_error(amqp_destroy_connection(m_Connection), "Ending connection");
+    die_on_error(amqp_destroy_connection(m_conn), "Ending connection");
 }
 
-static void RpcServer::Run(amqp_connection_state_t conn) {
-  uint64_t start_time = now_microseconds();
-  int received = 0;
-  int previous_received = 0;
-  uint64_t previous_report_time = start_time;
-  uint64_t next_summary_time = start_time + SUMMARY_EVERY_US;
+void RpcServer::Run()
+{
+    const char *messagebody="body";
+    {
+        for (;;) {
+            amqp_rpc_reply_t res;
+            amqp_envelope_t envelope;
 
-  amqp_frame_t frame;
+            amqp_maybe_release_buffers(m_conn);
 
-  uint64_t now;
+            res = amqp_consume_message(m_conn, &envelope, NULL, 0);
 
-  for (;;) {
-    amqp_rpc_reply_t ret;
-    amqp_envelope_t envelope;
-
-    now = now_microseconds();
-    if (now > next_summary_time) {
-      int countOverInterval = received - previous_received;
-      double intervalRate =
-          countOverInterval / ((now - previous_report_time) / 1000000.0);
-      printf("%d ms: Received %d - %d since last report (%d Hz)\n",
-             (int)(now - start_time) / 1000, received, countOverInterval,
-             (int)intervalRate);
-
-      previous_received = received;
-      previous_report_time = now;
-      next_summary_time += SUMMARY_EVERY_US;
-    }
-
-    amqp_maybe_release_buffers(conn);
-    ret = amqp_consume_message(conn, &envelope, NULL, 0);
-
-    if (AMQP_RESPONSE_NORMAL != ret.reply_type) {
-      if (AMQP_RESPONSE_LIBRARY_EXCEPTION == ret.reply_type &&
-          AMQP_STATUS_UNEXPECTED_STATE == ret.library_error) {
-        if (AMQP_STATUS_OK != amqp_simple_wait_frame(conn, &frame)) {
-          return;
+            if (AMQP_RESPONSE_NORMAL != res.reply_type) {
+            break;
         }
+        /*
+        Once you've consumed a message and processed it,
+        your code should publish to the default exchange (amqp_empty_bytes),
+        with a routing key that is specified in the reply_to header in the request message.
+        Additionally your code should set the correlation_id header to be the same as what is in the request message.
+        */
+        printf("||Delivery %u,%d exchange %s  %d routingkey %s consumer_tag %s|| \n",
+             (unsigned) envelope.delivery_tag,
+             (int) envelope.exchange.len,
+            (char *) envelope.exchange.bytes,
+             (int) envelope.routing_key.len,
+            (char *) envelope.routing_key.bytes,
+            (char *) envelope.message.properties.reply_to.bytes);
 
-        if (AMQP_FRAME_METHOD == frame.frame_type) {
-          switch (frame.payload.method.id) {
-            case AMQP_BASIC_ACK_METHOD:
-              /* if we've turned publisher confirms on, and we've published a
-               * message here is a message being confirmed.
-               */
-              break;
-            case AMQP_BASIC_RETURN_METHOD:
-              /* if a published message couldn't be routed and the mandatory
-               * flag was set this is what would be returned. The message then
-               * needs to be read.
-               */
-              {
-                amqp_message_t message;
-                ret = amqp_read_message(conn, frame.channel, &message, 0);
-                if (AMQP_RESPONSE_NORMAL != ret.reply_type) {
-                  return;
-                }
+        printf("----\n");
 
-                amqp_destroy_message(&message);
-              }
+        amqp_dump(envelope.message.body.bytes, envelope.message.body.len);
 
-              break;
+        //ALE
 
-            case AMQP_CHANNEL_CLOSE_METHOD:
-              /* a channel.close method happens when a channel exception occurs,
-               * this can happen by publishing to an exchange that doesn't exist
-               * for example.
-               *
-               * In this case you would need to open another channel redeclare
-               * any queues that were declared auto-delete, and restart any
-               * consumers that were attached to the previous channel.
-               */
-              return;
+        amqp_basic_properties_t props;
+            props._flags = AMQP_BASIC_CONTENT_TYPE_FLAG |
+                       AMQP_BASIC_DELIVERY_MODE_FLAG |
+                       AMQP_BASIC_CORRELATION_ID_FLAG;
+            props.content_type = amqp_cstring_bytes("text/plain");
+            props.delivery_mode = 2; // persistent delivery mode
+        //Additionally your code should set the correlation_id header to be the same as what is in the request message.
+        //props.correlation_id = amqp_cstring_bytes("1");
+            props.correlation_id = envelope.message.properties.correlation_id;
 
-            case AMQP_CONNECTION_CLOSE_METHOD:
-              /* a connection.close method happens when a connection exception
-               * occurs, this can happen by trying to use a channel that isn't
-               * open for example.
-               *
-               * In this case the whole connection must be restarted.
-               */
-              return;
+        die_on_error(amqp_basic_publish(m_conn,
+                                        m_channel_id,
+        //your code should publish to the default exchange (amqp_empty_bytes)
+                        amqp_empty_bytes,
+        // with a routing key that is specified in the reply_to header in the request message.
+                                        amqp_cstring_bytes((char *)envelope.message.properties.reply_to.bytes),
+                        0,
+                                        0,
+                                        &props,
+                                        amqp_cstring_bytes(messagebody)),
+                     "Publishing");
 
-            default:
-              fprintf(stderr, "An unexpected method was received %u\n",
-                      frame.payload.method.id);
-              return;
-          }
+        printf("MESSAGEBODY:[%s]\n",messagebody);
+        //amqp_bytes_free(props.reply_to);
+
+
+        //END ALE
+
+
+
+        amqp_destroy_envelope(&envelope);
         }
-      }
-
-    } else {
-      amqp_destroy_envelope(&envelope);
     }
-
-    received++;
-  }
-}
-
-int main(int argc, char const *const *argv) {
-  char const *hostname;
-  int port, status;
-  char const *exchange;
-  char const *bindingkey;
-  amqp_socket_t *socket = NULL;
-  amqp_connection_state_t conn;
-
-  amqp_bytes_t queuename;
-
-  if (argc < 3) {
-    fprintf(stderr, "Usage: amqp_consumer host port\n");
-    return 1;
-  }
-
-  hostname = argv[1];
-  port = atoi(argv[2]);
-  exchange = "amq.direct";   /* argv[3]; */
-  bindingkey = "test queue"; /* argv[4]; */
-
-  conn = amqp_new_connection();
-
-  socket = amqp_tcp_socket_new(conn);
-  if (!socket) {
-    die("creating TCP socket");
-  }
-
-  status = amqp_socket_open(socket, hostname, port);
-  if (status) {
-    die("opening TCP socket");
-  }
-
-  die_on_amqp_error(amqp_login(conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN,
-                               "guest", "guest"),
-                    "Logging in");
-  amqp_channel_open(conn, 1);
-  die_on_amqp_error(amqp_get_rpc_reply(conn), "Opening channel");
-
-  {
-    amqp_queue_declare_ok_t *r = amqp_queue_declare(
-        conn, 1, amqp_empty_bytes, 0, 0, 0, 1, amqp_empty_table);
-    die_on_amqp_error(amqp_get_rpc_reply(conn), "Declaring queue");
-    queuename = amqp_bytes_malloc_dup(r->queue);
-    if (queuename.bytes == NULL) {
-      fprintf(stderr, "Out of memory while copying queue name");
-      return 1;
-    }
-  }
-
-  amqp_queue_bind(conn, 1, queuename, amqp_cstring_bytes(exchange),
-                  amqp_cstring_bytes(bindingkey), amqp_empty_table);
-  die_on_amqp_error(amqp_get_rpc_reply(conn), "Binding queue");
-
-  amqp_basic_consume(conn, 1, queuename, amqp_empty_bytes, 0, 1, 0,
-                     amqp_empty_table);
-  die_on_amqp_error(amqp_get_rpc_reply(conn), "Consuming");
-
-  run(conn);
-
-  die_on_amqp_error(amqp_channel_close(conn, 1, AMQP_REPLY_SUCCESS),
-                    "Closing channel");
-  die_on_amqp_error(amqp_connection_close(conn, AMQP_REPLY_SUCCESS),
-                    "Closing connection");
-  die_on_error(amqp_destroy_connection(conn), "Ending connection");
-
-  return 0;
 }

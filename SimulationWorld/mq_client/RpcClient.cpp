@@ -1,14 +1,14 @@
 //
-//  FibonacciRpcClient.cpp
+//  RpcClient.cpp
 //  amqpTest
 //
 //  Created by 孙川 on 2019/11/6.
 //  Copyright © 2019 孙川. All rights reserved.
 //
 
-#include "FibonacciRpcClient.hpp"
+#include "RpcClient.hpp"
 
-FibonacciRpcClient::FibonacciRpcClient()
+RpcClient::RpcClient()
 {
     m_Exchange = "";
     m_Routingkey = "ask_python";
@@ -54,7 +54,7 @@ FibonacciRpcClient::FibonacciRpcClient()
     }
 }
 
-FibonacciRpcClient::~FibonacciRpcClient()
+RpcClient::~RpcClient()
 {
     die_on_amqp_error(amqp_channel_close(m_Connection, 1, AMQP_REPLY_SUCCESS),
                       "Closing channel");
@@ -63,7 +63,7 @@ FibonacciRpcClient::~FibonacciRpcClient()
     die_on_error(amqp_destroy_connection(m_Connection), "Ending connection");
 }
 
-void FibonacciRpcClient::Call()
+void RpcClient::Call()
 {
     /*
        send the message
@@ -78,7 +78,7 @@ void FibonacciRpcClient::Call()
                      AMQP_BASIC_DELIVERY_MODE_FLAG | AMQP_BASIC_REPLY_TO_FLAG |
                      AMQP_BASIC_CORRELATION_ID_FLAG;
       props.content_type = amqp_cstring_bytes("text/plain");
-      props.delivery_mode = 2; /* persistent delivery mode */
+        props.delivery_mode = 2; /* persistent delivery mode */
       props.reply_to = amqp_bytes_malloc_dup(m_ReplyToQueue);
       if (props.reply_to.bytes == NULL) {
         fprintf(stderr, "Out of memory while copying queue name");
@@ -181,9 +181,7 @@ void FibonacciRpcClient::Call()
             /* We break here to close the connection */
             break;
           }
-        
-          
-
+            
           /* everything was fine, we can quit now because we received the reply */
           break;
         }

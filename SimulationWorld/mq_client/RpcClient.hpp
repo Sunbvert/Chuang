@@ -1,13 +1,13 @@
 //
-//  FibonacciRpcClient.hpp
+//  RpcClient.hpp
 //  amqpTest
 //
 //  Created by 孙川 on 2019/11/6.
 //  Copyright © 2019 孙川. All rights reserved.
 //
 
-#ifndef FibonacciRpcClient_hpp
-#define FibonacciRpcClient_hpp
+#ifndef RpcClient_hpp
+#define RpcClient_hpp
 
 #include <stdio.h>
 
@@ -20,11 +20,11 @@ extern "C" {
     #include "utils.h"
 }
 
-class FibonacciRpcClient
+class RpcClient
 {
 public:
-    FibonacciRpcClient();
-    ~FibonacciRpcClient();
+    RpcClient();
+    ~RpcClient();
     
     void OnResponse();
     void Call();
@@ -37,4 +37,4 @@ private:
     const char *m_Messagebody;
 };
 
-#endif /* FibonacciRpcClient_hpp */
+#endif /* RpcClient_hpp */

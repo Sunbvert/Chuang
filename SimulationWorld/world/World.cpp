@@ -15,7 +15,9 @@
 #include "imgui/imgui.h"
 #include "DebugDraw.hpp"
 #include "glm/glm.hpp"
-#include "FibonacciRpcClient.hpp"
+#include "RpcClient.hpp"
+#include "RpcServer.hpp"
+#include "MqRpc.hpp"
 
 #define CUTE_C2_IMPLEMENTATION
 #include "cute_c2.h"
@@ -504,10 +506,20 @@ void World::OnImGuiRender()
         g_camera.center.Set(0.0f, 0.0f);
         g_camera.zoom = 1.0f;
     }
-    if (ImGui::Button("begin RPC"))
+    if (ImGui::Button("Begin as RPC Client"))
     {
-        FibonacciRpcClient *client = new FibonacciRpcClient();
+        RpcClient *client = new RpcClient();
         client->Call();
+    }
+    if (ImGui::Button("Begin as RPC Server"))
+    {
+//        RpcServer *server = new RpcServer();
+//        server->Run();
+        MqRpc *rpc = new MqRpc();
+        rpc->EstablishConnection();
+        
+        json j = "{ \"happy\": true, \"pi\": 3.141 }"_json;
+        rpc->ServerRun(j);
     }
     
     if (ImGui::Button("Reset World"))
@@ -523,4 +535,9 @@ void World::OnImGuiRender()
     {
         ImGui::Text("Done, Head contact detacted!");
     }
+}
+
+void World::OnRecieveData(json &data)
+{
+    std::cout << "Data Recieved!" << std::endl;
 }

@@ -23,11 +23,12 @@
 		A17C5FAD238680380024C87E /* Basic.shader in CopyFiles */ = {isa = PBXBuildFile; fileRef = A1ABABCE23471AC000141B4F /* Basic.shader */; };
 		A17C5FAE2386803F0024C87E /* BasicColor.shader in CopyFiles */ = {isa = PBXBuildFile; fileRef = A1484CB7237476AC00823B68 /* BasicColor.shader */; };
 		A17C5FB22386C7830024C87E /* JsonMessager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17C5FB02386C7830024C87E /* JsonMessager.cpp */; };
+		A17C5FB8238818550024C87E /* RpcServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17C5FB7238818550024C87E /* RpcServer.cpp */; };
 		A188B44723795582003A637E /* World.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A188B44523795582003A637E /* World.cpp */; };
 		A188B44C23795A70003A637E /* WindowEventCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A188B44A23795A70003A637E /* WindowEventCallback.cpp */; };
 		A188B45023799626003A637E /* librabbitmq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A188B44F23799626003A637E /* librabbitmq.a */; };
 		A188B456237996E4003A637E /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = A188B451237996E3003A637E /* utils.c */; };
-		A188B457237996E4003A637E /* FibonacciRpcClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A188B454237996E3003A637E /* FibonacciRpcClient.cpp */; };
+		A188B457237996E4003A637E /* RpcClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A188B454237996E3003A637E /* RpcClient.cpp */; };
 		A189B286234DCE8F0022A5DB /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A189B284234DCE8F0022A5DB /* Shader.cpp */; };
 		A189B289234DE7910022A5DB /* VertexArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A189B287234DE7910022A5DB /* VertexArray.cpp */; };
 		A192258D235591320017327B /* TestTexture2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A192258B235591320017327B /* TestTexture2D.cpp */; };
@@ -40,6 +41,7 @@
 		A1CA44B62353475C00E6C006 /* imgui_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CA44AC2353475B00E6C006 /* imgui_draw.cpp */; };
 		A1CA44B72353475C00E6C006 /* imgui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CA44AF2353475C00E6C006 /* imgui.cpp */; };
 		A1CA44B82353475C00E6C006 /* imgui_impl_glfw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CA44B12353475C00E6C006 /* imgui_impl_glfw.cpp */; };
+		A1DC6201238A824600F24B32 /* MqRpc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DC61FF238A824600F24B32 /* MqRpc.cpp */; };
 		A1EFF1EA23476EC000869649 /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1EFF1E823476EC000869649 /* Renderer.cpp */; };
 		A1EFF1ED2347708700869649 /* VertexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1EFF1EB2347708700869649 /* VertexBuffer.cpp */; };
 		A1EFF1F02347732700869649 /* IndexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1EFF1EE2347732700869649 /* IndexBuffer.cpp */; };
@@ -86,16 +88,18 @@
 		A177D6BE235710420053A0D6 /* TestBox2D.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TestBox2D.hpp; sourceTree = "<group>"; };
 		A17C5FB02386C7830024C87E /* JsonMessager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JsonMessager.cpp; sourceTree = "<group>"; };
 		A17C5FB12386C7830024C87E /* JsonMessager.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = JsonMessager.hpp; sourceTree = "<group>"; };
-		A17C5FB42386C8200024C87E /* json.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
+		A17C5FB6238818550024C87E /* RpcServer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RpcServer.hpp; sourceTree = "<group>"; };
+		A17C5FB7238818550024C87E /* RpcServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcServer.cpp; sourceTree = "<group>"; };
+		A17DED78238AE2E200C65717 /* json.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
 		A188B44523795582003A637E /* World.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = World.cpp; sourceTree = "<group>"; };
 		A188B44623795582003A637E /* World.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = World.hpp; sourceTree = "<group>"; };
 		A188B44A23795A70003A637E /* WindowEventCallback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WindowEventCallback.cpp; sourceTree = "<group>"; };
 		A188B44B23795A70003A637E /* WindowEventCallback.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = WindowEventCallback.hpp; sourceTree = "<group>"; };
 		A188B44F23799626003A637E /* librabbitmq.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = librabbitmq.a; path = ExternalLibraries/RabbitMQ/lib/librabbitmq.a; sourceTree = "<group>"; };
 		A188B451237996E3003A637E /* utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };
-		A188B452237996E3003A637E /* FibonacciRpcClient.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FibonacciRpcClient.hpp; sourceTree = "<group>"; };
+		A188B452237996E3003A637E /* RpcClient.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RpcClient.hpp; sourceTree = "<group>"; };
 		A188B453237996E3003A637E /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
-		A188B454237996E3003A637E /* FibonacciRpcClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FibonacciRpcClient.cpp; sourceTree = "<group>"; };
+		A188B454237996E3003A637E /* RpcClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcClient.cpp; sourceTree = "<group>"; };
 		A189B284234DCE8F0022A5DB /* Shader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Shader.cpp; sourceTree = "<group>"; };
 		A189B285234DCE8F0022A5DB /* Shader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Shader.hpp; sourceTree = "<group>"; };
 		A189B287234DE7910022A5DB /* VertexArray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VertexArray.cpp; sourceTree = "<group>"; };
@@ -124,6 +128,8 @@
 		A1CA44B02353475C00E6C006 /* imconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imconfig.h; sourceTree = "<group>"; };
 		A1CA44B12353475C00E6C006 /* imgui_impl_glfw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imgui_impl_glfw.cpp; sourceTree = "<group>"; };
 		A1CA44B22353475C00E6C006 /* imgui_impl_opengl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imgui_impl_opengl3.h; sourceTree = "<group>"; };
+		A1DC61FF238A824600F24B32 /* MqRpc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MqRpc.cpp; sourceTree = "<group>"; };
+		A1DC6200238A824600F24B32 /* MqRpc.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MqRpc.hpp; sourceTree = "<group>"; };
 		A1EFF1E823476EC000869649 /* Renderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cpp; sourceTree = "<group>"; };
 		A1EFF1E923476EC000869649 /* Renderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Renderer.hpp; sourceTree = "<group>"; };
 		A1EFF1EB2347708700869649 /* VertexBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VertexBuffer.cpp; sourceTree = "<group>"; };
@@ -255,24 +261,27 @@
 			path = world;
 			sourceTree = "<group>";
 		};
-		A17C5FB32386C8200024C87E /* nlohmann */ = {
+		A17DED77238AE2E200C65717 /* nlohmann */ = {
 			isa = PBXGroup;
 			children = (
-				A17C5FB42386C8200024C87E /* json.hpp */,
+				A17DED78238AE2E200C65717 /* json.hpp */,
 			);
-			name = nlohmann;
-			path = ExternalLibraries/nlohmann;
-			sourceTree = SOURCE_ROOT;
+			path = nlohmann;
+			sourceTree = "<group>";
 		};
 		A188B44E23799558003A637E /* mq_client */ = {
 			isa = PBXGroup;
 			children = (
-				A188B454237996E3003A637E /* FibonacciRpcClient.cpp */,
-				A188B452237996E3003A637E /* FibonacciRpcClient.hpp */,
+				A188B454237996E3003A637E /* RpcClient.cpp */,
+				A188B452237996E3003A637E /* RpcClient.hpp */,
+				A17C5FB7238818550024C87E /* RpcServer.cpp */,
+				A17C5FB6238818550024C87E /* RpcServer.hpp */,
 				A188B451237996E3003A637E /* utils.c */,
 				A188B453237996E3003A637E /* utils.h */,
 				A17C5FB02386C7830024C87E /* JsonMessager.cpp */,
 				A17C5FB12386C7830024C87E /* JsonMessager.hpp */,
+				A1DC61FF238A824600F24B32 /* MqRpc.cpp */,
+				A1DC6200238A824600F24B32 /* MqRpc.hpp */,
 			);
 			path = mq_client;
 			sourceTree = "<group>";
@@ -298,7 +307,7 @@
 		A1C6F3992350771100C87B58 /* vendor */ = {
 			isa = PBXGroup;
 			children = (
-				A17C5FB32386C8200024C87E /* nlohmann */,
+				A17DED77238AE2E200C65717 /* nlohmann */,
 				A16170742376A1A30055D8DE /* cute */,
 				A1CA44A42353473900E6C006 /* imgui */,
 				A1CA44A02352FF1E00E6C006 /* glm */,
@@ -420,6 +429,8 @@
 				A1484CB3237459F600823B68 /* Canvas.cpp in Sources */,
 				A14F93782354A41300D5C6D0 /* Test.cpp in Sources */,
 				A1CA44B82353475C00E6C006 /* imgui_impl_glfw.cpp in Sources */,
+				A17C5FB8238818550024C87E /* RpcServer.cpp in Sources */,
+				A1DC6201238A824600F24B32 /* MqRpc.cpp in Sources */,
 				A17C5FB22386C7830024C87E /* JsonMessager.cpp in Sources */,
 				A14F93732354569C00D5C6D0 /* TestClearColor.cpp in Sources */,
 				A12428AE23437752001D2276 /* main.cpp in Sources */,
@@ -430,7 +441,7 @@
 				A1CA44B32353475C00E6C006 /* imgui_demo.cpp in Sources */,
 				A189B286234DCE8F0022A5DB /* Shader.cpp in Sources */,
 				A177D6BC2356FFB50053A0D6 /* DebugDraw.cpp in Sources */,
-				A188B457237996E4003A637E /* FibonacciRpcClient.cpp in Sources */,
+				A188B457237996E4003A637E /* RpcClient.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

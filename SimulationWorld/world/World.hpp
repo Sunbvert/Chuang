@@ -18,6 +18,10 @@
 #include "Canvas.hpp"
 #include "Environment.hpp"
 
+#include "json.hpp"
+
+using json = nlohmann::json;
+
 // 机器人身体和模拟环境用户数据
 enum WorldBodyType {
     OBSTACLE,
@@ -100,6 +104,8 @@ public:
     void Keyboard(int key);
 
     void SampleAction(float action[]);
+    
+    void OnRecieveData(json &data);
 private:
     void GetObservation(float observation[]);
     void SetWaistMotorSpeed(float speed);

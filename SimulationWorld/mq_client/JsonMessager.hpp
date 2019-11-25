@@ -11,10 +11,8 @@
 
 #include <stdio.h>
 
-#include "FibonacciRpcClient.hpp"
-#include "json.hpp"
+#include "RpcClient.hpp"
 
-using json = nlohmann::json;
 
 class JsonMessager
 {
@@ -22,7 +20,7 @@ public:
     JsonMessager();
     ~JsonMessager();
    
-
+    
     
 };
 

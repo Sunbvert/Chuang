@@ -16,8 +16,8 @@ public:
     RpcServer();
     ~RpcServer();
 
-    static void Run(amqp_connection_state_t conn);
+    void Run();
 private:
-    amqp_connection_state_t m_Connection;
-
-}
+    amqp_connection_state_t m_conn;
+    amqp_channel_t m_channel_id;
+};
