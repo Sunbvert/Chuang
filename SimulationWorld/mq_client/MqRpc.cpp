@@ -10,17 +10,14 @@
 
 #include "MqRpc.hpp"
 
-MqRpc::MqRpc()
-{
-    connected = false;
-    m_client_channel = 1;
-    m_server_channel = 2;
-}
 
-MqRpc::~MqRpc()
-{
-    
-}
+bool MqRpc::connected = false;
+amqp_connection_state_t MqRpc::m_conn;
+amqp_channel_t MqRpc::m_server_channel = 2;
+amqp_channel_t MqRpc::m_client_channel = 1;
+amqp_bytes_t MqRpc::m_reply_queue;
+std::thread MqRpc::m_server_thread;
+
 
 void MqRpc::EstablishConnection()
 {
@@ -53,7 +50,7 @@ void MqRpc::EstablishConnection()
     die_on_amqp_error(amqp_login(m_conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN, "guest", "guest"),
                     "Logging in");
     
-    BeginAsClient();
+    //BeginAsClient();
     BeginAsServer();
 }
 
@@ -82,12 +79,23 @@ void MqRpc::BeginAsClient()
     }
 }
 
-void MqRpc::ServerRun(json &j)
+void MqRpc::ServerRun(MqConnCallback &callbackContext)
 {
-    std::string s = j.dump();
-    amqp_bytes_t_ body_bytes = amqp_cstring_bytes(s.c_str());
-
+    if (!connected)
     {
+        m_server_thread = std::thread(ListenAndRecieveData, std::ref(callbackContext));
+    }
+    else
+    {
+        std::cout << "warnning: server thread already running!" << std::endl;
+    }
+}
+
+void MqRpc::ListenAndRecieveData(MqConnCallback &callbackContext)
+{
+    
+    {
+        connected = true;
         for (;;) {
             amqp_rpc_reply_t res;
             amqp_envelope_t envelope;
@@ -99,13 +107,15 @@ void MqRpc::ServerRun(json &j)
         }
         
         unsigned char *recieved = (unsigned char *)envelope.message.body.bytes;
-        
         std::string s( reinterpret_cast<char const* >(recieved), envelope.message.body.len);
-        std::cout << s <<std::endl;
         
-        json j3 = json::parse(s);
+        json receivedJson = json::parse(s);
 
+        json j = callbackContext.OnDataRecieve(receivedJson);
         //ALE
+            
+        std::string send = j.dump();
+        amqp_bytes_t_ body_bytes = amqp_cstring_bytes(send.c_str());
 
         amqp_basic_properties_t props;
             props._flags = AMQP_BASIC_CONTENT_TYPE_FLAG |

@@ -105,6 +105,7 @@
 		A189B287234DE7910022A5DB /* VertexArray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VertexArray.cpp; sourceTree = "<group>"; };
 		A189B288234DE7910022A5DB /* VertexArray.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VertexArray.hpp; sourceTree = "<group>"; };
 		A189B28B234DE85A0022A5DB /* VertexBufferLayout.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VertexBufferLayout.hpp; sourceTree = "<group>"; };
+		A189C2E3238C2C6E000FD9B0 /* MqConnCallback.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MqConnCallback.hpp; sourceTree = "<group>"; };
 		A192258B235591320017327B /* TestTexture2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestTexture2D.cpp; sourceTree = "<group>"; };
 		A192258C235591320017327B /* TestTexture2D.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TestTexture2D.hpp; sourceTree = "<group>"; };
 		A1ABABCE23471AC000141B4F /* Basic.shader */ = {isa = PBXFileReference; lastKnownFileType = text; path = Basic.shader; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -257,6 +258,7 @@
 				A188B44623795582003A637E /* World.hpp */,
 				A165EB2C23812C1A0018F049 /* Environment.cpp */,
 				A165EB2D23812C1A0018F049 /* Environment.hpp */,
+				A189C2E3238C2C6E000FD9B0 /* MqConnCallback.hpp */,
 			);
 			path = world;
 			sourceTree = "<group>";

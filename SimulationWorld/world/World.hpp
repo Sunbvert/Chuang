@@ -17,7 +17,8 @@
 
 #include "Canvas.hpp"
 #include "Environment.hpp"
-
+#include "MqConnCallback.hpp"
+#include "MqRpc.hpp"
 #include "json.hpp"
 
 using json = nlohmann::json;
@@ -86,7 +87,7 @@ private:
     }
 };
 
-class World : Environment
+class World : Environment, MqConnCallback
 {
 public:
     World();
@@ -105,7 +106,8 @@ public:
 
     void SampleAction(float action[]);
     
-    void OnRecieveData(json &data);
+protected:
+    json OnDataRecieve(json &data) override;
 private:
     void GetObservation(float observation[]);
     void SetWaistMotorSpeed(float speed);

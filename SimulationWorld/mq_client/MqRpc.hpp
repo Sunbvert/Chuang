@@ -10,6 +10,7 @@
 #define MqRpc_hpp
 
 #include <stdio.h>
+#include <thread>
 
 extern "C" {
     #include <amqp.h>
@@ -21,29 +22,31 @@ extern "C" {
 }
 
 #include "json.hpp"
+#include "MqConnCallback.hpp"
 
 using json = nlohmann::json;
 
 class MqRpc
 {
 public:
-    MqRpc();
-    ~MqRpc();
-    
-    void EstablishConnection();
-    void ServerRun(json &j);
-    void ClientCall();
-    
+    static void EstablishConnection();
+    static void ServerRun(MqConnCallback &callbackContext);
+    static void ClientCall();
 private:
-    amqp_connection_state_t m_conn;
-    amqp_channel_t m_server_channel;
-    amqp_channel_t m_client_channel;
-    amqp_bytes_t m_reply_queue;
+    MqRpc() {};
     
-    bool connected;
+    static void ListenAndRecieveData(MqConnCallback &callbackContext);
     
-    void BeginAsServer();
-    void BeginAsClient();
+    static amqp_connection_state_t m_conn;
+    static amqp_channel_t m_server_channel;
+    static amqp_channel_t m_client_channel;
+    static amqp_bytes_t m_reply_queue;
+    
+    static bool connected;
+    static std::thread m_server_thread;
+    
+    static void BeginAsServer();
+    static void BeginAsClient();
 };
 
 #endif /* MqRpc_hpp */

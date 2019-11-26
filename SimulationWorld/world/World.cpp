@@ -11,13 +11,11 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <string>
 
 #include "imgui/imgui.h"
 #include "DebugDraw.hpp"
 #include "glm/glm.hpp"
-#include "RpcClient.hpp"
-#include "RpcServer.hpp"
-#include "MqRpc.hpp"
 
 #define CUTE_C2_IMPLEMENTATION
 #include "cute_c2.h"
@@ -506,20 +504,11 @@ void World::OnImGuiRender()
         g_camera.center.Set(0.0f, 0.0f);
         g_camera.zoom = 1.0f;
     }
-    if (ImGui::Button("Begin as RPC Client"))
+    
+    if (ImGui::Button("Begin RPC Connection"))
     {
-        RpcClient *client = new RpcClient();
-        client->Call();
-    }
-    if (ImGui::Button("Begin as RPC Server"))
-    {
-//        RpcServer *server = new RpcServer();
-//        server->Run();
-        MqRpc *rpc = new MqRpc();
-        rpc->EstablishConnection();
-        
-        json j = "{ \"happy\": true, \"pi\": 3.141 }"_json;
-        rpc->ServerRun(j);
+        MqRpc::EstablishConnection();
+        MqRpc::ServerRun(*this);
     }
     
     if (ImGui::Button("Reset World"))
@@ -537,7 +526,11 @@ void World::OnImGuiRender()
     }
 }
 
-void World::OnRecieveData(json &data)
+json World::OnDataRecieve(json &data)
 {
-    std::cout << "Data Recieved!" << std::endl;
+    std::string s = data.dump();
+    std::cout << "Data Recieved: "<< s << std::endl;
+    
+    json j = "{ \"happy\": true, \"pi\": 3.141 }"_json;
+    return j;
 }
