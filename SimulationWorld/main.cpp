@@ -21,6 +21,8 @@
 #include "DebugDraw.hpp"
 #include "WindowEventCallback.hpp"
 #include "World.hpp"
+#include "PlayGround.hpp"
+#include "RobotHopper.hpp"
 
 // test
 #include "Canvas.hpp"
@@ -104,8 +106,8 @@ int main(void)
         double frameTime = 0.0;
         double alpha = 0.9f; // alpha for frame time smooth
         
-        World *world = new World();
-        WindowEventCallback::world = world;
+        PlayGround *playGround = new PlayGround();
+        WindowEventCallback::world = playGround;
         
         while( !glfwWindowShouldClose( window ) )
         {
@@ -119,11 +121,15 @@ int main(void)
             ImGui::NewFrame();
             
             /* begin writing code here */
+            
+            playGround->Update();
+            playGround->Render();
+            playGround->ImGuiRender();
 
-            float action[3] = {0.0f, 0.0f, 0.0f};
-            world->SampleAction(action);
-            world->Step(action);
-            world->Render();
+//            float action[3] = {0.0f, 0.0f, 0.0f};
+//            world->SampleAction(action);
+//            world->Step(action);
+//            world->Render();
      
             /* end writing code here */
             
@@ -158,7 +164,7 @@ int main(void)
         }
         
        // TODO: delete pointers;
-        delete world;
+        delete playGround;
     }
     
     // Cleanup

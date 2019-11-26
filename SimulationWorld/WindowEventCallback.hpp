@@ -15,7 +15,7 @@
 #include <Box2D/Box2D.h>
 
 #include "TestBox2D.hpp"
-#include "World.hpp"
+#include "PlayGround.hpp"
 
 class WindowEventCallback
 {
@@ -26,7 +26,7 @@ public:
     static void onMouseMotion(GLFWwindow*, double xd, double yd);
     static void onMouseScroll(GLFWwindow* window, double dx, double dy);
 
-    static World *world;
+    static PlayGround *world;
     
 private:
     static bool rightMouseDown;

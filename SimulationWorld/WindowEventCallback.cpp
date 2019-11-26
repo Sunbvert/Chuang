@@ -15,7 +15,7 @@
 
 bool WindowEventCallback::rightMouseDown = false;
 b2Vec2 WindowEventCallback::lastp(0, 0);
-World* WindowEventCallback::world = nullptr;
+PlayGround* WindowEventCallback::world = nullptr;
 
 
 void WindowEventCallback::onResizeWindow(GLFWwindow*, int width, int height)
