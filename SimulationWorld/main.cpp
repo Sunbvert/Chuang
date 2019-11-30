@@ -24,7 +24,6 @@
 #include "PlayGround.hpp"
 #include "RobotHopper.hpp"
 
-// test
 #include "Canvas.hpp"
 
 void glfwErrorCallback(int error, const char *description)

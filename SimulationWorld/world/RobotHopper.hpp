@@ -86,14 +86,14 @@ private:
     }
 };
 
-class RobotHopper : Environment
+class RobotHopper : public Environment
 {
 public:
     RobotHopper();
     ~RobotHopper();
     
-    Result Step(float action[]) override;
-    Result Reset() override;
+    void Step() override;
+    void Reset() override;
     void Render() override;
     
     void SampleAction(float action[]);
@@ -147,9 +147,7 @@ private:
     RobotBodyPart m_RobotThigh;
     RobotBodyPart m_RobotCalf;
     RobotBodyPart m_RobotFoot;
-
-    Space observation_space;
-    Space action_space;
+    
     Canvas *m_Canvas;
 };
 

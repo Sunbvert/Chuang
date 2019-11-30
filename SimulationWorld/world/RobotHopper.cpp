@@ -129,9 +129,9 @@ RobotHopper::RobotHopper() : m_HeadInitialPosition(0.0f, 0.0f)
     groundBody->CreateFixture(&groundBox, 0.0f);
     
     CreateHopperRobot();
-    
-    observation_space.Set(VISION_SIZE * VISION_SIZE + FEATURE_SIZE, 1);
-    action_space.Set(FEATURE_SIZE, 1);
+
+    SetObservationSpace(VISION_SIZE * VISION_SIZE + FEATURE_SIZE, 1);
+    SetActionSpace(FEATURE_SIZE, 1);
     
     done = false;
     WorldRunTime = 0;
@@ -146,13 +146,14 @@ RobotHopper::~RobotHopper()
     delete m_HeadContactListener;
 }
 
-Result RobotHopper::Step(float action[])
+void RobotHopper::Step()
 {
     float32 timeStep = 1.0f / 60.0f;
     int32 velocityIterations = 6;
     int32 positionIterations = 2;
 
     // Update
+    float *action = GetAction();
     TakeAction(action);
     
     m_World->Step(timeStep, velocityIterations, positionIterations);
@@ -166,8 +167,8 @@ Result RobotHopper::Step(float action[])
     }
     
     std::map<std::string, std::string> b;
-    Result result(m_Observation, reward, true, b);
-    return result;
+    Result *result = new Result(m_Observation, reward, true, b);
+    SetResult(result);
 }
 
 void RobotHopper::SampleAction(float action[])
@@ -196,7 +197,7 @@ void RobotHopper::Render()
     OnImGuiRender();
 }
 
-Result RobotHopper::Reset()
+void RobotHopper::Reset()
 {
     // Delete
     m_World->DestroyBody(m_RobotHead.body);
@@ -219,8 +220,8 @@ Result RobotHopper::Reset()
     
     float a[] = {1.0f, 1.0f};
     std::map<std::string, std::string> b;
-    Result result(a, 1.0f, true, b);
-    return result;
+    Result *result = new Result(a, 1.0f, true, b);
+    SetResult(result);
 }
 
 void RobotHopper::OnRender()

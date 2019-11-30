@@ -42,11 +42,24 @@ struct Space
 class Environment
 {
 public:
-    Environment() {}
-    virtual ~Environment() {}
-    virtual Result Step(float action[]) = 0;
-    virtual Result Reset() = 0;
+    Environment() : action(nullptr), result(nullptr), observation_space(nullptr), action_space(nullptr) {}
+    ~Environment();
+    virtual void Step() = 0;
+    virtual void Reset() = 0;
     virtual void Render() = 0;
+    void SetAction(float action[]);
+    float* GetAction();
+    void SetResult(Result* _result);
+    Result* GetResult();
+    void SetActionSpace(int x, int y);
+    Space* GetActionSpace();
+    void SetObservationSpace(int x, int y);
+    Space* GetObservationSpace();
+private:
+    float *action;
+    Result *result;
+    Space *observation_space;
+    Space *action_space;
 };
 
 #endif /* Environment_hpp */

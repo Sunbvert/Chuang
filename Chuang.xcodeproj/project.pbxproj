@@ -20,6 +20,7 @@
 		A165EB2E23812C1A0018F049 /* Environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A165EB2C23812C1A0018F049 /* Environment.cpp */; };
 		A177D6BC2356FFB50053A0D6 /* DebugDraw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A177D6BA2356FFB50053A0D6 /* DebugDraw.cpp */; };
 		A177D6BF235710420053A0D6 /* TestBox2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A177D6BD235710420053A0D6 /* TestBox2D.cpp */; };
+		A1792E2D2391107100EA03A4 /* ThreadWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1792E2B2391107100EA03A4 /* ThreadWrapper.cpp */; };
 		A17C5FAD238680380024C87E /* Basic.shader in CopyFiles */ = {isa = PBXBuildFile; fileRef = A1ABABCE23471AC000141B4F /* Basic.shader */; };
 		A17C5FAE2386803F0024C87E /* BasicColor.shader in CopyFiles */ = {isa = PBXBuildFile; fileRef = A1484CB7237476AC00823B68 /* BasicColor.shader */; };
 		A17C5FB22386C7830024C87E /* JsonMessager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17C5FB02386C7830024C87E /* JsonMessager.cpp */; };
@@ -37,6 +38,7 @@
 		A1C6F39C2350774D00C87B58 /* stb_image.hpp in Sources */ = {isa = PBXBuildFile; fileRef = A1C6F39B2350774D00C87B58 /* stb_image.hpp */; };
 		A1C6F39E235078C100C87B58 /* stb_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1C6F39D235078C100C87B58 /* stb_image.cpp */; };
 		A1C6F3A12350794900C87B58 /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1C6F39F2350794900C87B58 /* Texture.cpp */; };
+		A1C9E1E2238E3C6B00491A40 /* SubproVecEnv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1C9E1E0238E3C6B00491A40 /* SubproVecEnv.cpp */; };
 		A1CA44B32353475C00E6C006 /* imgui_demo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CA44A52353475A00E6C006 /* imgui_demo.cpp */; };
 		A1CA44B42353475C00E6C006 /* imgui_impl_opengl3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CA44A92353475B00E6C006 /* imgui_impl_opengl3.cpp */; };
 		A1CA44B52353475C00E6C006 /* imgui_widgets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CA44AB2353475B00E6C006 /* imgui_widgets.cpp */; };
@@ -88,6 +90,8 @@
 		A177D6BB2356FFB50053A0D6 /* DebugDraw.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DebugDraw.hpp; sourceTree = "<group>"; };
 		A177D6BD235710420053A0D6 /* TestBox2D.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestBox2D.cpp; sourceTree = "<group>"; };
 		A177D6BE235710420053A0D6 /* TestBox2D.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TestBox2D.hpp; sourceTree = "<group>"; };
+		A1792E2B2391107100EA03A4 /* ThreadWrapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadWrapper.cpp; sourceTree = "<group>"; };
+		A1792E2C2391107100EA03A4 /* ThreadWrapper.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ThreadWrapper.hpp; sourceTree = "<group>"; };
 		A17C5FB02386C7830024C87E /* JsonMessager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JsonMessager.cpp; sourceTree = "<group>"; };
 		A17C5FB12386C7830024C87E /* JsonMessager.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = JsonMessager.hpp; sourceTree = "<group>"; };
 		A17C5FB6238818550024C87E /* RpcServer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RpcServer.hpp; sourceTree = "<group>"; };
@@ -120,6 +124,8 @@
 		A1C6F39D235078C100C87B58 /* stb_image.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = stb_image.cpp; sourceTree = "<group>"; };
 		A1C6F39F2350794900C87B58 /* Texture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Texture.cpp; sourceTree = "<group>"; };
 		A1C6F3A02350794900C87B58 /* Texture.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Texture.hpp; sourceTree = "<group>"; };
+		A1C9E1E0238E3C6B00491A40 /* SubproVecEnv.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SubproVecEnv.cpp; sourceTree = "<group>"; };
+		A1C9E1E1238E3C6B00491A40 /* SubproVecEnv.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SubproVecEnv.hpp; sourceTree = "<group>"; };
 		A1CA44A02352FF1E00E6C006 /* glm */ = {isa = PBXFileReference; lastKnownFileType = folder; path = glm; sourceTree = "<group>"; };
 		A1CA44A52353475A00E6C006 /* imgui_demo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imgui_demo.cpp; sourceTree = "<group>"; };
 		A1CA44A62353475B00E6C006 /* imstb_textedit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imstb_textedit.h; sourceTree = "<group>"; };
@@ -184,6 +190,7 @@
 			children = (
 				A188B44E23799558003A637E /* mq_client */,
 				A1484CAF2374529C00823B68 /* render */,
+				A1792E2A23910FFF00EA03A4 /* Mutilthreading */,
 				A177D6B92356FECD0053A0D6 /* world */,
 				A14F936D2354557D00D5C6D0 /* test */,
 				A1C6F3992350771100C87B58 /* vendor */,
@@ -271,6 +278,17 @@
 				A189C2E3238C2C6E000FD9B0 /* MqConnCallback.hpp */,
 			);
 			path = world;
+			sourceTree = "<group>";
+		};
+		A1792E2A23910FFF00EA03A4 /* Mutilthreading */ = {
+			isa = PBXGroup;
+			children = (
+				A1C9E1E0238E3C6B00491A40 /* SubproVecEnv.cpp */,
+				A1C9E1E1238E3C6B00491A40 /* SubproVecEnv.hpp */,
+				A1792E2B2391107100EA03A4 /* ThreadWrapper.cpp */,
+				A1792E2C2391107100EA03A4 /* ThreadWrapper.hpp */,
+			);
+			path = Mutilthreading;
 			sourceTree = "<group>";
 		};
 		A17DED77238AE2E200C65717 /* nlohmann */ = {
@@ -434,6 +452,7 @@
 				A1CA44B72353475C00E6C006 /* imgui.cpp in Sources */,
 				A188B44C23795A70003A637E /* WindowEventCallback.cpp in Sources */,
 				A1C6F39C2350774D00C87B58 /* stb_image.hpp in Sources */,
+				A1792E2D2391107100EA03A4 /* ThreadWrapper.cpp in Sources */,
 				A192258D235591320017327B /* TestTexture2D.cpp in Sources */,
 				A1CA44B42353475C00E6C006 /* imgui_impl_opengl3.cpp in Sources */,
 				A165EB2E23812C1A0018F049 /* Environment.cpp in Sources */,
@@ -455,6 +474,7 @@
 				A1CA44B32353475C00E6C006 /* imgui_demo.cpp in Sources */,
 				A189B286234DCE8F0022A5DB /* Shader.cpp in Sources */,
 				A177D6BC2356FFB50053A0D6 /* DebugDraw.cpp in Sources */,
+				A1C9E1E2238E3C6B00491A40 /* SubproVecEnv.cpp in Sources */,
 				A188B457237996E4003A637E /* RpcClient.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
