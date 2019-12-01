@@ -6,6 +6,7 @@
 //  Copyright © 2019 孙川. All rights reserved.
 //
 
+#pragma once
 #ifndef PlayGround_hpp
 #define PlayGround_hpp
 

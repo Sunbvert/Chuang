@@ -167,8 +167,9 @@ void RobotHopper::Step()
     }
     
     std::map<std::string, std::string> b;
-    Result *result = new Result(m_Observation, reward, true, b);
+    Result *result = new Result(m_Observation, reward, done, b);
     SetResult(result);
+    steped = true;
 }
 
 void RobotHopper::SampleAction(float action[])
@@ -218,10 +219,11 @@ void RobotHopper::Reset()
     m_HeadContactListener = new HeadContactListener(&done);
     m_World->SetContactListener(m_HeadContactListener);
     
-    float a[] = {1.0f, 1.0f};
+    GetObservation(m_Observation);
     std::map<std::string, std::string> b;
-    Result *result = new Result(a, 1.0f, true, b);
+    Result *result = new Result(m_Observation, 0.0f, done, b);
     SetResult(result);
+    steped = true;
 }
 
 void RobotHopper::OnRender()

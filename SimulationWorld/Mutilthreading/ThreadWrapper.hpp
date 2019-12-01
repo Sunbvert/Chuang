@@ -8,6 +8,7 @@
 //  The code bellow copy from
 //  https://thispointer.com/c11-how-to-use-stdthread-as-a-member-variable-in-class/
 
+#pragma once
 #ifndef ThreadWrapper_hpp
 #define ThreadWrapper_hpp
 

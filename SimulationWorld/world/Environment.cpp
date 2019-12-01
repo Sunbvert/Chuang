@@ -89,7 +89,7 @@ Space* Environment::GetObservationSpace()
 
 Environment::~Environment()
 {
-    delete action;
+    delete[] action;
     delete result;
     delete action_space;
     delete observation_space;

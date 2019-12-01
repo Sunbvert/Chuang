@@ -6,6 +6,7 @@
 //  Copyright © 2019 孙川. All rights reserved.
 //
 
+#pragma once
 #ifndef Environment_hpp
 #define Environment_hpp
 
@@ -31,18 +32,19 @@ struct Result
 
 struct Space
 {
-    int Size[2];
+    int X;
+    int Y;
     void Set(int x, int y)
     {
-        Size[0] = x;
-        Size[1] = y;
+        X = x;
+        Y = y;
     }
 };
 
 class Environment
 {
 public:
-    Environment() : action(nullptr), result(nullptr), observation_space(nullptr), action_space(nullptr) {}
+    Environment() : action(nullptr), result(nullptr), observation_space(nullptr), action_space(nullptr), steped(false) {}
     ~Environment();
     virtual void Step() = 0;
     virtual void Reset() = 0;
@@ -55,6 +57,8 @@ public:
     Space* GetActionSpace();
     void SetObservationSpace(int x, int y);
     Space* GetObservationSpace();
+    
+    bool steped;
 private:
     float *action;
     Result *result;

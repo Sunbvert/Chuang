@@ -6,6 +6,7 @@
 //  Copyright © 2019 孙川. All rights reserved.
 //
 
+#pragma once
 #ifndef SubproVecEnv_hpp
 #define SubproVecEnv_hpp
 
@@ -18,23 +19,23 @@
 #include <iostream>
 #include <condition_variable>
 
-#include "Environment.hpp"
+#include "RobotHopper.hpp"
 #include "ThreadWrapper.hpp"
 
 class VecEnv
 {
 public:
-    VecEnv(int num_envs)
+    VecEnv(int _num_envs)
     {
-        m_num_envs = num_envs;
+        num_envs = _num_envs;
     };
     virtual ~VecEnv() {};
     
-//    virtual Result Reset() = 0;
-//    virtual Result Step(float action[]) = 0;
-//    virtual void Close() = 0;
+    virtual void Reset(std::vector<Result*>* results) = 0;
+    virtual void Step(float actions[], std::vector<Result*>* results) = 0;
+    virtual void Close() = 0;
 protected:
-    int m_num_envs;
+    int num_envs;
 };
 
 enum CMD
@@ -47,14 +48,14 @@ enum CMD
 static std::mutex g_m;
 static std::condition_variable g_cv;
 
-void push_cmd(std::queue<CMD>& tasks, CMD cmd)
+static void push_cmd(std::queue<CMD>& tasks, CMD cmd)
 {
     const std::lock_guard<std::mutex> lock(g_m);
     tasks.push(cmd);
     g_cv.notify_all();
 }
 
-CMD pop_cmd(std::queue<CMD>& tasks)
+static CMD pop_cmd(std::queue<CMD>& tasks)
 {
     std::unique_lock<std::mutex> lk(g_m);
     g_cv.wait(lk, [&tasks]{ return !tasks.empty(); });
@@ -64,7 +65,7 @@ CMD pop_cmd(std::queue<CMD>& tasks)
     return cmd;
 }
 
-void worker(std::queue<CMD>& tasks, Environment &env, float data[])
+static void worker(std::queue<CMD> tasks, RobotHopper &env)
 {
     while (true)
     {
@@ -73,7 +74,7 @@ void worker(std::queue<CMD>& tasks, Environment &env, float data[])
             break;
         switch (cmd) {
             case STEP:
-                //env.Step(data);
+                env.Step();
                 break;
             case RESET:
                 env.Reset();
@@ -86,21 +87,22 @@ void worker(std::queue<CMD>& tasks, Environment &env, float data[])
 class SubproVecEnv : public VecEnv
 {
 public:
-    SubproVecEnv(std::vector<Environment> env_fns);
+    SubproVecEnv(std::vector<RobotHopper> &env_fns); // TODO: use vector of Environment
     ~SubproVecEnv();
+    SubproVecEnv(SubproVecEnv&&) = default;
     
-//    Result Reset() override;
-//    Result Step(float action[]) override;
-//    void Close() override;
+    void Reset(std::vector<Result*>* results) override;
+    void Step(float actions[], std::vector<Result*>*) override;
+    void Close() override;
     
 private:
     bool waiting;
     bool closed;
-    float *data;
+    Space *action_space;
     
     std::vector<std::thread> vecOfThreads;
     std::vector<std::queue<CMD>> vecOfTasks;
-    std::vector<Environment> vecOfEnvs;
+    std::vector<RobotHopper> vecOfEnvs;
 };
 
 

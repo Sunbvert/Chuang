@@ -23,6 +23,7 @@
 #include "World.hpp"
 #include "PlayGround.hpp"
 #include "RobotHopper.hpp"
+#include "SubproVecEnv.hpp"
 
 #include "Canvas.hpp"
 
@@ -98,15 +99,24 @@ int main(void)
         ImGui_ImplOpenGL3_Init(glsl_version);
         ImGui_ImplGlfw_InitForOpenGL(window, true);
         ImGui::StyleColorsDark();
-        bool show_demo_window = false;
+        bool show_demo_window = true;
         
         double time1 = glfwGetTime();
         double time2;
         double frameTime = 0.0;
         double alpha = 0.9f; // alpha for frame time smooth
         
+        // test environment
         PlayGround *playGround = new PlayGround();
         WindowEventCallback::world = playGround;
+        
+        // mutilthread environment
+        std::vector<RobotHopper> envs;
+        RobotHopper hopper1 = RobotHopper();
+        RobotHopper hopper2 = RobotHopper();
+        envs.push_back(hopper1);
+        envs.push_back(hopper2);
+        SubproVecEnv vecEnvs = SubproVecEnv(envs);
         
         while( !glfwWindowShouldClose( window ) )
         {
@@ -124,6 +134,8 @@ int main(void)
             playGround->Update();
             playGround->Render();
             playGround->ImGuiRender();
+            
+            
 
 //            float action[3] = {0.0f, 0.0f, 0.0f};
 //            world->SampleAction(action);

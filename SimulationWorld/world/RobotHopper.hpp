@@ -6,6 +6,7 @@
 //  Copyright © 2019 孙川. All rights reserved.
 //
 
+#pragma once
 #ifndef RobotHopper_hpp
 #define RobotHopper_hpp
 
