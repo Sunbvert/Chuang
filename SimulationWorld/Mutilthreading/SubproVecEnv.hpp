@@ -20,23 +20,8 @@
 #include <condition_variable>
 
 #include "RobotHopper.hpp"
-#include "ThreadWrapper.hpp"
+#include "VecEnv.hpp"
 
-class VecEnv
-{
-public:
-    VecEnv(int _num_envs)
-    {
-        num_envs = _num_envs;
-    };
-    virtual ~VecEnv() {};
-    
-    virtual void Reset(std::vector<Result*>* results) = 0;
-    virtual void Step(float actions[], std::vector<Result*>* results) = 0;
-    virtual void Close() = 0;
-protected:
-    int num_envs;
-};
 
 enum CMD
 {
@@ -48,24 +33,24 @@ enum CMD
 static std::mutex g_m;
 static std::condition_variable g_cv;
 
-static void push_cmd(std::queue<CMD>& tasks, CMD cmd)
+static void push_cmd(std::queue<CMD>* tasks, CMD cmd)
 {
     const std::lock_guard<std::mutex> lock(g_m);
-    tasks.push(cmd);
+    tasks->push(cmd);
     g_cv.notify_all();
 }
 
-static CMD pop_cmd(std::queue<CMD>& tasks)
+static CMD pop_cmd(std::queue<CMD>* tasks)
 {
     std::unique_lock<std::mutex> lk(g_m);
-    g_cv.wait(lk, [&tasks]{ return !tasks.empty(); });
+    g_cv.wait(lk, [tasks]{ return !tasks->empty(); });
     
-    CMD cmd = tasks.front();
-    tasks.pop();
+    CMD cmd = tasks->front();
+    tasks->pop();
     return cmd;
 }
 
-static void worker(std::queue<CMD> tasks, RobotHopper &env)
+static void worker(std::queue<CMD> *tasks, RobotHopper *env)
 {
     while (true)
     {
@@ -74,10 +59,10 @@ static void worker(std::queue<CMD> tasks, RobotHopper &env)
             break;
         switch (cmd) {
             case STEP:
-                env.Step();
+                env->Step();
                 break;
             case RESET:
-                env.Reset();
+                env->Reset();
             default:
                 break;
         }
@@ -87,22 +72,21 @@ static void worker(std::queue<CMD> tasks, RobotHopper &env)
 class SubproVecEnv : public VecEnv
 {
 public:
-    SubproVecEnv(std::vector<RobotHopper> &env_fns); // TODO: use vector of Environment
+    SubproVecEnv(std::vector<RobotHopper*> &env_fns); // TODO: use vector of Environment
     ~SubproVecEnv();
     SubproVecEnv(SubproVecEnv&&) = default;
     
     void Reset(std::vector<Result*>* results) override;
-    void Step(float actions[], std::vector<Result*>*) override;
+    void Step(float actions[], std::vector<Result*>* results) override;
     void Close() override;
-    
 private:
     bool waiting;
     bool closed;
     Space *action_space;
     
     std::vector<std::thread> vecOfThreads;
-    std::vector<std::queue<CMD>> vecOfTasks;
-    std::vector<RobotHopper> vecOfEnvs;
+    std::vector<std::queue<CMD>*> vecOfTasks;
+    std::vector<RobotHopper*> vecOfEnvs;
 };
 
 

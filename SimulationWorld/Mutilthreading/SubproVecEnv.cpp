@@ -8,21 +8,23 @@
 
 #include "SubproVecEnv.hpp"
 
-SubproVecEnv::SubproVecEnv(std::vector<RobotHopper> &env_fns) : VecEnv((int)env_fns.size())
+SubproVecEnv::SubproVecEnv(std::vector<RobotHopper*> &env_fns) : VecEnv((int)env_fns.size())
 {
     waiting = false;
     closed = false;
 
     vecOfEnvs = env_fns;
-    action_space = vecOfEnvs[0].GetActionSpace();
+    action_space = vecOfEnvs[0]->GetActionSpace();
 
     std::vector<std::thread> thds;
     for (int i = 0; i < num_envs; i++)
     {
-        std::queue<CMD> task;
+        std::queue<CMD> *task = new std::queue<CMD>();
         vecOfTasks.push_back(task);
-        vecOfThreads.push_back(std::thread(worker, std::ref(task), std::ref(vecOfEnvs[i])));
+        vecOfThreads.push_back(std::thread(worker, task, std::ref(vecOfEnvs[i])));
     }
+    
+    std::cout << "action space X: " << vecOfEnvs[0]->GetActionSpace()->X << " observation space X: " << vecOfEnvs[1]->GetObservationSpace()->X << std::endl;
 }
 
 SubproVecEnv::~SubproVecEnv()
@@ -30,6 +32,16 @@ SubproVecEnv::~SubproVecEnv()
     for (int i = 0; i < num_envs; i++) {
         (vecOfThreads)[i].join();
     }
+    for (auto p : vecOfTasks)
+    {
+        delete p;
+    }
+    vecOfTasks.clear();
+    for (auto p : vecOfEnvs)
+    {
+        delete p;
+    }
+    vecOfEnvs.clear();
 }
 
 
@@ -37,7 +49,7 @@ void SubproVecEnv::Step(float *actions, std::vector<Result*>* results)
 {
     for (int i = 0; i < num_envs; i++)
     {
-        vecOfEnvs[i].SetAction(&actions[i * action_space->X]);
+        vecOfEnvs[i]->SetAction(&actions[i * action_space->X]);
         push_cmd(vecOfTasks[i], STEP);
     }
     waiting = true;
@@ -48,7 +60,7 @@ void SubproVecEnv::Step(float *actions, std::vector<Result*>* results)
         int count = 0;
         for (int i = 0; i < num_envs; i++)
         {
-            if (vecOfEnvs[i].steped)
+            if (vecOfEnvs[i]->steped)
             {
                 count++;
             }
@@ -60,8 +72,8 @@ void SubproVecEnv::Step(float *actions, std::vector<Result*>* results)
     }
     for (int i = 0; i < num_envs; i++)
     {
-        vecOfEnvs[i].steped = false;
-        (*results)[i] = vecOfEnvs[i].GetResult();
+        vecOfEnvs[i]->steped = false;
+        (*results)[i] = vecOfEnvs[i]->GetResult();
     }
 }
 
@@ -79,7 +91,7 @@ void SubproVecEnv::Reset(std::vector<Result*>* results)
         int count = 0;
         for (int i = 0; i < num_envs; i++)
         {
-            if (vecOfEnvs[i].steped)
+            if (vecOfEnvs[i]->steped)
             {
                 count++;
             }
@@ -91,8 +103,8 @@ void SubproVecEnv::Reset(std::vector<Result*>* results)
     }
     for (int i = 0; i < num_envs; i++)
     {
-        vecOfEnvs[i].steped = false;
-        (*results)[i] = vecOfEnvs[i].GetResult();
+        vecOfEnvs[i]->steped = false;
+        (*results)[i] = vecOfEnvs[i]->GetResult();
     }
 }
 

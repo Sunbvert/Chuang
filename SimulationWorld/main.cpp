@@ -15,6 +15,7 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <string>
 
 #include "Renderer.hpp"
 
@@ -111,12 +112,21 @@ int main(void)
         WindowEventCallback::world = playGround;
         
         // mutilthread environment
-        std::vector<RobotHopper> envs;
-        RobotHopper hopper1 = RobotHopper();
-        RobotHopper hopper2 = RobotHopper();
+        std::vector<RobotHopper*> envs;
+        RobotHopper *hopper1 = new RobotHopper();
+        RobotHopper *hopper2 = new RobotHopper();
         envs.push_back(hopper1);
         envs.push_back(hopper2);
         SubproVecEnv vecEnvs = SubproVecEnv(envs);
+        
+        Result *hopper1R = nullptr;
+        Result *hopper2R = nullptr;
+        std::vector<Result*> *results = new std::vector<Result*>();
+        results->push_back(hopper1R);
+        results->push_back(hopper2R);
+        
+        float actions[6] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+        const char * data[] = {"reward", "0", "0"};
         
         while( !glfwWindowShouldClose( window ) )
         {
@@ -135,7 +145,12 @@ int main(void)
             playGround->Render();
             playGround->ImGuiRender();
             
+            vecEnvs.Step(actions, results);
+            data[1] = std::to_string((*results)[0]->reward).c_str();
+            data[2] = std::to_string((*results)[1]->reward).c_str();
+            vecEnvs.ImGuiRender(data, 1, 3);
             
+            //vecEnvs.ImGuiRender();
 
 //            float action[3] = {0.0f, 0.0f, 0.0f};
 //            world->SampleAction(action);
