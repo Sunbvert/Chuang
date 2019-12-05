@@ -11,6 +11,9 @@
 #include <GLFW/glfw3.h>
 
 #include "PlayGround.hpp"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 class QueryCallback : public b2QueryCallback
 {
@@ -71,7 +74,16 @@ void PlayGround::Render()
 
 void PlayGround::ImGuiRender()
 {
-    
+    if (ImGui::Button("Reset View"))
+    {
+        g_camera.center.Set(0.0f, 0.0f);
+        g_camera.zoom = 1.0f;
+    }
+
+    if (ImGui::Button("Reset World"))
+    {
+        m_RobotHopper->Reset();
+    }
 }
 
 void PlayGround::Keyboard(int key)

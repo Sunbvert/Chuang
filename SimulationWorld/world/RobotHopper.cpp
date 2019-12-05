@@ -195,7 +195,6 @@ void RobotHopper::TakeAction(float action[])
 void RobotHopper::Render()
 {
     OnRender();
-    OnImGuiRender();
 }
 
 void RobotHopper::Reset()
@@ -237,35 +236,6 @@ void RobotHopper::OnRender()
 
     m_World->DrawDebugData();
     g_debugDraw.Flush();
-}
-
-void RobotHopper::OnImGuiRender()
-{
-    if (ImGui::Button("Reset View"))
-    {
-        g_camera.center.Set(0.0f, 0.0f);
-        g_camera.zoom = 1.0f;
-    }
-    
-    if (ImGui::Button("Begin RPC Connection"))
-    {
-//        MqRpc::EstablishConnection();
-//        MqRpc::ServerRun(*this);
-    }
-    
-    if (ImGui::Button("Reset World"))
-    {
-        Reset();
-    }
-    
-    ImGui::Text("my waist angle speed: %f", m_WaistJoint->GetJointSpeed());
-    ImGui::Text("my knee angle speed: %f", m_KneeJoint->GetJointSpeed());
-    ImGui::Text("my ankle angle speed: %f", m_AnkleJoint->GetJointSpeed());
-    
-    if (done)
-    {
-        ImGui::Text("Done, Head contact detacted!");
-    }
 }
 
 b2RevoluteJoint* RobotHopper::CreateRevoluteJoint(b2Body *bodyA, b2Body *bodyB, b2Vec2 anchor, bool enableLimit, float32 lowerAngle, float32 upperAngle)

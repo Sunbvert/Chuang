@@ -27,7 +27,7 @@
 		A17C5FAE2386803F0024C87E /* BasicColor.shader in CopyFiles */ = {isa = PBXBuildFile; fileRef = A1484CB7237476AC00823B68 /* BasicColor.shader */; };
 		A17C5FB22386C7830024C87E /* JsonMessager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17C5FB02386C7830024C87E /* JsonMessager.cpp */; };
 		A17C5FB8238818550024C87E /* RpcServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17C5FB7238818550024C87E /* RpcServer.cpp */; };
-		A188B44723795582003A637E /* World.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A188B44523795582003A637E /* World.cpp */; };
+		A188B44723795582003A637E /* Dispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A188B44523795582003A637E /* Dispatcher.cpp */; };
 		A188B44C23795A70003A637E /* WindowEventCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A188B44A23795A70003A637E /* WindowEventCallback.cpp */; };
 		A188B45023799626003A637E /* librabbitmq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A188B44F23799626003A637E /* librabbitmq.a */; };
 		A188B456237996E4003A637E /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = A188B451237996E3003A637E /* utils.c */; };
@@ -103,8 +103,8 @@
 		A17C5FB6238818550024C87E /* RpcServer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RpcServer.hpp; sourceTree = "<group>"; };
 		A17C5FB7238818550024C87E /* RpcServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcServer.cpp; sourceTree = "<group>"; };
 		A17DED78238AE2E200C65717 /* json.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
-		A188B44523795582003A637E /* World.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = World.cpp; sourceTree = "<group>"; };
-		A188B44623795582003A637E /* World.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = World.hpp; sourceTree = "<group>"; };
+		A188B44523795582003A637E /* Dispatcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Dispatcher.cpp; sourceTree = "<group>"; };
+		A188B44623795582003A637E /* Dispatcher.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Dispatcher.hpp; sourceTree = "<group>"; };
 		A188B44A23795A70003A637E /* WindowEventCallback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WindowEventCallback.cpp; sourceTree = "<group>"; };
 		A188B44B23795A70003A637E /* WindowEventCallback.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = WindowEventCallback.hpp; sourceTree = "<group>"; };
 		A188B44F23799626003A637E /* librabbitmq.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = librabbitmq.a; path = ExternalLibraries/RabbitMQ/lib/librabbitmq.a; sourceTree = "<group>"; };
@@ -273,8 +273,8 @@
 			children = (
 				A1484CB1237459F600823B68 /* Canvas.cpp */,
 				A1484CB2237459F600823B68 /* Canvas.hpp */,
-				A188B44523795582003A637E /* World.cpp */,
-				A188B44623795582003A637E /* World.hpp */,
+				A188B44523795582003A637E /* Dispatcher.cpp */,
+				A188B44623795582003A637E /* Dispatcher.hpp */,
 				A19185B9238D0FCB000FF5BD /* PlayGround.cpp */,
 				A19185BA238D0FCB000FF5BD /* PlayGround.hpp */,
 				A19185B6238D0653000FF5BD /* RobotHopper.cpp */,
@@ -453,7 +453,7 @@
 			files = (
 				A1CA44B62353475C00E6C006 /* imgui_draw.cpp in Sources */,
 				A1EFF1EA23476EC000869649 /* Renderer.cpp in Sources */,
-				A188B44723795582003A637E /* World.cpp in Sources */,
+				A188B44723795582003A637E /* Dispatcher.cpp in Sources */,
 				A1C6F39E235078C100C87B58 /* stb_image.cpp in Sources */,
 				A189B289234DE7910022A5DB /* VertexArray.cpp in Sources */,
 				A1C6F3A12350794900C87B58 /* Texture.cpp in Sources */,

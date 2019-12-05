@@ -21,7 +21,6 @@
 
 #include "DebugDraw.hpp"
 #include "WindowEventCallback.hpp"
-#include "World.hpp"
 #include "PlayGround.hpp"
 #include "RobotHopper.hpp"
 #include "SubproVecEnv.hpp"
@@ -110,23 +109,7 @@ int main(void)
         // test environment
         PlayGround *playGround = new PlayGround();
         WindowEventCallback::world = playGround;
-        
-        // mutilthread environment
-        std::vector<RobotHopper*> envs;
-        RobotHopper *hopper1 = new RobotHopper();
-        RobotHopper *hopper2 = new RobotHopper();
-        envs.push_back(hopper1);
-        envs.push_back(hopper2);
-        SubproVecEnv vecEnvs = SubproVecEnv(envs);
-        
-        Result *hopper1R = nullptr;
-        Result *hopper2R = nullptr;
-        std::vector<Result*> *results = new std::vector<Result*>();
-        results->push_back(hopper1R);
-        results->push_back(hopper2R);
-        
-        float actions[6] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-        const char * data[] = {"reward", "0", "0"};
+
         
         while( !glfwWindowShouldClose( window ) )
         {
@@ -144,11 +127,6 @@ int main(void)
             playGround->Update();
             playGround->Render();
             playGround->ImGuiRender();
-            
-            vecEnvs.Step(actions, results);
-            data[1] = std::to_string((*results)[0]->reward).c_str();
-            data[2] = std::to_string((*results)[1]->reward).c_str();
-            vecEnvs.ImGuiRender(data, 1, 3);
             
             //vecEnvs.ImGuiRender();
 

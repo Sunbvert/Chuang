@@ -106,7 +106,6 @@ private:
     void TakeAction(float action[]);
     
     void OnRender();
-    void OnImGuiRender();
     void CreateHopperRobot();
     
     float GetVisionScore(b2Fixture *body, b2Fixture* ground);
