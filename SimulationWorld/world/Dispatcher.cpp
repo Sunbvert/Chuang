@@ -14,6 +14,9 @@
 #include "Dispatcher.hpp"
 #include "MqRpc.hpp"
 #include "RobotHopper.hpp"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 Dispatcher::Dispatcher()
 {
@@ -151,4 +154,12 @@ json Dispatcher::Reset(json &data)
     }
     response["observation"] = observations;
     return response;
+}
+
+void Dispatcher::ImGuiRender()
+{
+    if (ImGui::Button("Begin Connection"))
+    {
+        BeginConnection();
+    }
 }

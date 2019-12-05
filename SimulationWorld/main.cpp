@@ -23,7 +23,7 @@
 #include "WindowEventCallback.hpp"
 #include "PlayGround.hpp"
 #include "RobotHopper.hpp"
-#include "SubproVecEnv.hpp"
+#include "Dispatcher.hpp"
 
 #include "Canvas.hpp"
 
@@ -99,7 +99,7 @@ int main(void)
         ImGui_ImplOpenGL3_Init(glsl_version);
         ImGui_ImplGlfw_InitForOpenGL(window, true);
         ImGui::StyleColorsDark();
-        bool show_demo_window = true;
+        bool show_demo_window = false;
         
         double time1 = glfwGetTime();
         double time2;
@@ -110,6 +110,7 @@ int main(void)
         PlayGround *playGround = new PlayGround();
         WindowEventCallback::world = playGround;
 
+        Dispatcher dispatcher = Dispatcher();
         
         while( !glfwWindowShouldClose( window ) )
         {
@@ -128,7 +129,7 @@ int main(void)
             playGround->Render();
             playGround->ImGuiRender();
             
-            //vecEnvs.ImGuiRender();
+            dispatcher.ImGuiRender();
 
 //            float action[3] = {0.0f, 0.0f, 0.0f};
 //            world->SampleAction(action);

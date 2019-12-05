@@ -9,8 +9,6 @@
 #ifndef MqConnCallback_hpp
 #define MqConnCallback_hpp
 
-#include <stdio.h>
-
 #include "json.hpp"
 using json = nlohmann::json;
 
