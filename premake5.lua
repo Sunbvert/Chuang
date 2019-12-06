@@ -9,6 +9,7 @@ workspace 'Chuang'
 
 project 'Chuang'
     kind 'ConsoleApp'
+    buildoptions { '-g' }
     includedirs
     {
          'SimulationWorld/mq_client',

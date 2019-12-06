@@ -3,3 +3,5 @@ Build
 .idea
 .vscode
 __pycatch__
+AI_Core/ppo/lib/__pycache__
+AI_Core/ppo/runs

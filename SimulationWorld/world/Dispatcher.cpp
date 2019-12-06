@@ -19,13 +19,14 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
-Dispatcher::Dispatcher()
+Dispatcher::Dispatcher(PlayGround *testHopper)
 {
     m_num_envs = 0;
     m_num_actions = 0;
     m_num_observations = 0;
     m_VecEnv = nullptr;
     m_Results = new std::vector<Result*>();
+    m_TestHopper = testHopper;
 }
 
 Dispatcher::~Dispatcher()
@@ -50,7 +51,14 @@ json Dispatcher::OnDataRecieve(json &data)
     std::cout << "Data Recieved: "<< d << std::endl;
     
     std::string instruction = data["call"];
+
     json j;
+
+    if (data["test"])
+    {
+        j = HandleTestRender(data);
+    }
+
     if (instruction == "make")
     {
         j = Make(data);
@@ -68,6 +76,54 @@ json Dispatcher::OnDataRecieve(json &data)
     std::cout << "Data Send: "<< s << std::endl;
     
     return j;
+}
+
+json Dispatcher::HandleTestRender(json &data)
+{
+    std::string instruction = data["call"];
+
+    json response;
+
+    if (instruction == "make")
+    {
+        m_TestHopper->PrepareTest();
+        response["status"] = 1;
+    }
+    else if (instruction == "step")
+    {
+        response["response"] = "step";
+        
+        std::vector<float> actions;
+        data["action"].get_to(actions);
+        
+        assert(actions.size() == m_num_actions);
+        float *action = &actions[0];
+        Result *result = m_TestHopper->TestStep(action);
+
+        float *p = result->observation;
+        std::vector<float> vec(p, p + m_num_observations);
+
+        response["observation"] = vec;
+        response["reward"] = result->reward;
+        response["done"] = result->done;
+        
+        return response;
+    }
+    else if (instruction == "reset")
+    {
+        response["response"] = "reset";
+
+        Result *result = m_TestHopper->TestReset();
+
+        float *p = result->observation;
+        std::vector<float> vec(p, p + m_num_observations);
+
+        response["observation"] = vec;
+        
+        return response;
+    }
+
+    return response;
 }
 
 void Dispatcher::BeginConnection()

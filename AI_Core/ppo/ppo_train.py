@@ -177,6 +177,7 @@ if __name__ == "__main__":
 
             action = dist.sample()
             # each state, reward, done is a list of results from each parallel environment
+            action_exp = action.cpu().numpy()
             next_state, reward, done, _ = envs.step(action.cpu().numpy())
             log_prob = dist.log_prob(action)
             

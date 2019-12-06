@@ -12,13 +12,14 @@
 #include "MqConnCallback.hpp"
 #include "json.hpp"
 #include "SubproVecEnv.hpp"
+#include "PlayGround.hpp"
 using json = nlohmann::json;
 
 
 class Dispatcher : MqConnCallback
 {
 public:
-    Dispatcher();
+    Dispatcher(PlayGround *testHopper);
     ~Dispatcher();
     
     void ImGuiRender();
@@ -27,6 +28,7 @@ protected:
     json OnDataRecieve(json &data) override;
 private:
     void BeginConnection();
+    json HandleTestRender(json &data);
     json Make(json &data);
     json Step(json &data);
     json Reset(json &data);
@@ -37,6 +39,8 @@ private:
     SubproVecEnv *m_VecEnv;
     std::vector<RobotHopper*> m_Envs;
     std::vector<Result*> *m_Results;
+
+    PlayGround *m_TestHopper;
 };
 
 #endif /* Dispatcher_hpp */

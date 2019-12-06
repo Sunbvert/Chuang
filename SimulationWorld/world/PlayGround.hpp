@@ -24,6 +24,10 @@ public:
     void Render();
     void ImGuiRender();
     void Update();
+
+    void PrepareTest();
+    Result* TestStep(float *action);
+    Result* TestReset();
     
     void MouseDown(const b2Vec2& p);
     void MouseUp(const b2Vec2& p);
@@ -35,6 +39,8 @@ private:
     b2MouseJoint* m_mouseJoint;
     b2World* m_World;
     b2Body* m_groundBody;
+
+    bool enableControl;
 };
 
 #endif /* PlayGround_hpp */

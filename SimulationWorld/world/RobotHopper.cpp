@@ -157,7 +157,6 @@ RobotHopper::~RobotHopper()
 
 void RobotHopper::Step()
 {
-    float32 timeStep = 1.0f / 60.0f;
     int32 velocityIterations = 6;
     int32 positionIterations = 2;
 
@@ -165,7 +164,7 @@ void RobotHopper::Step()
     float *action = GetAction();
     TakeAction(action);
     
-    m_World->Step(timeStep, velocityIterations, positionIterations);
+    m_World->Step(1.0f / FPS, velocityIterations, positionIterations);
     
     GetObservation(m_Observation);
     float reward = GetReward();

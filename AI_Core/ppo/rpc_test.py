@@ -1,5 +1,4 @@
-from lib.rabbitmq import RpcClient, Dispatcher
-import json
+from lib.fake_gym import Dispatcher
 
 def test_step(dispatcher):
     action = [0.0, 0.0, 0.0, 1.0, 2.0, 3.0]
@@ -18,6 +17,6 @@ if __name__ == "__main__":
     # data = json.loads(response)
     
     # print(" Got " + response)
-    dispatcher = Dispatcher();
+    dispatcher = Dispatcher()
     if dispatcher.make(2):
         test_step(dispatcher)

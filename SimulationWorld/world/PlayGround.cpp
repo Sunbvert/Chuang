@@ -53,6 +53,8 @@ PlayGround::PlayGround() : m_mouseJoint(nullptr)
     m_RobotHopper->EnableRender();
     m_World = m_RobotHopper->Getb2WorldPtr();
     m_groundBody = m_RobotHopper->GetGroundBody();
+
+    enableControl = true;
 }
 
 PlayGround::~PlayGround()
@@ -87,70 +89,101 @@ void PlayGround::ImGuiRender()
     }
 }
 
+void PlayGround::PrepareTest()
+{
+    enableControl = false;
+    m_RobotHopper->Reset();
+}
+
+Result* PlayGround::TestStep(float *action)
+{
+    m_RobotHopper->SetAction(action);
+}
+
+Result* PlayGround::TestReset()
+{
+    m_RobotHopper->Reset();
+
+}
+
 void PlayGround::Keyboard(int key)
 {
-    switch (key) {
-        case GLFW_KEY_A:
-            //m_KneeJoint->SetMotorSpeed(-0.2f);
-            break;
-        default:
-            break;
+    if (enableControl)
+    {
+        switch (key) {
+            case GLFW_KEY_A:
+                //m_KneeJoint->SetMotorSpeed(-0.2f);
+                break;
+            default:
+                break;
+        }
     }
 }
 
 void PlayGround::MouseDown(const b2Vec2& p)
 {
-
-    if (m_mouseJoint != NULL)
+    if (enableControl)
     {
-        return;
-    }
+        if (m_mouseJoint != NULL)
+        {
+            return;
+        }
 
-    // Make a small box.
-    b2AABB aabb;
-    b2Vec2 d;
-    d.Set(0.001f, 0.001f);
-    aabb.lowerBound = p - d;
-    aabb.upperBound = p + d;
+        // Make a small box.
+        b2AABB aabb;
+        b2Vec2 d;
+        d.Set(0.001f, 0.001f);
+        aabb.lowerBound = p - d;
+        aabb.upperBound = p + d;
 
-    // Query the world for overlapping shapes.
-    QueryCallback callback(p);
-    m_World->QueryAABB(&callback, aabb);
+        // Query the world for overlapping shapes.
+        QueryCallback callback(p);
+        m_World->QueryAABB(&callback, aabb);
 
-    if (callback.m_fixture)
-    {
-        b2Body* body = callback.m_fixture->GetBody();
-        b2MouseJointDef md;
-        md.bodyA = m_groundBody;
-        md.bodyB = body;
-        md.target = p;
-        md.maxForce = 1000.0f * body->GetMass();
-        m_mouseJoint = (b2MouseJoint*)m_World->CreateJoint(&md);
-        body->SetAwake(true);
+        if (callback.m_fixture)
+        {
+            b2Body* body = callback.m_fixture->GetBody();
+            b2MouseJointDef md;
+            md.bodyA = m_groundBody;
+            md.bodyB = body;
+            md.target = p;
+            md.maxForce = 1000.0f * body->GetMass();
+            m_mouseJoint = (b2MouseJoint*)m_World->CreateJoint(&md);
+            body->SetAwake(true);
+        }
     }
 }
 
 void PlayGround::ShiftMouseDown(const b2Vec2& p)
 {
-    if (m_mouseJoint != NULL)
+    if (enableControl)
     {
-        return;
+        if (m_mouseJoint != NULL)
+        {
+            return;
+        }
     }
 }
 
 void PlayGround::MouseUp(const b2Vec2& p)
 {
-    if (m_mouseJoint)
+    if (enableControl)
     {
-        m_World->DestroyJoint(m_mouseJoint);
-        m_mouseJoint = NULL;
+        if (m_mouseJoint)
+        {
+            m_World->DestroyJoint(m_mouseJoint);
+            m_mouseJoint = NULL;
+        }
     }
 }
 
 void PlayGround::MouseMove(const b2Vec2& p)
 {
-    if (m_mouseJoint)
+    if (enableControl)
     {
-        m_mouseJoint->SetTarget(p);
+        if (m_mouseJoint)
+        {
+            m_mouseJoint->SetTarget(p);
+        }
     }
 }

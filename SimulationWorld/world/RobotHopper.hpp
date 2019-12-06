@@ -151,6 +151,8 @@ private:
     
     Canvas *m_Canvas;
     bool enableRender;
+
+    static const float FPS = 60.0f;
 };
 
 #endif /* RobotHopper_hpp */
