@@ -1,13 +1,15 @@
-from lib.rabbitmq import RpcClient
+from lib.rabbitmq import RpcClient, Dispatcher
 import json
 
 if __name__ == "__main__":
-    fibonacci_rpc = RpcClient()
+    # fibonacci_rpc = RpcClient()
 
-    print(" [x] Requesting fib(30)")
-    data = [ { 'a' : 1, 'b' : 2, 'c' : 3, 'd' : 4, 'e' : 5 } ]
-    j = json.dumps(data)
-    response = fibonacci_rpc.call(j)
-    data = json.loads(response)
+    # print(" [x] Requesting fib(30)")
+    # data = [ { 'a' : 1, 'b' : 2, 'c' : 3, 'd' : 4, 'e' : 5 } ]
+    # j = json.dumps(data)
+    # response = fibonacci_rpc.call(j)
+    # data = json.loads(response)
     
-    print(" Got " + response)
+    # print(" Got " + response)
+    dispatcher = Dispatcher();
+    dispatcher.make(8);

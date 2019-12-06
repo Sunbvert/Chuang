@@ -7,7 +7,7 @@ Author: 孙川
 Create Data: 2019年12月4日
 */
 
-// API when Python app is server
+// API when Cpp app is server
 // Call:
 {
     "call": "make",
@@ -23,13 +23,13 @@ Create Data: 2019年12月4日
 // Call:
 {
     "call": "step",
-    "action": [0.0, 0.0, ...],
+    "action": [0.0, 0.0, ...], // one dimension array of actions
 }
-// Response:
+// Response:o
 {
     "response": "step",
-    "observation": [0.0, 0.0, ...],
-    "reward": 100.0,
+    "observation": [0.0, 0.0, ...],  // two dimension array of observations
+    "reward": 100.0,  // one dimension
     "done": false,
 }
 // Call:
@@ -39,5 +39,5 @@ Create Data: 2019年12月4日
 // Response:
 {
     "response": "reset",
-    "observation": [0.0, 0.0, ...],
+    "observation": [0.0, 0.0, ...],  // two dimension array of observations
 }

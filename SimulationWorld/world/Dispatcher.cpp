@@ -4,7 +4,8 @@
 //
 //  Created by 孙川 on 2019/11/11.
 //  Copyright © 2019 孙川. All rights reserved.
-
+//
+//  Here we accept and handle instructions form python client.
 
 #include <iostream>
 #include <string>

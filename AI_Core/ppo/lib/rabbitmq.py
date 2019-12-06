@@ -63,5 +63,45 @@ class RpcClient(object):
             body = j)
         while self.response is None:
             self.connection.process_data_events()
-        a = bytes(self.response).decode('utf8');
-        return a
+        data = bytes(self.response).decode('utf8');
+        json_response = json.loads(data)
+        return json_response
+
+
+class Dispatcher(object):
+    def __init__(self):
+        self.rpc_client = RpcClient();
+
+    def make(self, num_envs):
+        data = {
+            'call': 'make',
+            'num_envs': num_envs
+        }
+        json_str = json.dumps(data);
+        
+        response = self.rpc_client.call(json_str)
+        if (response.status):
+            self.observation_space = response.observation_space
+            self.action_space = response.action_space
+            return True
+        return False
+
+    def step(self, actions):
+        # TODO: check action dimensions
+        data = {
+            'call': 'step',
+            'action': actions
+        }
+        json_str = json.dumps(data)
+
+        response = self.rpc_client.call(json_str)
+        return response.observation, response.reward, response.done, ""
+
+    def reset(self):
+        data = {
+            'call': 'reset'
+        }
+        json_str = json.dumps(data)
+
+        response = self.rpc_client.call(json_str)
+        return response.observation

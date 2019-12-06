@@ -2,3 +2,4 @@ ExternalLibraries
 Build
 .idea
 .vscode
+__pycatch__
