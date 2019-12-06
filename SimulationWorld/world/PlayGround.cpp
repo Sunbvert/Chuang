@@ -50,6 +50,7 @@ public:
 PlayGround::PlayGround() : m_mouseJoint(nullptr)
 {
     m_RobotHopper = new RobotHopper();
+    m_RobotHopper->EnableRender();
     m_World = m_RobotHopper->Getb2WorldPtr();
     m_groundBody = m_RobotHopper->GetGroundBody();
 }

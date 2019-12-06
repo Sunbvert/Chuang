@@ -1,6 +1,13 @@
 from lib.rabbitmq import RpcClient, Dispatcher
 import json
 
+def test_step(dispatcher):
+    action = [0.0, 0.0, 0.0, 1.0, 2.0, 3.0]
+    observation, reward, done, _ = dispatcher.step(action)
+    print("observation", observation)
+    print("reward", reward)
+    print("done", done)
+
 if __name__ == "__main__":
     # fibonacci_rpc = RpcClient()
 
@@ -12,4 +19,5 @@ if __name__ == "__main__":
     
     # print(" Got " + response)
     dispatcher = Dispatcher();
-    dispatcher.make(8);
+    if dispatcher.make(2):
+        test_step(dispatcher)

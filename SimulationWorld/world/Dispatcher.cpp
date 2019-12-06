@@ -49,7 +49,7 @@ json Dispatcher::OnDataRecieve(json &data)
     std::string d = data.dump();
     std::cout << "Data Recieved: "<< d << std::endl;
     
-    std::string instruction = data["instruction"];
+    std::string instruction = data["call"];
     json j;
     if (instruction == "make")
     {
@@ -95,6 +95,7 @@ json Dispatcher::Make(json &data)
         Result *result = nullptr;
         m_Results->push_back(result);
     }
+    m_VecEnv = new SubproVecEnv(m_Envs);
     
     response["status"] = 1;
     response["observation_space"] = { m_Envs[0]->GetObservationSpace()->X, m_Envs[0]->GetObservationSpace()->Y };
@@ -125,7 +126,7 @@ json Dispatcher::Step(json &data)
     for (int i = 0; i < m_num_envs; i++)
     {
         float *p = (*m_Results)[i]->observation;
-        std::vector<float> vec(*p, m_num_observations);
+        std::vector<float> vec(p, p + m_num_observations);
         observations.push_back(vec);
         rewards.push_back((*m_Results)[i]->reward);
         dones.push_back((*m_Results)[i]->done);
@@ -150,7 +151,7 @@ json Dispatcher::Reset(json &data)
     for (int i = 0; i < m_num_envs; i++)
     {
         float *p = (*m_Results)[i]->observation;
-        std::vector<float> vec(*p, m_num_observations);
+        std::vector<float> vec(p, p + m_num_observations);
         observations.push_back(vec);
     }
     response["observation"] = observations;
@@ -162,5 +163,14 @@ void Dispatcher::ImGuiRender()
     if (ImGui::Button("Begin Connection"))
     {
         BeginConnection();
+    }
+    if (ImGui::Button("Test"))
+    {
+        json data;
+        data["num_envs"] = 1;
+        Make(data);
+        data["action"] = std::array<float, 3>({0.0f, 0.0f, 0.0f});
+        json j = Step(data);
+        std::cout << j << std::endl;
     }
 }

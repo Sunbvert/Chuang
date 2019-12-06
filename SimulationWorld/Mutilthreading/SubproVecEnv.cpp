@@ -24,7 +24,7 @@ SubproVecEnv::SubproVecEnv(std::vector<RobotHopper*> &env_fns) : VecEnv((int)env
         vecOfThreads.push_back(std::thread(worker, task, std::ref(vecOfEnvs[i])));
     }
     
-    std::cout << "action space X: " << vecOfEnvs[0]->GetActionSpace()->X << " observation space X: " << vecOfEnvs[1]->GetObservationSpace()->X << std::endl;
+    std::cout << "action space X: " << vecOfEnvs[0]->GetActionSpace()->X << " observation space X: " << vecOfEnvs[0]->GetObservationSpace()->X << std::endl;
 }
 
 SubproVecEnv::~SubproVecEnv()

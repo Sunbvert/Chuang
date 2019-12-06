@@ -80,9 +80,9 @@ class Dispatcher(object):
         json_str = json.dumps(data);
         
         response = self.rpc_client.call(json_str)
-        if (response.status):
-            self.observation_space = response.observation_space
-            self.action_space = response.action_space
+        if (response['status']):
+            self.observation_space = response['observation_space']
+            self.action_space = response['action_space']
             return True
         return False
 
@@ -95,7 +95,7 @@ class Dispatcher(object):
         json_str = json.dumps(data)
 
         response = self.rpc_client.call(json_str)
-        return response.observation, response.reward, response.done, ""
+        return response['observation'], response['reward'], response['done'], ""
 
     def reset(self):
         data = {
@@ -104,4 +104,4 @@ class Dispatcher(object):
         json_str = json.dumps(data)
 
         response = self.rpc_client.call(json_str)
-        return response.observation
+        return response['observation']

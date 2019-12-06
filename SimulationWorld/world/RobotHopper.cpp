@@ -111,9 +111,11 @@ public:
 
 RobotHopper::RobotHopper() : m_HeadInitialPosition(0.0f, 0.0f)
 {
+    enableRender = false;
+    m_Canvas = nullptr;
+    
     b2Vec2 gravity(0.0f, -10.0f);
     m_World = new b2World(gravity);
-    m_World->SetDebugDraw(&g_debugDraw);
     
     m_HeadContactListener = new HeadContactListener(&done);
     m_World->SetContactListener(m_HeadContactListener);
@@ -136,8 +138,15 @@ RobotHopper::RobotHopper() : m_HeadInitialPosition(0.0f, 0.0f)
     done = false;
     WorldRunTime = 0;
     WorldBeginTime = glfwGetTime();
+}
 
+void RobotHopper::EnableRender()
+{
+    enableRender = true;
+    m_World->SetDebugDraw(&g_debugDraw);
     m_Canvas = new Canvas();
+    uint32 flags = b2Draw::e_shapeBit + b2Draw::e_jointBit;
+    g_debugDraw.SetFlags(flags);
 }
 
 RobotHopper::~RobotHopper()
@@ -194,7 +203,8 @@ void RobotHopper::TakeAction(float action[])
 
 void RobotHopper::Render()
 {
-    OnRender();
+    if (enableRender)
+        OnRender();
 }
 
 void RobotHopper::Reset()
@@ -227,9 +237,6 @@ void RobotHopper::Reset()
 
 void RobotHopper::OnRender()
 {
-    uint32 flags = b2Draw::e_shapeBit + b2Draw::e_jointBit;
-    g_debugDraw.SetFlags(flags);
-
     // Render stuff
 
     m_Canvas->OnRender();
@@ -292,7 +299,8 @@ void RobotHopper::GetObservation(float observation[])
     //glm::vec4 color(0.8f, 0.8f, 0.8f, 1.0f);
 
     //b2Vec2 center = aabb.GetCenter();
-    m_Canvas->Clear();
+    if (enableRender)
+        m_Canvas->Clear();
 //    m_Canvas->DrawSquare(-1.0, 1.0, cellLength, cellLength, color);
 
     for (int i = 0; i < VISION_SIZE; i++)
@@ -310,7 +318,8 @@ void RobotHopper::GetObservation(float observation[])
             observation[j + i * VISION_SIZE] = score;
             
             b2Vec2 center = aabb.GetCenter();
-            m_Canvas->DrawSquare(center.x, center.y, cellLength, cellLength, glm::vec4(score, 0.0f, 0.0f, 1.0f));
+            if (enableRender)
+                m_Canvas->DrawSquare(center.x, center.y, cellLength, cellLength, glm::vec4(score, 0.0f, 0.0f, 1.0f));
         }
     }
     

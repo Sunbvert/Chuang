@@ -99,6 +99,7 @@ public:
     
     void SampleAction(float action[]);
     
+    void EnableRender();
     b2World* Getb2WorldPtr();
     b2Body* GetGroundBody();
 private:
@@ -149,6 +150,7 @@ private:
     RobotBodyPart m_RobotFoot;
     
     Canvas *m_Canvas;
+    bool enableRender;
 };
 
 #endif /* RobotHopper_hpp */
