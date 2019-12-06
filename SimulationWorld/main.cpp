@@ -110,7 +110,7 @@ int main(void)
         PlayGround *playGround = new PlayGround();
         WindowEventCallback::world = playGround;
 
-        Dispatcher dispatcher = Dispatcher();
+        Dispatcher dispatcher = Dispatcher(playGround);
         
         while( !glfwWindowShouldClose( window ) )
         {
