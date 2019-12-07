@@ -47,8 +47,8 @@ Dispatcher::~Dispatcher()
 
 json Dispatcher::OnDataRecieve(json &data)
 {
-    std::string d = data.dump();
-    std::cout << "Data Recieved: "<< d << std::endl;
+    // std::string d = data.dump();
+    // std::cout << "Data Recieved: "<< d << std::endl;
     
     std::string instruction = data["call"];
 

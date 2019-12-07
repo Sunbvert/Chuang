@@ -98,6 +98,7 @@ void PlayGround::PrepareTest()
 Result* PlayGround::TestStep(float *action)
 {
     m_RobotHopper->SetAction(action);
+    m_RobotHopper->Step();
     return m_RobotHopper->GetResult();
 }
 

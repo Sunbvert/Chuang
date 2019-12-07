@@ -124,8 +124,12 @@ int main(void)
             ImGui::NewFrame();
             
             /* begin writing code here */
+
+            // float action[3] = {0.0f, 0.0f, 0.0f};
+            // playGround->SampleAction(action);
+            // playGround->TestStep(action);
             
-            playGround->Update();
+            // playGround->Update();
             playGround->Render();
             playGround->ImGuiRender();
             

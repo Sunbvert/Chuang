@@ -9,7 +9,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include <iostream>
+//#include <iostream>
 
 #include "RobotHopper.hpp"
 #include "imgui/imgui.h"
@@ -126,10 +126,10 @@ RobotHopper::RobotHopper() : m_HeadInitialPosition(0.0f, -0.08f)
     m_groundBody = m_World->CreateBody(&bodyDef);
 
     b2BodyDef groundBodyDef;
-    groundBodyDef.position.Set(0.0f, -1.25f);
+    groundBodyDef.position.Set(90.0f, -1.25f);
     b2Body* groundBody = m_World->CreateBody(&groundBodyDef);
     b2PolygonShape groundBox;
-    groundBox.SetAsBox(2.5f, 0.25f);
+    groundBox.SetAsBox(100.0f, 0.25f);
     groundBody->CreateFixture(&groundBox, 0.0f);
     
     CreateHopperRobot();
@@ -260,7 +260,7 @@ b2RevoluteJoint* RobotHopper::CreateRevoluteJoint(b2Body *bodyA, b2Body *bodyB, 
     jointDef.upperAngle = upperAngle;
     jointDef.enableLimit = enableLimit;
     jointDef.motorSpeed = 0.0f;
-    jointDef.maxMotorTorque = 0.0f;
+    jointDef.maxMotorTorque = 1.0f;
     jointDef.enableMotor = true;
     return (b2RevoluteJoint*)m_World->CreateJoint(&jointDef);
 }
@@ -339,8 +339,8 @@ void RobotHopper::GetObservation(float observation[])
 float RobotHopper::GetReward()
 {
     b2Vec2 position = m_RobotHead.body->GetPosition();
-    WorldRunTime = glfwGetTime() - WorldBeginTime;
-    float reward = position.x * 100 - (float)WorldRunTime;
+    // WorldRunTime = glfwGetTime() - WorldBeginTime;
+    float reward = position.x * 100; //  - (float)WorldRunTime;
     
     //std::cout << reward << std::endl;
     return reward;
