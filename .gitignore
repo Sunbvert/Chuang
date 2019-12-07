@@ -5,3 +5,4 @@ Build
 __pycatch__
 AI_Core/ppo/lib/__pycache__
 AI_Core/ppo/runs
+AI_Core/ppo/checkpoints

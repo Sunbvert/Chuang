@@ -9,6 +9,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <iostream>
+
 #include "RobotHopper.hpp"
 #include "imgui/imgui.h"
 #include "DebugDraw.hpp"
@@ -109,7 +111,7 @@ public:
 };
 
 
-RobotHopper::RobotHopper() : m_HeadInitialPosition(0.0f, 0.0f)
+RobotHopper::RobotHopper() : m_HeadInitialPosition(0.0f, -0.08f)
 {
     enableRender = false;
     m_Canvas = nullptr;
@@ -168,7 +170,13 @@ void RobotHopper::Step()
     
     GetObservation(m_Observation);
     float reward = GetReward();
-    
+
+    WorldRunTime = glfwGetTime() - WorldBeginTime;
+    if (WorldRunTime >= 4 && m_RobotHead.body->GetWorldCenter().x <= m_HeadInitialPosition.x)
+    {
+        done = true;
+    }
+
     if (done)
     {
         reward -= 100;
@@ -182,22 +190,22 @@ void RobotHopper::Step()
 
 void RobotHopper::SampleAction(float action[])
 {
-    float action_low = -20.0f;
-    float action_high = 20.0f;
     
     for (int i = 0; i < FEATURE_SIZE; i++)
     {
         /* generate secret number between 0.0 and 1.0 : */
         float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-        action[i] = r * (action_high - action_low) - action_high;
+        action[i] = r * 2.0f - 1.0f;
     }
 }
 
 void RobotHopper::TakeAction(float action[])
 {
-    m_WaistJoint->SetMotorSpeed(action[0]);
-    m_KneeJoint->SetMotorSpeed(action[1]);
-    m_AnkleJoint->SetMotorSpeed(action[2]);
+    m_WaistJoint->SetMotorSpeed(action[0] * 20.0f);
+    m_KneeJoint->SetMotorSpeed(action[1] * 20.0f);
+    m_AnkleJoint->SetMotorSpeed(action[2] * 20.0f);
+
+    // std::cout << "0: " << action[0] << " 1: " << action[1] << " 2: " << action[2] << std::endl;
 }
 
 void RobotHopper::Render()
@@ -220,7 +228,7 @@ void RobotHopper::Reset()
     // Regernate
     done = false;
     WorldRunTime = 0;
-    WorldBeginTime = glfwGetTime();
+    WorldBeginTime = glfwGetTime();  // Seconds
     
     CreateHopperRobot();
     
@@ -252,7 +260,7 @@ b2RevoluteJoint* RobotHopper::CreateRevoluteJoint(b2Body *bodyA, b2Body *bodyB, 
     jointDef.upperAngle = upperAngle;
     jointDef.enableLimit = enableLimit;
     jointDef.motorSpeed = 0.0f;
-    jointDef.maxMotorTorque = 1.0f;
+    jointDef.maxMotorTorque = 0.0f;
     jointDef.enableMotor = true;
     return (b2RevoluteJoint*)m_World->CreateJoint(&jointDef);
 }
@@ -395,7 +403,7 @@ void RobotHopper::CreateHopperRobot()
     calf->SetUserData(&m_RobotCalf);
     foot->SetUserData(&m_RobotFoot);
 
-    m_WaistAngleLimit.Set(-0.25f * b2_pi, 0.5f * b2_pi);
+    m_WaistAngleLimit.Set(-0.25f * b2_pi, 0.25f * b2_pi);
     m_KneeAngleLimit.Set(-1.0f * b2_pi, 0.1f * b2_pi);
     m_AnkleAngleLimit.Set(-0.25f * b2_pi, 0.25f * b2_pi);
 

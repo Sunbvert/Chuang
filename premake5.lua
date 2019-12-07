@@ -9,7 +9,11 @@ workspace 'Chuang'
 
 project 'Chuang'
     kind 'ConsoleApp'
-    buildoptions { '-g' }
+
+    filter "configurations:Debug"
+        defines { "DEBUG" }
+        symbols "On"
+        
     includedirs
     {
          'SimulationWorld/mq_client',

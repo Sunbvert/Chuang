@@ -49,21 +49,25 @@ class Dispatcher(object):
 class RemoteVecEnv(object):
     def __init__(self, num_envs):
         self.dispatcher = Dispatcher()
+        self.num_envs = num_envs
         if self.dispatcher.make(num_envs):
             print("Successfully make ", num_envs, " remote environment")
         else:
             print("Error creating ", num_envs, " remote environment, please check remote server.")
-        self.action_space = spaces.Box(np.array([-20, -20, -20]), np.array([20, 20, 20]), dtype=np.float32)
-        high = np.array([np.inf] * self.dispatcher.observation_space[0])
-        self.observation_space = spaces.Box(-high, high, dtype=np.float32)
+        self.action_space = spaces.Box(np.array([-1, -1, -1]), np.array([1, 1, 1]), dtype=np.float32)
+        high = np.array([0.9] * self.dispatcher.observation_space[0])
+        low = np.array([0] * self.dispatcher.observation_space[0])
+        self.observation_space = spaces.Box(low, high, dtype=np.float32)
 
     def reset(self, test=False):
         observation = self.dispatcher.reset(test)
         return np.asarray(observation, dtype=np.float32)
 
     def step(self, action, test=False):
-        action_list = action.tolist()
+        action_ = np.reshape(action, action.size)
+        action_list = action_.tolist()
         # TODO: reshape action & change done data type
+
         next_state, reward, done, _ = self.dispatcher.step(action_list, test)
         next_state = np.asarray(next_state, dtype=np.float32)
         reward = np.asarray(reward, dtype=np.float32)

@@ -139,7 +139,7 @@ private:
 
     // 以机器人头部中心为原点，上下左右各一米的范围作为机器人的视觉范围
     // 将该范围内看到的内容储存到 VISION_SIZE 的数组中
-    static const int VISION_SIZE = 20;
+    static const int VISION_SIZE = 40;
     static const int FEATURE_SIZE = 3;
     constexpr static const float VISION_LENGTH = 4.0f;
     float32 m_Observation [VISION_SIZE * VISION_SIZE + FEATURE_SIZE];

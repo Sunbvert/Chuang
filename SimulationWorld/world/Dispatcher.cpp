@@ -58,22 +58,24 @@ json Dispatcher::OnDataRecieve(json &data)
     {
         j = HandleTestRender(data);
     }
-
-    if (instruction == "make")
+    else
     {
-        j = Make(data);
-    }
-    else if (instruction == "step")
-    {
-        j = Step(data);
-    }
-    else if (instruction == "reset")
-    {
-        j = Reset(data);
+        if (instruction == "make")
+        {
+            j = Make(data);
+        }
+        else if (instruction == "step")
+        {
+            j = Step(data);
+        }
+        else if (instruction == "reset")
+        {
+            j = Reset(data);
+        }
     }
     
-    std::string s = j.dump();
-    std::cout << "Data Send: "<< s << std::endl;
+    // std::string s = j.dump();
+    // std::cout << "Data Send: "<< s << std::endl;
     
     return j;
 }

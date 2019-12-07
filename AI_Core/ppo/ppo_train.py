@@ -16,9 +16,10 @@ from tensorboardX import SummaryWriter
 from lib.common import mkdir
 from lib.model import ActorCritic
 from lib.multiprocessing_env import SubprocVecEnv
+from lib.fake_gym import RemoteVecEnv
 
-NUM_ENVS            = 8 
-ENV_ID              = "Pendulum-v0"
+NUM_ENVS            = 8
+#ENV_ID              = "Pendulum-v0"
 HIDDEN_SIZE         = 256
 LEARNING_RATE       = 1e-4
 GAMMA               = 0.99
@@ -34,16 +35,16 @@ NUM_TESTS           = 10
 TARGET_REWARD       = 2500
 
 
-def make_env():
-    # returns a function which creates a single environment
-    def _thunk():
-        env = gym.make(ENV_ID)
-        return env
-    return _thunk
+# def make_env():
+#     # returns a function which creates a single environment
+#     def _thunk():
+#         env = gym.make(ENV_ID)
+#         return env
+#     return _thunk
 
     
 def test_env(env, model, device, deterministic=True):
-    state = env.reset()
+    state = env.reset(True)
     done = False
     total_reward = 0
     while not done:
@@ -52,7 +53,7 @@ def test_env(env, model, device, deterministic=True):
         dist, _ = model(state)
         action = dist.mean.detach().cpu().numpy()[0] if deterministic \
             else dist.sample().cpu().numpy()[0]
-        next_state, reward, done, _ = env.step(action)
+        next_state, reward, done, _ = env.step(action, True)
         state = next_state
         total_reward += reward
     return total_reward
@@ -135,7 +136,7 @@ def ppo_update(frame_idx, states, actions, log_probs, returns, advantages, clip_
 if __name__ == "__main__":
     mkdir('.', 'checkpoints')
     parser = argparse.ArgumentParser()
-    parser.add_argument("-n", "--name", default=ENV_ID, help="Name of the run")
+    parser.add_argument("-n", "--name", default="RohotHopper", help="Name of the run")
     args = parser.parse_args()
     writer = SummaryWriter(comment="ppo_" + args.name)
     
@@ -145,9 +146,7 @@ if __name__ == "__main__":
     print('Device:', device)
     
     # Prepare environments
-    envs = [make_env() for i in range(NUM_ENVS)]
-    envs = SubprocVecEnv(envs)
-    env = gym.make(ENV_ID)
+    envs = RemoteVecEnv(NUM_ENVS)
     num_inputs  = envs.observation_space.shape[0]
     num_outputs = envs.action_space.shape[0]
 
@@ -208,7 +207,7 @@ if __name__ == "__main__":
         train_epoch += 1
 
         if train_epoch % TEST_EPOCHS == 0:
-            test_reward = np.mean([test_env(env, model, device) for _ in range(NUM_TESTS)])
+            test_reward = np.mean([test_env(envs, model, device) for _ in range(NUM_TESTS)])
             writer.add_scalar("test_rewards", test_reward, frame_idx)
             print('Frame %s. reward: %s' % (frame_idx, test_reward))
             # Save a checkpoint every time we achieve a best reward

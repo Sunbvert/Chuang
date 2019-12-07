@@ -65,7 +65,7 @@ PlayGround::~PlayGround()
 void PlayGround::Update()
 {
     float action[3] = {0.0f, 0.0f, 0.0f};
-    //m_RobotHopper.SampleAction(action);
+    m_RobotHopper->SampleAction(action);
     m_RobotHopper->SetAction(action);
     m_RobotHopper->Step();
 }
@@ -98,12 +98,18 @@ void PlayGround::PrepareTest()
 Result* PlayGround::TestStep(float *action)
 {
     m_RobotHopper->SetAction(action);
+    return m_RobotHopper->GetResult();
+}
+
+void PlayGround::SampleAction(float *action)
+{
+    m_RobotHopper->SampleAction(action);
 }
 
 Result* PlayGround::TestReset()
 {
     m_RobotHopper->Reset();
-
+    return m_RobotHopper->GetResult();
 }
 
 void PlayGround::Keyboard(int key)
