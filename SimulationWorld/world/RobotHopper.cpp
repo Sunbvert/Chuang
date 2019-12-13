@@ -9,7 +9,10 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-//#include <iostream>
+#include <iostream>
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 #include "RobotHopper.hpp"
 #include "imgui/imgui.h"
@@ -115,6 +118,8 @@ RobotHopper::RobotHopper() : m_HeadInitialPosition(0.0f, -0.08f)
 {
     enableRender = false;
     m_Canvas = nullptr;
+    m_unmoveStepCount = 0;
+    m_lastHeadX = m_HeadInitialPosition.x;
     
     b2Vec2 gravity(0.0f, -10.0f);
     m_World = new b2World(gravity);
@@ -166,7 +171,7 @@ void RobotHopper::Step()
     float *action = GetAction();
     TakeAction(action);
     
-    m_World->Step(1.0f / FPS, velocityIterations, positionIterations);
+    m_World->Step(1.0f / FPS, velocityIterations * 30.0f, positionIterations * 30.0f);
     
     GetObservation(m_Observation);
     float reward = GetReward();
@@ -177,9 +182,25 @@ void RobotHopper::Step()
         done = true;
     }
 
+    // Stop robot from staying still too long
+    if (m_RobotHead.body->GetWorldCenter().x == m_lastHeadX)
+    {
+        m_unmoveStepCount++;
+    }
+    else 
+    {
+        m_unmoveStepCount = 0;
+    }
+    m_lastHeadX = m_RobotHead.body->GetWorldCenter().x;
+
+    if (m_unmoveStepCount >= 20)
+    {
+        done = true;
+    }
+
     if (done)
     {
-        reward -= 100;
+        reward -= 200;
     }
     
     std::map<std::string, std::string> b;
@@ -201,9 +222,9 @@ void RobotHopper::SampleAction(float action[])
 
 void RobotHopper::TakeAction(float action[])
 {
-    m_WaistJoint->SetMotorSpeed(action[0] * 20.0f);
-    m_KneeJoint->SetMotorSpeed(action[1] * 20.0f);
-    m_AnkleJoint->SetMotorSpeed(action[2] * 20.0f);
+    m_WaistJoint->SetMotorSpeed(action[0] * 2.0f);
+    m_KneeJoint->SetMotorSpeed(action[1] * 2.0f);
+    m_AnkleJoint->SetMotorSpeed(action[2] * 2.0f);
 
     // std::cout << "0: " << action[0] << " 1: " << action[1] << " 2: " << action[2] << std::endl;
 }
@@ -240,6 +261,17 @@ void RobotHopper::Reset()
     Result *result = new Result(m_Observation, 0.0f, done, b);
     SetResult(result);
     steped = true;
+    m_unmoveStepCount = 0;
+    m_lastHeadX = 0.0f;
+}
+
+void RobotHopper::OnImGuiRender()
+{
+    if (done)
+    {
+        ImGui::Text("Simulation Done!");
+    }
+    ImGui::Text("Current unmoved step count: %d", m_unmoveStepCount);
 }
 
 void RobotHopper::OnRender()
@@ -247,6 +279,7 @@ void RobotHopper::OnRender()
     // Render stuff
 
     m_Canvas->OnRender();
+    OnImGuiRender();
 
     m_World->DrawDebugData();
     g_debugDraw.Flush();
@@ -260,7 +293,7 @@ b2RevoluteJoint* RobotHopper::CreateRevoluteJoint(b2Body *bodyA, b2Body *bodyB, 
     jointDef.upperAngle = upperAngle;
     jointDef.enableLimit = enableLimit;
     jointDef.motorSpeed = 0.0f;
-    jointDef.maxMotorTorque = 1.0f;
+    jointDef.maxMotorTorque = 80.0f;
     jointDef.enableMotor = true;
     return (b2RevoluteJoint*)m_World->CreateJoint(&jointDef);
 }
@@ -340,7 +373,7 @@ float RobotHopper::GetReward()
 {
     b2Vec2 position = m_RobotHead.body->GetPosition();
     // WorldRunTime = glfwGetTime() - WorldBeginTime;
-    float reward = position.x * 100; //  - (float)WorldRunTime;
+    float reward = position.x * 10; //  - (float)WorldRunTime;
     
     //std::cout << reward << std::endl;
     return reward;
@@ -388,10 +421,12 @@ void RobotHopper::CreateHopperRobot()
     b2Vec2 calfCenter(headCenter.x, thighCenter.y - thighSize.y / 2 - calfSize.y / 2);
     b2Vec2 footCenter(headCenter.x, calfCenter.y - calfSize.y / 2 - footSize.y / 2);
 
-    b2Body* head = CreateDynamicBody(headCenter.x, headCenter.y, headSize.x / 2, headSize.y / 2, 1.0f, 0.3f);
-    b2Body* thigh = CreateDynamicBody(thighCenter.x, thighCenter.y, thighSize.x / 2, thighSize.y / 2, 1.0f, 0.3f);
-    b2Body* calf = CreateDynamicBody(calfCenter.x, calfCenter.y, calfSize.x / 2, calfSize.y / 2, 1.0f, 0.3f);
-    b2Body* foot = CreateDynamicBody(footCenter.x, footCenter.y, footSize.x / 2, footSize.y / 2, 1.0f, 0.3f);
+    float density = 300.0f;
+
+    b2Body* head = CreateDynamicBody(headCenter.x, headCenter.y, headSize.x / 2, headSize.y / 2, density, 0.3f);
+    b2Body* thigh = CreateDynamicBody(thighCenter.x, thighCenter.y, thighSize.x / 2, thighSize.y / 2, density, 0.3f);
+    b2Body* calf = CreateDynamicBody(calfCenter.x, calfCenter.y, calfSize.x / 2, calfSize.y / 2, density, 0.3f);
+    b2Body* foot = CreateDynamicBody(footCenter.x, footCenter.y, footSize.x / 2, footSize.y / 2, density, 0.3f);
 
     m_RobotHead.Set(head, HEAD);
     m_RobotThigh.Set(thigh, THIGH);
@@ -410,6 +445,11 @@ void RobotHopper::CreateHopperRobot()
     m_WaistJoint = CreateRevoluteJoint(head, thigh, b2Vec2(headCenter.x, headCenter.y - headSize.y / 2), true, m_WaistAngleLimit.x, m_WaistAngleLimit.y);
     m_KneeJoint = CreateRevoluteJoint(thigh, calf, b2Vec2(headCenter.x, thighCenter.y - thighSize.y / 2), true, m_KneeAngleLimit.x, m_KneeAngleLimit.y);
     m_AnkleJoint = CreateRevoluteJoint(calf, foot, b2Vec2(headCenter.x, calfCenter.y - calfSize.y / 2), true, m_AnkleAngleLimit.x, m_AnkleAngleLimit.y);
+
+    // Set robot body mass
+    
+    float totalMass = head->GetMass() + thigh->GetMass() + calf->GetMass()  + foot->GetMass();
+    std::cout << "total robot mass: " << totalMass << std::endl;
 }
 
 b2World* RobotHopper::Getb2WorldPtr()

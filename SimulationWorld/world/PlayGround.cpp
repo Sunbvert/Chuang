@@ -65,7 +65,7 @@ PlayGround::~PlayGround()
 void PlayGround::Update()
 {
     float action[3] = {0.0f, 0.0f, 0.0f};
-    m_RobotHopper->SampleAction(action);
+    //m_RobotHopper->SampleAction(action);
     m_RobotHopper->SetAction(action);
     m_RobotHopper->Step();
 }

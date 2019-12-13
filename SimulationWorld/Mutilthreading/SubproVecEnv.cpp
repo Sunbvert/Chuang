@@ -24,7 +24,7 @@ SubproVecEnv::SubproVecEnv(std::vector<RobotHopper*> &env_fns) : VecEnv((int)env
         vecOfThreads.push_back(std::thread(worker, task, std::ref(vecOfEnvs[i])));
     }
     
-    std::cout << "action space X: " << vecOfEnvs[0]->GetActionSpace()->X << " observation space X: " << vecOfEnvs[0]->GetObservationSpace()->X << std::endl;
+    std::cout << "action space X: " << vecOfEnvs[0]->GetActionSpace()->X << ", observation space X: " << vecOfEnvs[0]->GetObservationSpace()->X << std::endl;
 }
 
 SubproVecEnv::~SubproVecEnv()
@@ -56,7 +56,7 @@ void SubproVecEnv::Step(float *actions, std::vector<Result*>* results)
     while (waiting)
     {
         // TODO: sleep cpu
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        //std::this_thread::sleep_for(std::chrono::milliseconds(100));
         int count = 0;
         for (int i = 0; i < num_envs; i++)
         {
@@ -87,7 +87,7 @@ void SubproVecEnv::Reset(std::vector<Result*>* results)
     while (waiting)
     {
         // TODO: sleep cpu
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        //std::this_thread::sleep_for(std::chrono::milliseconds(100));
         int count = 0;
         for (int i = 0; i < num_envs; i++)
         {

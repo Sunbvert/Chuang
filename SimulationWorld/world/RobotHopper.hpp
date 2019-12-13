@@ -107,6 +107,7 @@ private:
     void TakeAction(float action[]);
     
     void OnRender();
+    void OnImGuiRender();
     void CreateHopperRobot();
     
     float GetVisionScore(b2Fixture *body, b2Fixture* ground);
@@ -153,6 +154,8 @@ private:
     bool enableRender;
 
     constexpr static const float FPS = 60.0f;
+    int m_unmoveStepCount;
+    float m_lastHeadX;
 };
 
 #endif /* RobotHopper_hpp */

@@ -32,7 +32,7 @@ MINI_BATCH_SIZE     = 64
 PPO_EPOCHS          = 10
 TEST_EPOCHS         = 10
 NUM_TESTS           = 10
-TARGET_REWARD       = 2500
+TARGET_REWARD       = 8000
 
 
 # def make_env():
@@ -48,7 +48,7 @@ def test_env(env, model, device, deterministic=True):
     done = False
     total_reward = 0
     while not done:
-        # env.render()s
+        # env.render()
         state = torch.FloatTensor(state).unsqueeze(0).to(device)
         dist, _ = model(state)
         action = dist.mean.detach().cpu().numpy()[0] if deterministic \

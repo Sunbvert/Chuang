@@ -1,5 +1,6 @@
 import argparse
 import gym
+from lib.fake_gym import RemoteVecEnv
 
 from lib.model import ActorCritic
 
@@ -7,7 +8,7 @@ import numpy as np
 import torch
 
 
-ENV_ID = "Pendulum-v0"
+ENV_ID = "RobotHopper"
 HIDDEN_SIZE = 256
 
 if __name__ == "__main__":
@@ -22,28 +23,28 @@ if __name__ == "__main__":
     use_cuda = torch.cuda.is_available()
     device   = torch.device("cuda" if use_cuda else "cpu")
 
-    env = gym.make(args.env)
-    if args.record:
-        env = gym.wrappers.Monitor(env, args.record, force=True)
+    env = RemoteVecEnv(2)
+    # if args.record:
+    #     env = gym.wrappers.Monitor(env, args.record, force=True)
 
     num_inputs  = env.observation_space.shape[0]
     num_outputs = env.action_space.shape[0]
     model = ActorCritic(num_inputs, num_outputs, HIDDEN_SIZE).to(device)
     model.load_state_dict(torch.load(args.model))
 
-    state = env.reset()
+    state = env.reset(True)
     done = False
     total_steps = 0
     total_reward = 0
     while not done:
-        env.render()
+        # env.render()
         state = torch.FloatTensor(state).unsqueeze(0).to(device)
         dist, _ = model(state)
         action = dist.mean.detach().cpu().numpy()[0] if args.deterministic \
             else dist.sample().cpu().numpy()[0]
-        next_state, reward, done, _ = env.step(action)
+        next_state, reward, done, _ = env.step(action, True)
         state = next_state
         total_reward += reward
         total_steps += 1
-    env.env.close()
+    #env.env.close()
     print("In %d steps we got %.3f reward" % (total_steps, total_reward))
