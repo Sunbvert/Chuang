@@ -1,16 +1,29 @@
 import wx
 import numpy as np
-from ui.panels import TrainingVisualizer
+from ui.panels import TrainingVisualizer, ActionLog, ParameterControl
+
 
 class MainFrame(wx.Frame):
     def __init__(self, parent, title):
-        wx.Frame.__init__(self, parent, title=title, size=(1000, 600))
+        wx.Frame.__init__(self, parent, title=title)
         self.InitUI()
         self.Show(True)
 
     def InitUI(self):
+        self.panel = wx.Panel(self, wx.ID_ANY)
+        topSizer = wx.GridSizer(2, 2, 2, 2)
+
         visual = TrainingVisualizer(self)
-        visual.SetPaintData(np.array([[0.1, 0.2, 0.3], [0.4, 0.5, 0.6], [0.7, 0.8, 0.9]]))
+        action = ActionLog(self)
+        control = ParameterControl(self)
+
+        topSizer.Add(visual, 0, wx.EXPAND)
+        topSizer.Add(action, 0, wx.EXPAND)
+        topSizer.Add(control, 0, wx.EXPAND)
+
+        self.panel.SetSizerAndFit(topSizer)
+        topSizer.Fit(self)
+
 
 ex = wx.App(False)
 MainFrame(None, "Training Control")

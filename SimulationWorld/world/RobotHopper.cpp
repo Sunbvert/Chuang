@@ -222,9 +222,9 @@ void RobotHopper::SampleAction(float action[])
 
 void RobotHopper::TakeAction(float action[])
 {
-    m_WaistJoint->SetMotorSpeed(action[0] * 2.0f);
-    m_KneeJoint->SetMotorSpeed(action[1] * 2.0f);
-    m_AnkleJoint->SetMotorSpeed(action[2] * 2.0f);
+    m_WaistJoint->SetMotorSpeed(action[0] * 10.0f);
+    m_KneeJoint->SetMotorSpeed(action[1] * 10.0f);
+    m_AnkleJoint->SetMotorSpeed(action[2] * 10.0f);
 
     // std::cout << "0: " << action[0] << " 1: " << action[1] << " 2: " << action[2] << std::endl;
 }
@@ -421,7 +421,7 @@ void RobotHopper::CreateHopperRobot()
     b2Vec2 calfCenter(headCenter.x, thighCenter.y - thighSize.y / 2 - calfSize.y / 2);
     b2Vec2 footCenter(headCenter.x, calfCenter.y - calfSize.y / 2 - footSize.y / 2);
 
-    float density = 300.0f;
+    float density = 200.0f;
 
     b2Body* head = CreateDynamicBody(headCenter.x, headCenter.y, headSize.x / 2, headSize.y / 2, density, 0.3f);
     b2Body* thigh = CreateDynamicBody(thighCenter.x, thighCenter.y, thighSize.x / 2, thighSize.y / 2, density, 0.3f);
