@@ -7,3 +7,5 @@ AI_Core/ppo/lib/__pycache__
 AI_Core/ppo/runs
 AI_Core/ppo/checkpoints
 AI_Core/ppo/ui/__pycache__/
+AI_Core/ppo/_test_/__pycache__
+AI_Core/ppo/algorithms/__pycache__

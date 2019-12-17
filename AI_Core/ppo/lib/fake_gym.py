@@ -24,7 +24,6 @@ class Dispatcher(object):
         return False
 
     def step(self, actions, test=False):
-        # TODO: check action dimensions
         data = {
             'call': 'step',
             'action': actions,
@@ -55,9 +54,10 @@ class RemoteVecEnv(object):
         else:
             print("Error creating ", num_envs, " remote environment, please check remote server.")
         self.action_space = spaces.Box(np.array([-1, -1, -1]), np.array([1, 1, 1]), dtype=np.float32)
-        high = np.array([0.9] * self.dispatcher.observation_space[0])
+        # high = np.array([0.9] * self.dispatcher.observation_space[0])
+        high = np.array([np.inf] * self.dispatcher.observation_space[0])
         low = np.array([0] * self.dispatcher.observation_space[0])
-        self.observation_space = spaces.Box(low, high, dtype=np.float32)
+        self.observation_space = spaces.Box(-high, high, dtype=np.float32)
 
     def reset(self, test=False):
         observation = self.dispatcher.reset(test)

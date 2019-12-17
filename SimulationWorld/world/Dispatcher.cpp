@@ -60,6 +60,7 @@ json Dispatcher::OnDataRecieve(json &data)
     }
     else
     {
+        m_TestHopper->EndTest();
         if (instruction == "make")
         {
             j = Make(data);
@@ -113,6 +114,7 @@ json Dispatcher::HandleTestRender(json &data)
     }
     else if (instruction == "reset")
     {
+        m_TestHopper->BeginTest();
         response["response"] = "reset";
 
         Result *result = m_TestHopper->TestReset();

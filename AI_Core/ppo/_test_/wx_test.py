@@ -1,6 +1,6 @@
 import wx
 import numpy as np
-from ui.panels import TrainingVisualizer, ActionLog, ParameterControl
+from ui.panels import TrainingVisualizer, ActionLog, ParameterControl, Logs
 
 
 class MainFrame(wx.Frame):
@@ -16,10 +16,12 @@ class MainFrame(wx.Frame):
         visual = TrainingVisualizer(self)
         action = ActionLog(self)
         control = ParameterControl(self)
+        logs = Logs(self)
 
         topSizer.Add(visual, 0, wx.EXPAND)
         topSizer.Add(action, 0, wx.EXPAND)
         topSizer.Add(control, 0, wx.EXPAND)
+        topSizer.Add(logs, 0, wx.EXPAND)
 
         self.panel.SetSizerAndFit(topSizer)
         topSizer.Fit(self)

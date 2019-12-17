@@ -77,7 +77,7 @@ private:
         if (fixture->GetBody()->GetType() == b2_dynamicBody)
         {
             RobotBodyPart *part = (RobotBodyPart*)fixture->GetBody()->GetUserData();
-            if (part->worldBodyType == HEAD)
+            if (part->worldBodyType != FOOT)
             {
                 return true;
             }

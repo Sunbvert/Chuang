@@ -124,7 +124,7 @@ int main(void)
             ImGui::NewFrame();
             
             /* begin writing code here */
-            // playGround->Update();
+            playGround->Update();
             
             playGround->Render();
             playGround->ImGuiRender();

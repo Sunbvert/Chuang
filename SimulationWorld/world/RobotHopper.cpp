@@ -176,8 +176,7 @@ void RobotHopper::Step()
     GetObservation(m_Observation);
     float reward = GetReward();
 
-    WorldRunTime = glfwGetTime() - WorldBeginTime;
-    if (WorldRunTime >= 4 && m_RobotHead.body->GetWorldCenter().x <= m_HeadInitialPosition.x)
+    if (m_RobotHead.body->GetWorldCenter().x <= m_HeadInitialPosition.x - 4)
     {
         done = true;
     }
@@ -193,7 +192,7 @@ void RobotHopper::Step()
     }
     m_lastHeadX = m_RobotHead.body->GetWorldCenter().x;
 
-    if (m_unmoveStepCount >= 20)
+    if (m_unmoveStepCount >= 200)
     {
         done = true;
     }
@@ -222,9 +221,9 @@ void RobotHopper::SampleAction(float action[])
 
 void RobotHopper::TakeAction(float action[])
 {
-    m_WaistJoint->SetMotorSpeed(action[0] * 10.0f);
-    m_KneeJoint->SetMotorSpeed(action[1] * 10.0f);
-    m_AnkleJoint->SetMotorSpeed(action[2] * 10.0f);
+    m_WaistJoint->SetMotorSpeed(action[0] * 20.0f);
+    m_KneeJoint->SetMotorSpeed(action[1] * 20.0f);
+    m_AnkleJoint->SetMotorSpeed(action[2] * 20.0f);
 
     // std::cout << "0: " << action[0] << " 1: " << action[1] << " 2: " << action[2] << std::endl;
 }
@@ -448,8 +447,8 @@ void RobotHopper::CreateHopperRobot()
 
     // Set robot body mass
     
-    float totalMass = head->GetMass() + thigh->GetMass() + calf->GetMass()  + foot->GetMass();
-    std::cout << "total robot mass: " << totalMass << std::endl;
+    // float totalMass = head->GetMass() + thigh->GetMass() + calf->GetMass()  + foot->GetMass();
+    // std::cout << "total robot mass: " << totalMass << std::endl;
 }
 
 b2World* RobotHopper::Getb2WorldPtr()

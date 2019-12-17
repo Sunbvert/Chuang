@@ -29,6 +29,8 @@ public:
     Result* TestStep(float *action);
     Result* TestReset();
     void SampleAction(float []);
+    void EndTest();
+    void BeginTest();
     
     void MouseDown(const b2Vec2& p);
     void MouseUp(const b2Vec2& p);

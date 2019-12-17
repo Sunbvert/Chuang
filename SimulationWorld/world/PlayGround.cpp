@@ -64,10 +64,13 @@ PlayGround::~PlayGround()
 
 void PlayGround::Update()
 {
-    float action[3] = {0.0f, 0.0f, 0.0f};
-    //m_RobotHopper->SampleAction(action);
-    m_RobotHopper->SetAction(action);
-    m_RobotHopper->Step();
+    if (enableControl)
+    {
+        float action[3] = {0.0f, 0.0f, 0.0f};
+        //m_RobotHopper->SampleAction(action);  //use this when need random actions
+        m_RobotHopper->SetAction(action);
+        m_RobotHopper->Step();
+    }
 }
 
 void PlayGround::Render()
@@ -77,6 +80,10 @@ void PlayGround::Render()
 
 void PlayGround::ImGuiRender()
 {
+    if (enableControl)
+    {
+        ImGui::Text("Control enabled");
+    }
     if (ImGui::Button("Reset View"))
     {
         g_camera.center.Set(0.0f, 0.0f);
@@ -93,6 +100,16 @@ void PlayGround::PrepareTest()
 {
     enableControl = false;
     m_RobotHopper->Reset();
+}
+
+void PlayGround::BeginTest()
+{
+    enableControl = false;
+}
+
+void PlayGround::EndTest()
+{
+    enableControl = true;
 }
 
 Result* PlayGround::TestStep(float *action)
