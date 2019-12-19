@@ -67,6 +67,8 @@ class MainFrame(wx.Frame):
             self.visual.SetVisualData(data[0][self.selectedEnvId][:index])
             self.actionLog.PushActionsIn(data[0][self.selectedEnvId][index:])
             self.actionLog.PushActionsOut(data[3][self.selectedEnvId], data[1][self.selectedEnvId], data[2][self.selectedEnvId])
+            if data[2][self.selectedEnvId]:
+                self.actionLog.Clear()
 
     def PauseTraining(self):
         self.pauseQueue.put(1)

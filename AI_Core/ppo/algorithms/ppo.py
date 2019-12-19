@@ -31,9 +31,9 @@ GAE_LAMBDA          = 0.95
 PPO_EPSILON         = 0.2
 CRITIC_DISCOUNT     = 0.5
 ENTROPY_BETA        = 0.001
-PPO_STEPS           = 256
-MINI_BATCH_SIZE     = 64
-PPO_EPOCHS          = 10
+PPO_STEPS           = 128
+MINI_BATCH_SIZE     = 256
+PPO_EPOCHS          = 30
 TEST_EPOCHS         = 10
 NUM_TESTS           = 10
 TARGET_REWARD       = 8000
@@ -93,11 +93,15 @@ class PPO_Train:
 
     def ppo_iter(self, states, actions, log_probs, returns, advantage):
         batch_size = states.size(0)
+        ids = np.random.permutation(batch_size)
+        ids = np.split(ids[:batch_size // MINI_BATCH_SIZE * MINI_BATCH_SIZE], batch_size // MINI_BATCH_SIZE)
+        for i in range(len(ids)):
+            yield states[ids[i], :], actions[ids[i], :], log_probs[ids[i], :], returns[ids[i], :], advantage[ids[i], :]
         # generates random mini-batches until we have covered the full batch
-        for _ in range(batch_size // MINI_BATCH_SIZE):
-            rand_ids = np.random.randint(0, batch_size, MINI_BATCH_SIZE)
-            yield states[rand_ids, :], actions[rand_ids, :], log_probs[rand_ids, :], returns[rand_ids, :], advantage[
-                                                                                                           rand_ids, :]
+        # for _ in range(batch_size // MINI_BATCH_SIZE):
+        #     rand_ids = np.random.randint(0, batch_size, MINI_BATCH_SIZE)
+        #     yield states[rand_ids, :], actions[rand_ids, :], log_probs[rand_ids, :], returns[rand_ids, :], advantage[
+        #                                                                                                    rand_ids, :]
 
     def ppo_update(self, frame_idx, states, actions, log_probs, returns, advantages, clip_param=PPO_EPSILON):
         count_steps = 0
@@ -164,7 +168,7 @@ class PPO_Train:
         num_inputs = envs.observation_space.shape[0]
         num_outputs = envs.action_space.shape[0]
 
-        self.logQueue.put('Successfully make 8 remake environment')
+        self.logQueue.put('Successfully make 8 remote environment')
 
         self.model = ActorCritic(num_inputs, num_outputs, HIDDEN_SIZE).to(device)
         self.logQueue.put(pprint.pformat(self.model))
@@ -218,6 +222,7 @@ class PPO_Train:
                             pauseQueue.get()
 
 
+
             next_state = torch.FloatTensor(next_state).to(device)
             _, next_value = self.model(next_state)
             returns = self.compute_gae(next_value, rewards, masks, values)
@@ -246,3 +251,5 @@ class PPO_Train:
                         torch.save(self.model.state_dict(), fname)
                     best_reward = test_reward
                 if test_reward > TARGET_REWARD: early_stop = True
+
+            envs.reset(False)

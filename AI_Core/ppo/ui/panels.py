@@ -27,11 +27,27 @@ class ArrayVisualizer(wx.Panel):
         canvas.SetBackground(brush)
         canvas.Clear()
         canvas.SetPen(wx.Pen(wx.Colour('white'), 0, wx.PENSTYLE_TRANSPARENT))
-
         for i in range(self.paintData.shape[0]):
             for j in range(self.paintData.shape[1]):
-                canvas.SetBrush(wx.Brush(wx.Colour(int(255 * self.paintData[i][j]), 255, 255, 255)))
+                canvas.SetBrush(wx.Brush(self.GetColor(round(self.paintData[i][j].item(), 1))))
                 canvas.DrawRectangle(j * self.pixelSize, i * self.pixelSize, self.pixelSize, self.pixelSize)
+
+    def GetColor(self, feature_value):
+        if feature_value == 0.0:
+            return wx.Colour(255, 255, 255)
+        elif feature_value == 0.5:
+            return wx.Colour(25, 25, 25)
+        elif feature_value == 0.1:
+            return wx.Colour(142, 89, 62)
+        elif feature_value == 0.2:
+            return wx.Colour(142, 153, 83)
+        elif feature_value == 0.3:
+            return wx.Colour(84, 153, 83)
+        elif feature_value == 0.4:
+            return wx.Colour(84, 153, 211)
+        else:
+            return wx.Colour(255, 0, 0)
+
 
 
 class TrainingVisualizer(wx.Panel):
@@ -72,7 +88,6 @@ class TrainingVisualizer(wx.Panel):
     def OnChoice(self, e):
         self.selectedEnvId = self.envChoice.GetSelection()
         self.parent.selectedEnvId = self.selectedEnvId
-        self.parent.logs.Clear()
         self.parent.actionLog.Clear()
 
 
@@ -92,7 +107,7 @@ class ActionLog(wx.Panel):
         inoutLabel = wx.StaticText(self, wx.ID_ANY, 'In                                          Out')
         topSizer.Add(inoutLabel)
 
-        actionHeader = wx.StaticText(self, wx.ID_ANY, 'Waist | Knee | Ankle  ==>  Waist | Knee | Ankle | Award | Done')
+        actionHeader = wx.StaticText(self, wx.ID_ANY, 'Waist | Knee | Ankle  ==>  Waist | Knee | Ankle | Reward | Done')
         topSizer.Add(actionHeader)
 
         self.logText = wx.TextCtrl(self, wx.ID_ANY, 'Training has not yet started.', style=wx.TE_MULTILINE)

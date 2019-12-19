@@ -8,7 +8,7 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-
+#include <stdlib.h>
 #include <iostream>
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -143,8 +143,8 @@ RobotHopper::RobotHopper() : m_HeadInitialPosition(0.0f, -0.08f)
     SetActionSpace(FEATURE_SIZE, 1);
     
     done = false;
-    WorldRunTime = 0;
-    WorldBeginTime = glfwGetTime();
+    lastStepTime = glfwGetTime();
+    lastStepPos = 0.0f;
 }
 
 void RobotHopper::EnableRender()
@@ -174,7 +174,7 @@ void RobotHopper::Step()
     m_World->Step(1.0f / FPS, velocityIterations * 30.0f, positionIterations * 30.0f);
     
     GetObservation(m_Observation);
-    float reward = GetReward();
+    float reward = GetReward() + 1.0f;
 
     if (m_RobotHead.body->GetWorldCenter().x <= m_HeadInitialPosition.x - 4)
     {
@@ -182,7 +182,7 @@ void RobotHopper::Step()
     }
 
     // Stop robot from staying still too long
-    if (m_RobotHead.body->GetWorldCenter().x == m_lastHeadX)
+    if (abs(m_RobotHead.body->GetWorldCenter().x - m_lastHeadX) < 0.001f)
     {
         m_unmoveStepCount++;
     }
@@ -197,10 +197,15 @@ void RobotHopper::Step()
         done = true;
     }
 
-    if (done)
+    if (m_RobotHead.body->GetWorldCenter().y < -1.0f)
     {
-        reward -= 200;
+        done = true;
     }
+
+    // if (done)
+    // {
+    //     reward -= 200;
+    // }
     
     std::map<std::string, std::string> b;
     Result *result = new Result(m_Observation, reward, done, b);
@@ -247,8 +252,8 @@ void RobotHopper::Reset()
     
     // Regernate
     done = false;
-    WorldRunTime = 0;
-    WorldBeginTime = glfwGetTime();  // Seconds
+    lastStepTime = glfwGetTime();  // Seconds
+    lastStepPos = 0.0f;
     
     CreateHopperRobot();
     
@@ -335,12 +340,8 @@ void RobotHopper::GetObservation(float observation[])
     float cellLength = VISION_LENGTH / VISION_SIZE;
     b2Vec2 visionLength(VISION_LENGTH, VISION_LENGTH);
 
-    //glm::vec4 color(0.8f, 0.8f, 0.8f, 1.0f);
-
-    //b2Vec2 center = aabb.GetCenter();
     if (enableRender)
         m_Canvas->Clear();
-//    m_Canvas->DrawSquare(-1.0, 1.0, cellLength, cellLength, color);
 
     for (int i = 0; i < VISION_SIZE; i++)
     {
@@ -371,9 +372,12 @@ void RobotHopper::GetObservation(float observation[])
 float RobotHopper::GetReward()
 {
     b2Vec2 position = m_RobotHead.body->GetPosition();
-    // WorldRunTime = glfwGetTime() - WorldBeginTime;
-    float reward = position.x * 10; //  - (float)WorldRunTime;
+    double dt = glfwGetTime() - lastStepTime;
+    float delatX = position.x - lastStepPos;
+    float reward = delatX / dt;
     
+    lastStepPos = position.x;
+    lastStepTime = glfwGetTime();
     //std::cout << reward << std::endl;
     return reward;
 }
