@@ -27,6 +27,8 @@ Dispatcher::Dispatcher(PlayGround *testHopper)
     m_VecEnv = nullptr;
     m_Results = new std::vector<Result*>();
     m_TestHopper = testHopper;
+
+    BeginConnection();
 }
 
 Dispatcher::~Dispatcher()
@@ -220,17 +222,17 @@ json Dispatcher::Reset(json &data)
 
 void Dispatcher::ImGuiRender()
 {
-    if (ImGui::Button("Begin Connection"))
-    {
-        BeginConnection();
-    }
-    if (ImGui::Button("Test"))
-    {
-        json data;
-        data["num_envs"] = 1;
-        Make(data);
-        data["action"] = std::array<float, 3>({0.0f, 0.0f, 0.0f});
-        json j = Step(data);
-        std::cout << j << std::endl;
-    }
+    // if (ImGui::Button("Begin Connection"))
+    // {
+    //     BeginConnection();
+    // }
+    // if (ImGui::Button("Test"))
+    // {
+    //     json data;
+    //     data["num_envs"] = 1;
+    //     Make(data);
+    //     data["action"] = std::array<float, 3>({0.0f, 0.0f, 0.0f});
+    //     json j = Step(data);
+    //     std::cout << j << std::endl;
+    // }
 }

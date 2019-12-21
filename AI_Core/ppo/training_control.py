@@ -1,4 +1,5 @@
 import wx
+import time
 import os
 import numpy as np
 from ui.panels import TrainingVisualizer, ActionLog, ParameterControl, Logs
@@ -40,13 +41,13 @@ class MainFrame(wx.Frame):
 
         self.logTimer.Start(1000)
 
-    def InitTrainingProcess(self):
+    def InitTrainingProcess(self, f_path=''):
         self.logs.Clear()
         self.actionLog.Clear()
 
         self.debugQueue = Queue()
         self.pauseQueue = Queue()
-        self.trainingProcess = Process(target=self.ppo.Start, args=(self.debugQueue, self.pauseQueue, ))
+        self.trainingProcess = Process(target=self.ppo.Start, args=(self.debugQueue, self.pauseQueue, f_path, ))
 
         self.debugInfoRefreshTimer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.OnDebugData, self.debugInfoRefreshTimer)
@@ -65,10 +66,10 @@ class MainFrame(wx.Frame):
         if len(data) > 0:
             index = len(data[0][0]) - 3
             self.visual.SetVisualData(data[0][self.selectedEnvId][:index])
-            self.actionLog.PushActionsIn(data[0][self.selectedEnvId][index:])
-            self.actionLog.PushActionsOut(data[3][self.selectedEnvId], data[1][self.selectedEnvId], data[2][self.selectedEnvId])
-            if data[2][self.selectedEnvId]:
-                self.actionLog.Clear()
+            # self.actionLog.PushActionsIn(data[0][self.selectedEnvId][index:])
+            # self.actionLog.PushActionsOut(data[3][self.selectedEnvId], data[1][self.selectedEnvId], data[2][self.selectedEnvId])
+            # if data[2][self.selectedEnvId]:
+            #     self.actionLog.Clear()
 
     def PauseTraining(self):
         self.pauseQueue.put(1)
@@ -78,8 +79,16 @@ class MainFrame(wx.Frame):
         self.pauseQueue.put(1)
         self.logs.Log('Training Resumed...')
 
+    def StartTrainingFromFile(self, f_path):
+        self.control.StartEnv()
+        self.logQueue.put('Starting Environment, sleeping for 1 second...')
+        time.sleep(1)
+        self.InitTrainingProcess(f_path)
 
     def StartTraining(self, e):
+        self.control.StartEnv()
+        self.logQueue.put('Starting Environment, sleeping for 1 second...')
+        time.sleep(1)
         self.InitTrainingProcess()
 
     def StopTraining(self):

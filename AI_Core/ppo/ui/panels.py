@@ -19,7 +19,7 @@ class ArrayVisualizer(wx.Panel):
 
     def OnPaint(self, e):
         if self.paintData is None:
-            print("ERROR: Have not set painting data!")
+            # print("ERROR: Have not set painting data!")
             return
 
         canvas = wx.PaintDC(self)
@@ -151,7 +151,7 @@ class ParameterControl(wx.Panel):
         topSizer.Add(wx.StaticLine(self, ), 0, wx.ALL | wx.EXPAND, 5)
 
         self.connectionBtn = wx.Button(self, wx.ID_ANY, 'Connect RabbitMQ Server')
-        self.connectionStatus = wx.StaticText(self, wx.ID_ANY, 'Not Connected')
+        self.connectionStatus = wx.StaticText(self, wx.ID_ANY, 'Connected')
         connSizer = wx.BoxSizer(wx.HORIZONTAL)
         connSizer.Add(self.connectionBtn, 0, wx.LEFT, 5)
         connSizer.Add((0, 0), 1)
@@ -171,11 +171,14 @@ class ParameterControl(wx.Panel):
         self.startBtn.Bind(wx.EVT_BUTTON, self.startFuc)
         self.pauseBtn = wx.ToggleButton(self, wx.ID_ANY, 'Pause Training')
         self.pauseBtn.Bind(wx.EVT_TOGGLEBUTTON, self.OnPauseToggle)
-        self.startEnvBtn = wx.Button(self, wx.ID_ANY, 'Start Environment')
-        self.startEnvBtn.Bind(wx.EVT_BUTTON, self.OnStartEnv)
+        self.loadModelbtn = wx.Button(self, wx.ID_ANY, 'Resume From Saved Model')
+        self.loadModelbtn.Bind(wx.EVT_BUTTON, self.OnChooseFile)
+
+        self.openFileDialog = wx.FileDialog(self.parent, 'Choose Model Check Point File',
+                                            '/home/sunchuan/AI/Chuang/AI_Core/ppo/checkpoints/')
 
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
-        btnSizer.Add(self.startEnvBtn, 0, wx.Right, 5)
+        btnSizer.Add(self.loadModelbtn, 0, wx.Right, 5)
         btnSizer.Add(self.startBtn, 0, wx.LEFT | wx.RIGHT, 5)
         btnSizer.Add(self.pauseBtn, 0, wx.LEFT, 5)
 
@@ -192,9 +195,16 @@ class ParameterControl(wx.Panel):
             self.parent.ResumeTraining()
             e.GetEventObject().SetLabel('Pause Training')
 
-    def OnStartEnv(self, e):
+    def StartEnv(self):
         cmd = 'cd /home/sunchuan/AI/Chuang/Build/bin/x86_64/Debug/ && ./Chuang'
         self.process = subprocess.Popen([cmd], shell=True)
+
+    def OnChooseFile(self, e):
+        self.openFileDialog.ShowModal()
+        # TODO: Check file path validity
+        # f_path = self.openFileDialog.GetPath()
+        self.parent.StartTrainingFromFile(self.openFileDialog.GetPath())
+        self.openFileDialog.Destroy()
 
 class Logs(wx.Panel):
     def __init__(self, parent, messageQueue):

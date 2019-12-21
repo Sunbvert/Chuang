@@ -36,7 +36,7 @@ MINI_BATCH_SIZE     = 256
 PPO_EPOCHS          = 30
 TEST_EPOCHS         = 10
 NUM_TESTS           = 10
-TARGET_REWARD       = 8000
+TARGET_REWARD       = 50000
 
 
 class PPO_Train:
@@ -51,12 +51,12 @@ class PPO_Train:
             'PPO_EPSILON': 0.2,
             'CRITIC_DISCOUNT': 0.5,
             'ENTROPY_BETA': 0.001,
-            'PPO_STEPS': 256,
-            'MINI_BATCH_SIZE': 64,
-            'PPO_EPOCHS': 10,
+            'PPO_STEPS': 128,
+            'MINI_BATCH_SIZE': 256,
+            'PPO_EPOCHS': 30,
             'TEST_EPOCHS': 10,
             'NUM_TESTS': 10,
-            'TARGET_REWARD': 8000
+            'TARGET_REWARD': 50000
         }
         self.logQueue = logQueue
 
@@ -151,12 +151,14 @@ class PPO_Train:
         self.writer.add_scalar("entropy", sum_entropy / count_steps, frame_idx)
         self.writer.add_scalar("loss_total", sum_loss_total / count_steps, frame_idx)
 
-    def Start(self, debugOutputQueue, pauseQueue):
+    def save_ckp(self, state, fname):
+        torch.save(state, fname)
+
+    def Start(self, debugOutputQueue, pauseQueue, fromSavedModel=''):
         mkdir('.', 'checkpoints')
         parser = argparse.ArgumentParser()
         parser.add_argument("-n", "--name", default=self.settings['ENV_NAME'], help="Name of the run")
         args = parser.parse_args()
-        self.writer = SummaryWriter(comment="ppo_" + args.name)
 
         # Autodetect CUDA
         use_cuda = torch.cuda.is_available()
@@ -168,21 +170,31 @@ class PPO_Train:
         num_inputs = envs.observation_space.shape[0]
         num_outputs = envs.action_space.shape[0]
 
-        self.logQueue.put('Successfully make 8 remote environment')
-
-        self.model = ActorCritic(num_inputs, num_outputs, HIDDEN_SIZE).to(device)
-        self.logQueue.put(pprint.pformat(self.model))
-        self.optimizer = optim.Adam(self.model.parameters(), lr=LEARNING_RATE)
-
         frame_idx = 0
         train_epoch = 0
         best_reward = None
 
+        self.model = ActorCritic(num_inputs, num_outputs, HIDDEN_SIZE).to(device)
+        self.optimizer = optim.Adam(self.model.parameters(), lr=LEARNING_RATE)
+        self.writer = SummaryWriter(comment="ppo_" + args.name)
+
+        if fromSavedModel == '':
+            self.logQueue.put('Successfully make 8 remote environment')
+            self.logQueue.put(pprint.pformat(self.model))
+        else:
+            check_point = torch.load(fromSavedModel)
+            self.model.load_state_dict(check_point['state_dict'])
+            self.optimizer.load_state_dict(check_point['optimizer'])
+            train_epoch = check_point['epoch']
+            frame_idx = check_point['frame_idx']
+            self.logQueue.put('Successfully load model from ' + fromSavedModel)
+
+
         state = envs.reset()
         early_stop = False
+        save_count = 0
 
         while not early_stop:
-
             log_probs = []
             values = []
             states = []
@@ -221,8 +233,6 @@ class PPO_Train:
                         while not pauseQueue.empty():
                             pauseQueue.get()
 
-
-
             next_state = torch.FloatTensor(next_state).to(device)
             _, next_value = self.model(next_state)
             returns = self.compute_gae(next_value, rewards, masks, values)
@@ -248,8 +258,28 @@ class PPO_Train:
                         self.logQueue.put(pprint.pformat("Best reward updated: %.3f -> %.3f" % (best_reward, test_reward)))
                         name = "%s_best_%+.3f_%d.dat" % (args.name, test_reward, frame_idx)
                         fname = os.path.join('.', 'checkpoints', name)
-                        torch.save(self.model.state_dict(), fname)
+                        check_point = {
+                            'epoch': train_epoch,
+                            'state_dict': self.model.state_dict(),
+                            'optimizer': self.optimizer.state_dict(),
+                            'frame_idx': frame_idx,
+                        }
+                        # self.save_ckp(check_point, fname)
+                        # torch.save(self.model.state_dict(), fname)
+                        torch.save(check_point, fname)
                     best_reward = test_reward
                 if test_reward > TARGET_REWARD: early_stop = True
 
-            envs.reset(False)
+                save_count += 1
+                if save_count >= 5:
+                    self.logQueue.put(pprint.pformat('Saving checkpoint for frame: ' + str(frame_idx)))
+                    name = "%s_frame_%d.dat" % (args.name, frame_idx)
+                    fname = os.path.join('.', 'checkpoints', name)
+                    check_point = {
+                        'epoch': train_epoch,
+                        'state_dict': self.model.state_dict(),
+                        'optimizer': self.optimizer.state_dict(),
+                        'frame_idx': frame_idx,
+                    }
+                    torch.save(check_point, fname)
+                    save_count = 0

@@ -202,13 +202,17 @@ void RobotHopper::Step()
         done = true;
     }
 
-    // if (done)
-    // {
-    //     reward -= 200;
-    // }
+    if (done)
+    {
+        reward -= 200;
+    }
     
     std::map<std::string, std::string> b;
     Result *result = new Result(m_Observation, reward, done, b);
+    if (done)
+    {
+        Reset();
+    }
     SetResult(result);
     steped = true;
 }
@@ -340,8 +344,8 @@ void RobotHopper::GetObservation(float observation[])
     float cellLength = VISION_LENGTH / VISION_SIZE;
     b2Vec2 visionLength(VISION_LENGTH, VISION_LENGTH);
 
-    if (enableRender)
-        m_Canvas->Clear();
+    // if (enableRender)
+        // m_Canvas->Clear();
 
     for (int i = 0; i < VISION_SIZE; i++)
     {
@@ -358,8 +362,8 @@ void RobotHopper::GetObservation(float observation[])
             observation[j + i * VISION_SIZE] = score;
             
             b2Vec2 center = aabb.GetCenter();
-            if (enableRender)
-                m_Canvas->DrawSquare(center.x, center.y, cellLength, cellLength, glm::vec4(score, 0.0f, 0.0f, 1.0f));
+            // if (enableRender)
+                // m_Canvas->DrawSquare(center.x, center.y, cellLength, cellLength, glm::vec4(score, 0.0f, 0.0f, 1.0f));
         }
     }
     
