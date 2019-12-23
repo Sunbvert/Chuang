@@ -11,7 +11,7 @@ class ArrayVisualizer(wx.Panel):
         wx.Panel.__init__(self, parent, size=(400, 400))
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.paintData = None
-        self.pixelSize = 10
+        self.pixelSize = 12
 
     def SetPaintData(self, data):
         self.paintData = data
@@ -171,8 +171,10 @@ class ParameterControl(wx.Panel):
         self.startBtn.Bind(wx.EVT_BUTTON, self.startFuc)
         self.pauseBtn = wx.ToggleButton(self, wx.ID_ANY, 'Pause Training')
         self.pauseBtn.Bind(wx.EVT_TOGGLEBUTTON, self.OnPauseToggle)
-        self.loadModelbtn = wx.Button(self, wx.ID_ANY, 'Resume From Saved Model')
+        self.loadModelbtn = wx.Button(self, wx.ID_ANY, 'Resume Training')
         self.loadModelbtn.Bind(wx.EVT_BUTTON, self.OnChooseFile)
+        self.playBtn = wx.Button(self, wx.ID_ANY, 'Play')
+        self.playBtn.Bind(wx.EVT_BUTTON, self.OnPlay)
 
         self.openFileDialog = wx.FileDialog(self.parent, 'Choose Model Check Point File',
                                             '/home/sunchuan/AI/Chuang/AI_Core/ppo/checkpoints/')
@@ -180,7 +182,8 @@ class ParameterControl(wx.Panel):
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
         btnSizer.Add(self.loadModelbtn, 0, wx.Right, 5)
         btnSizer.Add(self.startBtn, 0, wx.LEFT | wx.RIGHT, 5)
-        btnSizer.Add(self.pauseBtn, 0, wx.LEFT, 5)
+        btnSizer.Add(self.pauseBtn, 0, wx.LEFT | wx.RIGHT, 5)
+        btnSizer.Add(self.playBtn, 0, wx.LEFT, 5)
 
         topSizer.Add(btnSizer, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.TOP | wx.BOTTOM, 20)
 
@@ -204,6 +207,12 @@ class ParameterControl(wx.Panel):
         # TODO: Check file path validity
         # f_path = self.openFileDialog.GetPath()
         self.parent.StartTrainingFromFile(self.openFileDialog.GetPath())
+        self.openFileDialog.Destroy()
+
+    def OnPlay(self, e):
+        self.openFileDialog.ShowModal()
+        # TODO: Check file path validity
+        self.parent.Play(self.openFileDialog.GetPath())
         self.openFileDialog.Destroy()
 
 class Logs(wx.Panel):

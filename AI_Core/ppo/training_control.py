@@ -97,6 +97,15 @@ class MainFrame(wx.Frame):
             self.logQueue.close()
             self.trainingProcess.terminate()
 
+    def Play(self, f_path):
+        self.logs.Clear()
+        self.control.StartEnv()
+        self.logQueue.put('Starting Environment, sleeping for 1 second...')
+        time.sleep(1)
+        self.playProcess = Process(target=self.ppo.Play, args=(f_path, False, ))
+        self.playProcess.start()
+
+
 ex = wx.App(False)
 main = MainFrame(None, "Training Control")
 ex.MainLoop()

@@ -73,6 +73,3 @@ class RemoteVecEnv(object):
         reward = np.asarray(reward, dtype=np.float32)
         done = np.asarray(done, dtype=bool)
         return next_state, reward, done, _
-
-    def reset_make(self):
-        self.dispatcher.make(1, True)

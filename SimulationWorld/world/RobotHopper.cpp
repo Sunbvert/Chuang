@@ -131,11 +131,12 @@ RobotHopper::RobotHopper() : m_HeadInitialPosition(0.0f, -0.08f)
     m_groundBody = m_World->CreateBody(&bodyDef);
 
     b2BodyDef groundBodyDef;
-    groundBodyDef.position.Set(90.0f, -1.25f);
+    groundBodyDef.position.Set(40.0f, -1.25f);
     b2Body* groundBody = m_World->CreateBody(&groundBodyDef);
     b2PolygonShape groundBox;
-    groundBox.SetAsBox(100.0f, 0.25f);
-    groundBody->CreateFixture(&groundBox, 0.0f);
+    groundBox.SetAsBox(50.0f, 0.25f);
+    b2Fixture *groundfix = groundBody->CreateFixture(&groundBox, 0.0f);
+    groundfix->SetFriction(1.0f);
     
     CreateHopperRobot();
 
@@ -174,7 +175,7 @@ void RobotHopper::Step()
     m_World->Step(1.0f / FPS, velocityIterations * 30.0f, positionIterations * 30.0f);
     
     GetObservation(m_Observation);
-    float reward = GetReward() + 1.0f;
+    float reward = GetReward();
 
     if (m_RobotHead.body->GetWorldCenter().x <= m_HeadInitialPosition.x - 4)
     {
@@ -192,7 +193,7 @@ void RobotHopper::Step()
     }
     m_lastHeadX = m_RobotHead.body->GetWorldCenter().x;
 
-    if (m_unmoveStepCount >= 200)
+    if (m_unmoveStepCount >= 2000)
     {
         done = true;
     }
@@ -230,9 +231,13 @@ void RobotHopper::SampleAction(float action[])
 
 void RobotHopper::TakeAction(float action[])
 {
-    m_WaistJoint->SetMotorSpeed(action[0] * 20.0f);
-    m_KneeJoint->SetMotorSpeed(action[1] * 20.0f);
-    m_AnkleJoint->SetMotorSpeed(action[2] * 20.0f);
+    // m_WaistJoint->SetMotorSpeed(action[0] * 20.0f);
+    // m_KneeJoint->SetMotorSpeed(action[1] * 20.0f);
+    // m_AnkleJoint->SetMotorSpeed(action[2] * 20.0f);
+
+    m_WaistJoint->SetMotorSpeed(m_WaistJoint->GetMotorSpeed() + action[0] * 2);
+    m_KneeJoint->SetMotorSpeed(m_KneeJoint->GetMotorSpeed() + action[1] * 2);
+    m_AnkleJoint->SetMotorSpeed(m_AnkleJoint->GetMotorSpeed() + action[2] * 2);
 
     // std::cout << "0: " << action[0] << " 1: " << action[1] << " 2: " << action[2] << std::endl;
 }
@@ -378,12 +383,13 @@ float RobotHopper::GetReward()
     b2Vec2 position = m_RobotHead.body->GetPosition();
     double dt = glfwGetTime() - lastStepTime;
     float delatX = position.x - lastStepPos;
-    float reward = delatX / dt;
+    float reward = delatX / (dt * 10.0f);
     
     lastStepPos = position.x;
     lastStepTime = glfwGetTime();
-    //std::cout << reward << std::endl;
+    // std::cout << reward << std::endl;
     return reward;
+    // return position.x;
 }
 
 float RobotHopper::GetVisionScore(b2Fixture *body, b2Fixture *ground)
@@ -428,7 +434,7 @@ void RobotHopper::CreateHopperRobot()
     b2Vec2 calfCenter(headCenter.x, thighCenter.y - thighSize.y / 2 - calfSize.y / 2);
     b2Vec2 footCenter(headCenter.x, calfCenter.y - calfSize.y / 2 - footSize.y / 2);
 
-    float density = 200.0f;
+    float density = 100.0f;
 
     b2Body* head = CreateDynamicBody(headCenter.x, headCenter.y, headSize.x / 2, headSize.y / 2, density, 0.3f);
     b2Body* thigh = CreateDynamicBody(thighCenter.x, thighCenter.y, thighSize.x / 2, thighSize.y / 2, density, 0.3f);
@@ -445,9 +451,13 @@ void RobotHopper::CreateHopperRobot()
     calf->SetUserData(&m_RobotCalf);
     foot->SetUserData(&m_RobotFoot);
 
-    m_WaistAngleLimit.Set(-0.25f * b2_pi, 0.25f * b2_pi);
-    m_KneeAngleLimit.Set(-1.0f * b2_pi, 0.1f * b2_pi);
-    m_AnkleAngleLimit.Set(-0.25f * b2_pi, 0.25f * b2_pi);
+    // m_WaistAngleLimit.Set(-0.25f * b2_pi, 0.25f * b2_pi);
+    // m_KneeAngleLimit.Set(-1.0f * b2_pi, 0.1f * b2_pi);
+    // m_AnkleAngleLimit.Set(-0.25f * b2_pi, 0.25f * b2_pi);
+
+    m_WaistAngleLimit.Set(-0.5f * b2_pi, 0.5f * b2_pi);
+    m_KneeAngleLimit.Set(-1.0f * b2_pi, 1.0f * b2_pi);
+    m_AnkleAngleLimit.Set(-0.5f * b2_pi, 0.5f * b2_pi);
 
     m_WaistJoint = CreateRevoluteJoint(head, thigh, b2Vec2(headCenter.x, headCenter.y - headSize.y / 2), true, m_WaistAngleLimit.x, m_WaistAngleLimit.y);
     m_KneeJoint = CreateRevoluteJoint(thigh, calf, b2Vec2(headCenter.x, thighCenter.y - thighSize.y / 2), true, m_KneeAngleLimit.x, m_KneeAngleLimit.y);

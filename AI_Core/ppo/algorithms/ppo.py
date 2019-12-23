@@ -30,12 +30,12 @@ GAMMA               = 0.99
 GAE_LAMBDA          = 0.95
 PPO_EPSILON         = 0.2
 CRITIC_DISCOUNT     = 0.5
-ENTROPY_BETA        = 0.001
+ENTROPY_BETA        = 0.0001
 PPO_STEPS           = 128
 MINI_BATCH_SIZE     = 256
 PPO_EPOCHS          = 30
 TEST_EPOCHS         = 10
-NUM_TESTS           = 10
+NUM_TESTS           = 1
 TARGET_REWARD       = 50000
 
 
@@ -283,3 +283,33 @@ class PPO_Train:
                     }
                     torch.save(check_point, fname)
                     save_count = 0
+
+    def Play(self, f_path, deterministic):
+        # Autodetect CUDA
+        use_cuda = torch.cuda.is_available()
+        device = torch.device("cuda" if use_cuda else "cpu")
+
+        env = RemoteVecEnv(2)
+
+        num_inputs = env.observation_space.shape[0]
+        num_outputs = env.action_space.shape[0]
+        model = ActorCritic(num_inputs, num_outputs, HIDDEN_SIZE).to(device)
+        check_point = torch.load(f_path)
+        model.load_state_dict(check_point['state_dict'])
+
+        state = env.reset(True)
+        done = False
+        total_steps = 0
+        total_reward = 0
+        while not done:
+            # env.render()
+            state = torch.FloatTensor(state).unsqueeze(0).to(device)
+            dist, _ = model(state)
+            action = dist.mean.detach().cpu().numpy()[0] if deterministic \
+                else dist.sample().cpu().numpy()[0]
+            next_state, reward, done, _ = env.step(action, True)
+            state = next_state
+            total_reward += reward
+            total_steps += 1
+        # env.env.close()
+        self.logQueue.put(pprint.pformat("In %d steps we got %.3f reward" % (total_steps, total_reward)))
