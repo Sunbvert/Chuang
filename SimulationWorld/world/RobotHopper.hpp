@@ -11,7 +11,7 @@
 #define RobotHopper_hpp
 
 #include <stdio.h>
-
+#include <queue>
 #include <Box2D/Box2D.h>
 
 #include "glm/glm.hpp"
@@ -47,6 +47,18 @@ struct RobotBodyPart
 
     b2Body *body;
     WorldBodyType worldBodyType;
+};
+
+struct Obstacle 
+{
+    float right = 0.0f;
+    b2Body *obstacle = nullptr;
+
+    Obstacle (float _right, b2Body *_obstacle) 
+    {
+        right = _right;
+        obstacle =  _obstacle;
+    }
 };
 
 class HeadContactListener : public b2ContactListener
@@ -109,6 +121,7 @@ private:
     void OnRender();
     void OnImGuiRender();
     void CreateHopperRobot();
+    void GenerateObstacles();
     
     float GetVisionScore(b2Fixture *body, b2Fixture* ground);
     float GetReward();
@@ -156,6 +169,12 @@ private:
     constexpr static const float FPS = 60.0f;
     int m_unmoveStepCount;
     float m_lastHeadX;
+    float lastKneeSpeed;
+
+    // Obstacles creation arguements
+    constexpr static const float OBSTACLE_SPACING = 2.0f;
+    constexpr static const float OBSTACLE_BOTTOM = -1.0f;
+    std::queue<Obstacle*> m_obstacles;
 };
 
 #endif /* RobotHopper_hpp */

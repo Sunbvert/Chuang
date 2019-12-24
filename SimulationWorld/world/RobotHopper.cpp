@@ -10,6 +10,8 @@
 #include <GLFW/glfw3.h>
 #include <stdlib.h>
 #include <iostream>
+#include <thread>
+
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
@@ -136,7 +138,7 @@ RobotHopper::RobotHopper() : m_HeadInitialPosition(0.0f, -0.08f)
     b2PolygonShape groundBox;
     groundBox.SetAsBox(50.0f, 0.25f);
     b2Fixture *groundfix = groundBody->CreateFixture(&groundBox, 0.0f);
-    groundfix->SetFriction(1.0f);
+    groundfix->SetFriction(100.0f);
     
     CreateHopperRobot();
 
@@ -146,6 +148,10 @@ RobotHopper::RobotHopper() : m_HeadInitialPosition(0.0f, -0.08f)
     done = false;
     lastStepTime = glfwGetTime();
     lastStepPos = 0.0f;
+    lastKneeSpeed = 0.0f;
+
+    // Obstacles
+    GenerateObstacles();
 }
 
 void RobotHopper::EnableRender()
@@ -186,6 +192,7 @@ void RobotHopper::Step()
     if (abs(m_RobotHead.body->GetWorldCenter().x - m_lastHeadX) < 0.001f)
     {
         m_unmoveStepCount++;
+        reward -= 0.1;
     }
     else 
     {
@@ -193,7 +200,7 @@ void RobotHopper::Step()
     }
     m_lastHeadX = m_RobotHead.body->GetWorldCenter().x;
 
-    if (m_unmoveStepCount >= 2000)
+    if (m_unmoveStepCount >= 1000)
     {
         done = true;
     }
@@ -216,6 +223,8 @@ void RobotHopper::Step()
     }
     SetResult(result);
     steped = true;
+    // std::cout << std::this_thread::get_id() <<  " stepped " << std::endl;
+    GenerateObstacles();
 }
 
 void RobotHopper::SampleAction(float action[])
@@ -258,6 +267,14 @@ void RobotHopper::Reset()
     
     delete m_HeadContactListener;
     m_HeadContactListener = nullptr;
+
+    while (!m_obstacles.empty())
+    {
+        Obstacle* ob = m_obstacles.front();
+        m_obstacles.pop();
+        m_World->DestroyBody(ob->obstacle);
+        delete ob;
+    }
     
     // Regernate
     done = false;
@@ -298,6 +315,59 @@ void RobotHopper::OnRender()
     g_debugDraw.Flush();
 }
 
+void RobotHopper::GenerateObstacles()
+{
+    if (m_obstacles.size() != 0)
+    {
+        if (m_obstacles.front()->right < m_RobotHead.body->GetWorldCenter().x - VISION_LENGTH / 2)
+        {
+            Obstacle* ob = m_obstacles.front();
+            m_obstacles.pop();
+            m_World->DestroyBody(ob->obstacle);
+            delete ob;
+
+            float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+            float pos = r * OBSTACLE_SPACING;
+            float r2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+            float width = r2 * (OBSTACLE_SPACING / 2 - 0.1f) + 0.1f;
+            float r3 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+            float height = r3 * 0.1f + 0.02f;
+
+            b2BodyDef obBodyDef;
+            obBodyDef.position.Set(m_obstacles.back()->right + pos, OBSTACLE_BOTTOM + height);
+            b2Body* body = m_World->CreateBody(&obBodyDef);
+            b2PolygonShape obBox;
+            obBox.SetAsBox(width, height);
+            body->CreateFixture(&obBox, 0.0f);
+            m_obstacles.push(new Obstacle(m_obstacles.back()->right + OBSTACLE_SPACING, body));
+        }
+    }
+    else
+    {
+        int size = VISION_LENGTH / OBSTACLE_SPACING;
+        for (int i = 0; i < size + 2; i++)
+        {
+            float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+            float pos = r * OBSTACLE_SPACING;
+            float r2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+            float width = r2 * (OBSTACLE_SPACING / 2 - 0.1f) + 0.1f;
+            float r3 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+            float height = r3 * 0.1f + 0.02f;
+            if (i == size / 2 + 1)
+            {
+                height = -0.2f;
+            }
+            b2BodyDef obBodyDef;
+            obBodyDef.position.Set((m_HeadInitialPosition.x - VISION_LENGTH / 2 - OBSTACLE_SPACING) + OBSTACLE_SPACING * i + pos, OBSTACLE_BOTTOM + height);
+            b2Body* body = m_World->CreateBody(&obBodyDef);
+            b2PolygonShape obBox;
+            obBox.SetAsBox(width, height);
+            body->CreateFixture(&obBox, 0.0f);
+            m_obstacles.push(new Obstacle((m_HeadInitialPosition.x - VISION_LENGTH / 2) + OBSTACLE_SPACING * i, body));
+        }
+    }
+}
+
 b2RevoluteJoint* RobotHopper::CreateRevoluteJoint(b2Body *bodyA, b2Body *bodyB, b2Vec2 anchor, bool enableLimit, float32 lowerAngle, float32 upperAngle)
 {
     b2RevoluteJointDef jointDef;
@@ -324,6 +394,7 @@ b2Body* RobotHopper::CreateDynamicBody(float32 x, float32 y, float32 halfWidth, 
     fixtureDef.shape = &bodyBox;
     fixtureDef.density = desity;
     fixtureDef.friction = friction;
+    // fixtureDef.restitution = 0.5f;
     body->CreateFixture(&fixtureDef);
 
     return body;
@@ -381,12 +452,15 @@ void RobotHopper::GetObservation(float observation[])
 float RobotHopper::GetReward()
 {
     b2Vec2 position = m_RobotHead.body->GetPosition();
+    float kneeSpeed = m_KneeJoint->GetMotorSpeed();
     double dt = glfwGetTime() - lastStepTime;
-    float delatX = position.x - lastStepPos;
-    float reward = delatX / (dt * 10.0f);
+    float deltaX = position.x - lastStepPos;
+    float deltaSpeed = kneeSpeed - lastKneeSpeed;
+    float reward = deltaX / (dt * 10.0f) + deltaX + deltaSpeed;
     
     lastStepPos = position.x;
     lastStepTime = glfwGetTime();
+    lastKneeSpeed = kneeSpeed;
     // std::cout << reward << std::endl;
     return reward;
     // return position.x;
@@ -434,7 +508,7 @@ void RobotHopper::CreateHopperRobot()
     b2Vec2 calfCenter(headCenter.x, thighCenter.y - thighSize.y / 2 - calfSize.y / 2);
     b2Vec2 footCenter(headCenter.x, calfCenter.y - calfSize.y / 2 - footSize.y / 2);
 
-    float density = 100.0f;
+    float density = 8.0f;
 
     b2Body* head = CreateDynamicBody(headCenter.x, headCenter.y, headSize.x / 2, headSize.y / 2, density, 0.3f);
     b2Body* thigh = CreateDynamicBody(thighCenter.x, thighCenter.y, thighSize.x / 2, thighSize.y / 2, density, 0.3f);

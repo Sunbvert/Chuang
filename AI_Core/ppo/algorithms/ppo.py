@@ -209,6 +209,7 @@ class PPO_Train:
                 action = dist.sample()
                 # each state, reward, done is a list of results from each parallel environment
                 action_exp = action.cpu().numpy()
+                action_exp = np.clip(action_exp, -10, 10)
                 next_state, reward, done, _ = envs.step(action_exp)
                 log_prob = dist.log_prob(action)
 

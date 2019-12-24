@@ -134,9 +134,11 @@ void PlayGround::Keyboard(int key)
 {
     if (enableControl)
     {
+        float32 a[] = {0.0f, 0.0f, -10.0f};
         switch (key) {
             case GLFW_KEY_A:
-                //m_KneeJoint->SetMotorSpeed(-0.2f);
+                m_RobotHopper->SetAction(a);
+                m_RobotHopper->Step();
                 break;
             default:
                 break;

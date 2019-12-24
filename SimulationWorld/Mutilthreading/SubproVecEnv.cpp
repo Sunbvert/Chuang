@@ -87,7 +87,7 @@ void SubproVecEnv::Reset(std::vector<Result*>* results)
     while (waiting)
     {
         // TODO: sleep cpu
-        //std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        // std::this_thread::sleep_for(std::chrono::milliseconds(2));
         int count = 0;
         for (int i = 0; i < num_envs; i++)
         {

@@ -10,10 +10,12 @@
 
 #include <iostream>
 #include <assert.h>
+#include <thread>
 
 void Environment::SetAction(float *_action)
 {
     action = _action;
+    // std::cout << std::this_thread::get_id() << " set " << action[1] << std::endl;
 }
 
 float* Environment::GetAction()
@@ -23,6 +25,7 @@ float* Environment::GetAction()
         std::cout << "ERROR: trying to get null action" << std::endl;
         assert(action);
     }
+    // std::cout << std::this_thread::get_id() << " get " << action[1] << std::endl;
     return action;
 }
 

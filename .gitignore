@@ -10,3 +10,4 @@ AI_Core/ppo/ui/__pycache__/
 AI_Core/ppo/_test_/__pycache__
 AI_Core/ppo/algorithms/__pycache__
 AI_Core/ppo/packup/
+best_runs/
