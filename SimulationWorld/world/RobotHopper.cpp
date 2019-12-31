@@ -138,7 +138,7 @@ RobotHopper::RobotHopper() : m_HeadInitialPosition(0.0f, -0.08f)
     b2PolygonShape groundBox;
     groundBox.SetAsBox(50.0f, 0.25f);
     b2Fixture *groundfix = groundBody->CreateFixture(&groundBox, 0.0f);
-    groundfix->SetFriction(100.0f);
+    groundfix->SetFriction(1.0f);
     
     CreateHopperRobot();
 
@@ -148,7 +148,7 @@ RobotHopper::RobotHopper() : m_HeadInitialPosition(0.0f, -0.08f)
     done = false;
     lastStepTime = glfwGetTime();
     lastStepPos = 0.0f;
-    lastKneeSpeed = 0.0f;
+    lastKneeAngle = 0.0f;
 
     // Obstacles
     GenerateObstacles();
@@ -205,7 +205,7 @@ void RobotHopper::Step()
         done = true;
     }
 
-    if (m_RobotHead.body->GetWorldCenter().y < -1.0f)
+    if (m_RobotHead.body->GetWorldCenter().y < -0.6f)
     {
         done = true;
     }
@@ -376,7 +376,7 @@ b2RevoluteJoint* RobotHopper::CreateRevoluteJoint(b2Body *bodyA, b2Body *bodyB, 
     jointDef.upperAngle = upperAngle;
     jointDef.enableLimit = enableLimit;
     jointDef.motorSpeed = 0.0f;
-    jointDef.maxMotorTorque = 80.0f;
+    jointDef.maxMotorTorque = 40.0f;
     jointDef.enableMotor = true;
     return (b2RevoluteJoint*)m_World->CreateJoint(&jointDef);
 }
@@ -421,7 +421,7 @@ void RobotHopper::GetObservation(float observation[])
     b2Vec2 visionLength(VISION_LENGTH, VISION_LENGTH);
 
     // if (enableRender)
-        // m_Canvas->Clear();
+    //     m_Canvas->Clear();
 
     for (int i = 0; i < VISION_SIZE; i++)
     {
@@ -439,29 +439,29 @@ void RobotHopper::GetObservation(float observation[])
             
             b2Vec2 center = aabb.GetCenter();
             // if (enableRender)
-                // m_Canvas->DrawSquare(center.x, center.y, cellLength, cellLength, glm::vec4(score, 0.0f, 0.0f, 1.0f));
+            //     m_Canvas->DrawSquare(center.x, center.y, cellLength, cellLength, glm::vec4(score, 0.0f, 0.0f, 1.0f));
         }
     }
     
     int featureStart = VISION_SIZE * VISION_SIZE;
-    observation[featureStart] = m_WaistJoint->GetJointSpeed();
-    observation[featureStart + 1] = m_KneeJoint->GetJointSpeed();
-    observation[featureStart + 2] = m_AnkleJoint->GetJointSpeed();
+    observation[featureStart] = m_WaistJoint->GetJointAngle();
+    observation[featureStart + 1] = m_KneeJoint->GetJointAngle();
+    observation[featureStart + 2] = m_AnkleJoint->GetJointAngle();
 }
 
 float RobotHopper::GetReward()
 {
-    b2Vec2 position = m_RobotHead.body->GetPosition();
-    float kneeSpeed = m_KneeJoint->GetMotorSpeed();
+    float position = (m_RobotHead.body->GetPosition().x + m_RobotThigh.body->GetPosition().x + m_RobotCalf.body->GetPosition().x + m_RobotFoot.body->GetPosition().x) / 4.0f;
+    float kneeAngle = m_KneeJoint->GetJointAngle();
     double dt = glfwGetTime() - lastStepTime;
-    float deltaX = position.x - lastStepPos;
-    float deltaSpeed = kneeSpeed - lastKneeSpeed;
-    float reward = deltaX / (dt * 10.0f) + deltaX + deltaSpeed;
+    float deltaX = position - lastStepPos;
+    float deltaAngle = kneeAngle - lastKneeAngle;
+    float reward = deltaX / (dt * 10.0f) + deltaX * 200.0f + deltaAngle;
     
-    lastStepPos = position.x;
+    lastStepPos = position;
     lastStepTime = glfwGetTime();
-    lastKneeSpeed = kneeSpeed;
-    // std::cout << reward << std::endl;
+    lastKneeAngle = kneeAngle;
+    // std::cout << "deltax: " << deltaX << " deltaAngle: " << deltaAngle << " speed: " << deltaX / (dt * 10.0f) << std::endl;
     return reward;
     // return position.x;
 }
@@ -501,14 +501,14 @@ void RobotHopper::CreateHopperRobot()
     b2Vec2 headSize(0.4f, 0.2f);
     b2Vec2 thighSize(0.1f, 0.4f);
     b2Vec2 calfSize(0.1f, 0.3f);
-    b2Vec2 footSize(0.24f, 0.1f);
+    b2Vec2 footSize(0.4f, 0.1f);
 
     b2Vec2 headCenter(m_HeadInitialPosition.x, m_HeadInitialPosition.y);
     b2Vec2 thighCenter(headCenter.x, headCenter.y - headSize.y / 2 - thighSize.y / 2);
     b2Vec2 calfCenter(headCenter.x, thighCenter.y - thighSize.y / 2 - calfSize.y / 2);
     b2Vec2 footCenter(headCenter.x, calfCenter.y - calfSize.y / 2 - footSize.y / 2);
 
-    float density = 8.0f;
+    float density = 50.0f;
 
     b2Body* head = CreateDynamicBody(headCenter.x, headCenter.y, headSize.x / 2, headSize.y / 2, density, 0.3f);
     b2Body* thigh = CreateDynamicBody(thighCenter.x, thighCenter.y, thighSize.x / 2, thighSize.y / 2, density, 0.3f);

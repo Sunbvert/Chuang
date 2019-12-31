@@ -169,7 +169,7 @@ private:
     constexpr static const float FPS = 60.0f;
     int m_unmoveStepCount;
     float m_lastHeadX;
-    float lastKneeSpeed;
+    float lastKneeAngle;
 
     // Obstacles creation arguements
     constexpr static const float OBSTACLE_SPACING = 2.0f;

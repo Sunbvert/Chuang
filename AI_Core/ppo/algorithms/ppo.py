@@ -33,7 +33,7 @@ CRITIC_DISCOUNT     = 0.5
 ENTROPY_BETA        = 0.0001
 PPO_STEPS           = 128
 MINI_BATCH_SIZE     = 256
-PPO_EPOCHS          = 30
+PPO_EPOCHS          = 10
 TEST_EPOCHS         = 10
 NUM_TESTS           = 1
 TARGET_REWARD       = 50000
@@ -73,6 +73,7 @@ class PPO_Train:
             next_state, reward, done, _ = env.step(action, True)
             state = next_state
             total_reward += reward
+            time.sleep(0.05)
         return total_reward
 
     def normalize(self, x):
@@ -272,7 +273,7 @@ class PPO_Train:
                 if test_reward > TARGET_REWARD: early_stop = True
 
                 save_count += 1
-                if save_count >= 5:
+                if save_count >= 15:
                     self.logQueue.put(pprint.pformat('Saving checkpoint for frame: ' + str(frame_idx)))
                     name = "%s_frame_%d.dat" % (args.name, frame_idx)
                     fname = os.path.join('.', 'checkpoints', name)
